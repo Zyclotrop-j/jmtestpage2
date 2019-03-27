@@ -21,7 +21,7 @@ export default class BlogPage extends React.Component<Props> {
     const { edges, totalCount } = data.allMarkdownRemark;
 
     return (
-      <Layout>
+      <>
         <Helmet title={`Blog | ${config.siteTitle}`} />
         <Header>
           <Link to="/">{config.siteTitle}</Link>
@@ -43,7 +43,7 @@ export default class BlogPage extends React.Component<Props> {
             <Pagination currentPage={currentPage} totalPages={totalPages} url={'blog'} />
           </Content>
         </Wrapper>
-      </Layout>
+      </>
     );
   }
 }

@@ -6,7 +6,9 @@
     "lib": [
       "dom",
       "es2015",
-      "es2017"
+      "es2017",
+      "es2018",
+      "esNext"
     ],
     "strict": true,
     "noEmit": true,
@@ -16,7 +18,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "removeComments": false,
-    "preserveConstEnums": true
+    "preserveConstEnums": true,
+    "alwaysStrict": true,
+    "sourceMap": true
   },
   "include": [
     "./src/**/*"

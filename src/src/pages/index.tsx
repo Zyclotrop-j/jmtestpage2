@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, graphql } from 'gatsby';
 import styled from 'styled-components';
+import { Transition, config as animationConfig } from 'react-spring/renderprops';
 import { Layout, Wrapper, Button, Article } from '../components';
 import PageProps from '../models/PageProps';
 import Helmet from 'react-helmet';
@@ -33,8 +34,8 @@ const GridRow: any = styled.div`
     props.background
       ? `linear-gradient(
       -185deg,
-      ${rgba(darken(0.1, props.theme.colors.primary), 0.7)}, 
-      ${rgba(lighten(0.1, props.theme.colors.grey.dark), 0.9)}), url(/assets/bg.png) no-repeat`
+      ${rgba(darken(0.1, props.theme.colors.secondary), 0.7)},
+      ${rgba(lighten(0.1, props.theme.colors['color-primary-4']), 0.9)})`
       : null};
   background-size: cover;
   padding: 2rem 4rem;
@@ -55,68 +56,140 @@ const HomepageContent: any = styled.div`
   text-align: ${(props: any) => (props.center ? 'center' : 'left')};
 `;
 
+const ContactIcon: any = styled.div`
+  position: relative;
+  width: 15px;
+  box-sizing: content-box;
+  div {
+    top: -7.5px;
+    left: -7.5px;
+    color: ${(props: any) => props.theme.colors.white};
+    position: absolute;
+    margin-left: 2px;
+    margin-top: 4px;
+    width: 15px;
+    height: 10px;
+    border-radius: 1px;
+    border: solid 1px ${(props: any) => props.theme.colors.white};
+  }
+  div:before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: -4px;
+    width: 1px;
+    height: 10px;
+    background-color: ${(props: any) => props.theme.colors.white};
+    -webkit-transform-origin: bottom;
+    transform-origin: bottom;
+    -webkit-transform: rotate(-54deg);
+    transform: rotate(-54deg);
+  }
+  div:after {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: -4px;
+    width: 1px;
+    height: 10px;
+    background-color: ${(props: any) => props.theme.colors.white};
+    -webkit-transform-origin: bottom;
+    transform-origin: bottom;
+    -webkit-transform: rotate(54deg);
+    transform: rotate(54deg);
+  }
+`;
+
+const BlogIcon = styled.div`
+  position: relative;
+  width: 15px;
+  box-sizing: content-box;
+  div {
+    top: -7.5px;
+    left: -7.5px;
+    color: ${(props: any) => props.theme.colors.white};
+    position: absolute;
+    margin-left: 4px;
+    margin-top: 7px;
+    width: 14px;
+    height: 2px;
+    border-radius: 1px;
+    border: solid 1px ${(props: any) => props.theme.colors.white};
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+  }
+  div:before {
+    content: '';
+    position: absolute;
+    left: -12px;
+    top: -1px;
+    width: 0px;
+    height: 0px;
+    border-left: solid 5px transparent;
+    border-right: solid 5px ${(props: any) => props.theme.colors.white};
+    border-top: solid 2px transparent;
+    border-bottom: solid 2px transparent;
+  }
+`;
+
 export default class IndexPage extends React.Component<PageProps> {
   public render() {
     const { data } = this.props;
     const { edges, totalCount } = data.allMarkdownRemark;
     return (
-      <Layout>
-        <Wrapper fullWidth={true}>
-          <Helmet title={`Homepage | ${config.siteTitle}`} />
-          <Homepage>
-            <GridRow background={true}>
-              <HomepageContent center={true}>
-                <img src={config.siteLogo} />
-                <h1>
-                  Hi. I am <br />
-                  Jannes
-                </h1>
-                <p>This is a test-website :) </p>
-                <Link to="/contact">
-                  <Button big={true}>
-                    <svg width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M1764 11q33 24 27 64l-256 1536q-5 29-32 45-14 8-31 8-11 0-24-5l-453-185-242 295q-18 23-49 23-13 0-22-4-19-7-30.5-23.5t-11.5-36.5v-349l864-1059-1069 925-395-162q-37-14-40-55-2-40 32-59l1664-960q15-9 32-9 20 0 36 11z" />
-                    </svg>
-                    Contact
-                  </Button>
-                </Link>
-                <Link to="/blog">
-                  <Button big>
-                    <svg width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M1764 11q33 24 27 64l-256 1536q-5 29-32 45-14 8-31 8-11 0-24-5l-453-185-242 295q-18 23-49 23-13 0-22-4-19-7-30.5-23.5t-11.5-36.5v-349l864-1059-1069 925-395-162q-37-14-40-55-2-40 32-59l1664-960q15-9 32-9 20 0 36 11z" />
-                    </svg>
-                    Blog
-                  </Button>
-                </Link>
-              </HomepageContent>
-            </GridRow>
-            <GridRow>
-              <HomepageContent>
-                <h2>About Me</h2>
-                <p>
-                  ..... some text .......
-                </p>
-                <hr />
-                <h2>Latest Blog</h2>
-                {edges.map(post => (
-                  <Article
-                    title={post.node.frontmatter.title}
-                    date={post.node.frontmatter.date}
-                    excerpt={post.node.excerpt}
-                    timeToRead={post.node.timeToRead}
-                    slug={post.node.fields.slug}
-                    category={post.node.frontmatter.category}
-                    key={post.node.fields.slug}
-                  />
-                ))}
-                <p className={'textRight'}>
-                  <Link to={'/blog'}>All articles ({totalCount})</Link>
-                </p>
-              </HomepageContent>
-            </GridRow>
-          </Homepage>
-        </Wrapper>
-      </Layout>
+      <Wrapper fullWidth={true}>
+        <Helmet title={`Homepage | ${config.siteTitle}`} />
+        <Homepage>
+          <GridRow background={true}>
+            <HomepageContent center={true}>
+              {config.siteLogo && <img src={config.siteLogo} alt={config.siteLogoAlt} />}
+              <h1>
+                Hi. I am <br />
+                Jannes
+              </h1>
+              <p>This is a test-website :) </p>
+              <Link to="/contact">
+                <Button big={true}>
+                  <ContactIcon>
+                    <div />
+                  </ContactIcon>
+                  Contact
+                </Button>
+              </Link>
+              <Link to="/blog">
+                <Button big>
+                  <BlogIcon>
+                    <div />
+                  </BlogIcon>
+                  Blog
+                </Button>
+              </Link>
+            </HomepageContent>
+          </GridRow>
+          <GridRow>
+            <HomepageContent>
+              <h2>About Me</h2>
+              <p>..... some text .......</p>
+              <hr />
+              <h2>Latest Blog</h2>
+              {edges.map(post => (
+                <Article
+                  title={post.node.frontmatter.title}
+                  date={post.node.frontmatter.date}
+                  excerpt={post.node.excerpt}
+                  timeToRead={post.node.timeToRead}
+                  slug={post.node.fields.slug}
+                  category={post.node.frontmatter.category}
+                  key={post.node.fields.slug}
+                />
+              ))}
+              <p className={'textRight'}>
+                <Link to={'/blog'}>All articles ({totalCount})</Link>
+              </p>
+            </HomepageContent>
+          </GridRow>
+        </Homepage>
+      </Wrapper>
     );
   }
 }

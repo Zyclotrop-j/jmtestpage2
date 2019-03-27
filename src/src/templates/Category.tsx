@@ -13,7 +13,7 @@ export default class Category extends React.PureComponent<PageProps> {
     const subline = `${totalCount} post${totalCount === 1 ? '' : 's'} tagged with "${categoryName}"`;
 
     return (
-      <Layout>
+      <>
         <Helmet title={`${categoryName} | ${config.siteTitle}`} />
         <Header>
           <Link to="/">{config.siteTitle}</Link>
@@ -39,7 +39,7 @@ export default class Category extends React.PureComponent<PageProps> {
               : null}
           </Content>
         </Wrapper>
-      </Layout>
+      </>
     );
   }
 }

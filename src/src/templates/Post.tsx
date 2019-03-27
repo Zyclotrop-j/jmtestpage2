@@ -25,7 +25,7 @@ export default class PostPage extends React.PureComponent<Props> {
     const { prev, next } = this.props.pathContext;
     const post = this.props.data.markdownRemark;
     return (
-      <Layout>
+      <>
         {post ? (
           <>
             <SEO postPath={post.fields.slug} postNode={post} postSEO />
@@ -56,7 +56,7 @@ export default class PostPage extends React.PureComponent<Props> {
             </Wrapper>
           </>
         ) : null}
-      </Layout>
+      </>
     );
   }
 }

@@ -46,13 +46,17 @@ export class PrevNext extends React.PureComponent<Props> {
         {prev && (
           <Prev>
             <span>Previous</span>
-            <Link to={`/blog/${kebabCase(prev.frontmatter.title)}`}>{prev.frontmatter.title}</Link>
+            <Link to={`/blog/${kebabCase(prev.frontmatter.title)}`} state={{ direction: 'left' }}>
+              {prev.frontmatter.title}
+            </Link>
           </Prev>
         )}
         {next && (
           <Next>
             <span>Next</span>
-            <Link to={`/blog/${kebabCase(next.frontmatter.title)}`}>{next.frontmatter.title}</Link>
+            <Link to={`/blog/${kebabCase(next.frontmatter.title)}`} state={{ direction: 'right' }}>
+              {next.frontmatter.title}
+            </Link>
           </Next>
         )}
       </Wrapper>

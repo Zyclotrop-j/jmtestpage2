@@ -9,10 +9,12 @@ import PageProps from '../models/PageProps';
 export default class ContactPage extends React.Component<PageProps> {
   public render() {
     return (
-      <Layout>
+      <>
         <Helmet title={`Contact | ${config.siteTitle}`} />
         <Header>
-          <Link to="/">{config.siteTitle}</Link>
+          <Link to="/" state={{ toHome: true }}>
+            {config.siteTitle}
+          </Link>
           <SectionTitle uppercase={true}>Contact</SectionTitle>
         </Header>
         <Wrapper>
@@ -36,7 +38,7 @@ export default class ContactPage extends React.Component<PageProps> {
             </a>
           </Content>
         </Wrapper>
-      </Layout>
+      </>
     );
   }
 }

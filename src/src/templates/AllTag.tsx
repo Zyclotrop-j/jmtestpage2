@@ -12,7 +12,7 @@ export default class AllTagTemplate extends React.PureComponent<PageProps> {
     const { tags } = this.props.pathContext;
     if (tags) {
       return (
-        <Layout>
+        <>
           <Helmet title={`Tags | ${config.siteTitle}`} />
           <Header>
             <Link to="/">{config.siteTitle}</Link>
@@ -27,7 +27,7 @@ export default class AllTagTemplate extends React.PureComponent<PageProps> {
               ))}
             </Content>
           </Wrapper>
-        </Layout>
+        </>
       );
     }
   }

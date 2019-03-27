@@ -13,7 +13,7 @@ export default class TagTemplate extends React.PureComponent<PageProps> {
     const subline = `${totalCount} post${totalCount === 1 ? '' : 's'} tagged with "${tagName}"`;
 
     return (
-      <Layout>
+      <>
         <Helmet title={`${'Tags'} | ${config.siteTitle}`} />
         <Header>
           <Link to="/">{config.siteTitle}</Link>
@@ -39,7 +39,7 @@ export default class TagTemplate extends React.PureComponent<PageProps> {
               : null}
           </Content>
         </Wrapper>
-      </Layout>
+      </>
     );
   }
 }

@@ -12,7 +12,7 @@ export default class AllCategoryTemplate extends React.PureComponent<PageProps> 
     const { categories } = this.props.pathContext;
     if (categories) {
       return (
-        <Layout>
+        <>
           <Helmet title={`Categories | ${config.siteTitle}`} />
           <Header>
             <Link to="/">{config.siteTitle}</Link>
@@ -27,7 +27,7 @@ export default class AllCategoryTemplate extends React.PureComponent<PageProps> 
               ))}
             </Content>
           </Wrapper>
-        </Layout>
+        </>
       );
     }
   }
