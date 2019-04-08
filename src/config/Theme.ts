@@ -19,6 +19,8 @@ colors['color-secondary-2-1'] = '#4CA8B5';
 colors['color-secondary-2-2'] = '#2E93A1';
 colors['color-secondary-2-3'] = '#067483';
 colors['color-secondary-2-4'] = '#025E6B';
+
+// Needed???
 colors['brand-primary'] = colors['color-secondary-1-0'];
 colors['brand-secondary'] = colors['color-primary-0'];
 colors['brand-tertiary'] = colors['color-secondary-2-0'];

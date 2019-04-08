@@ -4,5 +4,7 @@
       "babel-preset-gatsby"
     ]
   ],
-  "plugins": ["babel-plugin-styled-components", "polished"]
+  "plugins": ["babel-plugin-styled-components", "polished", ["ramda", {
+      "useES": true
+    }]]
 }

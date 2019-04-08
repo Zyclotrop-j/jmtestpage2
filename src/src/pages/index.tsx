@@ -1,8 +1,11 @@
 import React from 'react';
 import { Link, graphql } from 'gatsby';
 import styled from 'styled-components';
+import { transitions } from 'polished';
 import { Transition, config as animationConfig } from 'react-spring/renderprops';
-import { Layout, Wrapper, Button, Article } from '../components';
+import { Button, Heading, Paragraph, Text, Anchor, Grid } from 'grommet';
+import { Apps, BlockQuote, ContactInfo } from 'grommet-icons';
+import { Layout, Wrapper, Article, AboutMe } from '../components';
 import PageProps from '../models/PageProps';
 import Helmet from 'react-helmet';
 import config from '../../config/SiteConfig';
@@ -56,79 +59,150 @@ const HomepageContent: any = styled.div`
   text-align: ${(props: any) => (props.center ? 'center' : 'left')};
 `;
 
-const ContactIcon: any = styled.div`
+const IconHover = styled(Text)``;
+const StyledAnchor = styled(Anchor)`
+  color: ${props => props.color};
+  transition: padding-left ${props => props.theme.global.transitionDuration} 0.3s;
   position: relative;
-  width: 15px;
+  &:hover {
+    transition: padding-left ${props => props.theme.global.transitionDuration} 0s;
+    padding-left: 1.5rem;
+  }
+`;
+
+const IconPin = styled.div`
+  left: 0;
+  font-size: 10px;
+  color: transparent;
+  transition: color ${props => props.theme.global.transitionDuration} 0s;
+  ${StyledAnchor}:hover & {
+    transition: color ${props => props.theme.global.transitionDuration} 0.5s;
+    color: white;
+  }
+  position: absolute;
+  color: transparent;
+  position: absolute;
+  margin-left: 0.4em;
+  margin-top: 0.2em;
+  width: 1.2em;
+  height: 1.2em;
+  border: solid 0.1em currentColor;
+  border-radius: 0.7em 0.7em 0.7em 0;
+  transform: rotate(-45deg);
+  &:before {
+    content: '';
+    position: absolute;
+    left: 0.3em;
+    top: 0.3em;
+    width: 0.4em;
+    height: 0.4em;
+    border: solid 0.1em currentColor;
+    border-radius: 0.3em;
+  }
+`;
+
+const ContactIcon: any = styled.i`
+  font-size: 0.8em;
+  left: calc(-1.5em - 20px);
+  position: relative;
   box-sizing: content-box;
+  ${IconHover}:hover & {
+    div {
+      border: solid 0.1em ${(props: any) => props.theme.global.colors.white};
+    }
+    div::before {
+      left: 0.7em;
+      top: -0.4em;
+      width: 0.1em;
+      height: 1em;
+    }
+    div::after {
+      right: calc(100% - 1px - 0.7em);
+      top: -0.4em;
+      width: 0.1em;
+      height: 1em;
+    }
+  }
   div {
-    top: -7.5px;
-    left: -7.5px;
+    ${props => transitions(['border'], props.theme.global.transitionDuration)};
+    top: 0;
     color: ${(props: any) => props.theme.colors.white};
     position: absolute;
-    margin-left: 2px;
-    margin-top: 4px;
-    width: 15px;
-    height: 10px;
-    border-radius: 1px;
-    border: solid 1px ${(props: any) => props.theme.colors.white};
+    width: 1.5em;
+    height: 1em;
+    border-radius: 0.1em;
+    border: solid 0.01em transparent;
   }
-  div:before {
+  div::before {
+    ${props => transitions(['color', 'left', 'top', 'width', 'height'], props.theme.global.transitionDuration)};
     content: '';
     position: absolute;
-    left: 7px;
-    top: -4px;
-    width: 1px;
-    height: 10px;
+    left: 0em;
+    top: 0em;
+    width: 0;
+    height: 0;
     background-color: ${(props: any) => props.theme.colors.white};
-    -webkit-transform-origin: bottom;
     transform-origin: bottom;
-    -webkit-transform: rotate(-54deg);
     transform: rotate(-54deg);
   }
-  div:after {
+  div::after {
+    ${props => transitions(['color', 'right', 'top', 'width', 'height'], props.theme.global.transitionDuration)};
     content: '';
     position: absolute;
-    left: 7px;
-    top: -4px;
-    width: 1px;
-    height: 10px;
+    right: 0em;
+    top: 0em;
+    width: 0;
+    height: 0;
     background-color: ${(props: any) => props.theme.colors.white};
-    -webkit-transform-origin: bottom;
     transform-origin: bottom;
-    -webkit-transform: rotate(54deg);
     transform: rotate(54deg);
   }
 `;
 
+const BlogLink = styled(Link)``;
+
 const BlogIcon = styled.div`
+  font-size: 10px;
   position: relative;
-  width: 15px;
+  width: 1.5em;
   box-sizing: content-box;
+  display: inline-block;
+  transition: border-color 1s;
+  ${BlogLink}:hover & {
+    div {
+      border-color: currentColor;
+      &:before {
+        border-right: solid 0.5em currentColor;
+      }
+    }
+  }
   div {
-    top: -7.5px;
-    left: -7.5px;
-    color: ${(props: any) => props.theme.colors.white};
-    position: absolute;
-    margin-left: 4px;
-    margin-top: 7px;
-    width: 14px;
-    height: 2px;
-    border-radius: 1px;
-    border: solid 1px ${(props: any) => props.theme.colors.white};
-    -webkit-transform: rotate(-45deg);
+    ${props => transitions(['border-color'], props.theme.global.transitionDuration)};
+    transition: border-color 1s;
+    top: -0.75em;
+    left: -0.75em;
+    color: black;
+    position: relative;
+    margin-left: 0.4em;
+    margin-top: 0.7em;
+    width: 1.4em;
+    height: 0.2em;
+    border-radius: 0.1em;
+    border: solid 0.1em transparent;
     transform: rotate(-45deg);
   }
   div:before {
+    ${props => transitions(['border-right'], props.theme.global.transitionDuration)};
     content: '';
     position: absolute;
-    left: -12px;
-    top: -1px;
-    width: 0px;
-    height: 0px;
-    border-left: solid 5px transparent;
-    border-right: solid 5px ${(props: any) => props.theme.colors.white};
-    border-top: solid 2px transparent;
-    border-bottom: solid 2px transparent;
+    left: -1.2em;
+    top: -0.1em;
+    width: 0;
+    height: 0;
+    border-left: solid 0.5em transparent;
+    border-right: solid 0.7em transparent;
+    border-top: solid 0.2em transparent;
+    border-bottom: solid 0.2em transparent;
   }
 `;
 
@@ -143,35 +217,66 @@ export default class IndexPage extends React.Component<PageProps> {
           <GridRow background={true}>
             <HomepageContent center={true}>
               {config.siteLogo && <img src={config.siteLogo} alt={config.siteLogoAlt} />}
-              <h1>
+              <Heading level={1} underline={false}>
                 Hi. I am <br />
-                Jannes
-              </h1>
-              <p>This is a test-website :) </p>
-              <Link to="/contact">
-                <Button big={true}>
-                  <ContactIcon>
-                    <div />
-                  </ContactIcon>
-                  Contact
-                </Button>
-              </Link>
-              <Link to="/blog">
-                <Button big>
-                  <BlogIcon>
-                    <div />
-                  </BlogIcon>
-                  Blog
-                </Button>
-              </Link>
+                <Anchor as={Link} color="inherit" to="/contact">
+                  <IconHover interactive size="inherit" underline signature underlineColor="color-secondary-1-0">
+                    <ContactIcon>
+                      <div />
+                    </ContactIcon>
+                    Jannes
+                  </IconHover>
+                </Anchor>
+              </Heading>
+              <Paragraph alignSelf="stretch" margin={{ bottom: '2rem' }}>
+                I'm techy, Web developer, Architect, Consultant, Team Lead, UX (CX) advocate, visionary, renegade and optimist.
+                <br />
+                Let's{' '}
+                <StyledAnchor as={Link} to="/meet" color="inherit">
+                  <Text interactive as="span" size="inherit" underline underlineColor="color-secondary-1-0">
+                    <IconPin>
+                      <i />
+                    </IconPin>
+                    meet
+                  </Text>
+                </StyledAnchor>{' '}
+                and see the awesome things we can do together!
+              </Paragraph>
+              <Grid
+                columns={{
+                  count: 3,
+                  size: 'auto',
+                }}
+                gap="small"
+              >
+                <Button
+                  // icon={<ContactInfo />}
+                  href="/contact"
+                  as={Link}
+                  to="/contact"
+                  label={'Contact'}
+                />
+                <Button
+                  // icon={<Apps />}
+                  href="/showcase"
+                  as={Link}
+                  to="/showcase"
+                  label={'Showcase'}
+                />
+                <Button
+                  // icon={<BlockQuote />}
+                  href="/blog"
+                  as={Link}
+                  to="/blog"
+                  label={'Blog'}
+                />
+              </Grid>
             </HomepageContent>
           </GridRow>
           <GridRow>
             <HomepageContent>
-              <h2>About Me</h2>
-              <p>..... some text .......</p>
-              <hr />
-              <h2>Latest Blog</h2>
+              <AboutMe />
+              <Heading level={2}>Latest Blog</Heading>
               {edges.map(post => (
                 <Article
                   title={post.node.frontmatter.title}
@@ -183,9 +288,14 @@ export default class IndexPage extends React.Component<PageProps> {
                   key={post.node.fields.slug}
                 />
               ))}
-              <p className={'textRight'}>
-                <Link to={'/blog'}>All articles ({totalCount})</Link>
-              </p>
+              <Paragraph textAlign="end">
+                <BlogLink to={'/blog'}>
+                  <BlogIcon>
+                    <div />
+                  </BlogIcon>
+                  All articles ({totalCount})
+                </BlogLink>
+              </Paragraph>
             </HomepageContent>
           </GridRow>
         </Homepage>
