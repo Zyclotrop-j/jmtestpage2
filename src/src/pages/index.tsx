@@ -240,7 +240,7 @@ export default class IndexPage extends React.Component<PageProps> {
                     meet
                   </Text>
                 </StyledAnchor>{' '}
-                and see the awesome things we can do together!
+                and see the awesome things we&nbsp;can&nbsp;do&nbsp;together!
               </Paragraph>
               <Grid
                 columns={{
