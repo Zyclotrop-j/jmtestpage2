@@ -2,6 +2,7 @@ import React from 'react';
 import Helmet from 'react-helmet';
 import { Link } from 'gatsby';
 import kebabCase from 'lodash/kebabCase';
+import { Anchor } from 'grommet';
 import { Layout, Wrapper, Header, SectionTitle, Content, Title } from '../components';
 
 import config from '../../config/SiteConfig';
@@ -15,14 +16,18 @@ export default class AllTagTemplate extends React.PureComponent<PageProps> {
         <>
           <Helmet title={`Tags | ${config.siteTitle}`} />
           <Header>
-            <Link to="/">{config.siteTitle}</Link>
+            <Anchor as={Link} href="/" to="/">
+              {config.siteTitle}
+            </Anchor>
             <SectionTitle>Tags</SectionTitle>
           </Header>
           <Wrapper>
             <Content>
               {tags.map((tag, index: number) => (
                 <Title key={index}>
-                  <Link to={`/tags/${kebabCase(tag)}`}>{tag}</Link>
+                  <Anchor as={Link} href="/" to={`/tags/${kebabCase(tag)}`}>
+                    {tag}
+                  </Anchor>
                 </Title>
               ))}
             </Content>

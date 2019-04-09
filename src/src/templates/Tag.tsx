@@ -3,6 +3,7 @@ import Link from 'gatsby-link';
 import PageProps from '../models/PageProps';
 import { Article, Content, Header, Layout, SectionTitle, Subline, Wrapper } from '../components';
 import Helmet from 'react-helmet';
+import { Anchor } from 'grommet';
 import config from '../../config/SiteConfig';
 import kebabCase from 'lodash/kebabCase';
 
@@ -16,10 +17,16 @@ export default class TagTemplate extends React.PureComponent<PageProps> {
       <>
         <Helmet title={`${'Tags'} | ${config.siteTitle}`} />
         <Header>
-          <Link to="/">{config.siteTitle}</Link>
+          <Anchor as={Link} href="/" to="/">
+            {config.siteTitle}
+          </Anchor>
           <SectionTitle>Tag &ndash; {tagName}</SectionTitle>
           <Subline sectionTitle light={true}>
-            {subline} (See <Link to="/tags">all tags</Link>)
+            {subline} (See{' '}
+            <Anchor as={Link} href="/tags" to="/tags">
+              all tags
+            </Anchor>
+            )
           </Subline>
         </Header>
         <Wrapper>

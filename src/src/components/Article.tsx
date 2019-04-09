@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'gatsby';
 import kebabCase from 'lodash/kebabCase';
+import { Anchor } from 'grommet';
 import { Subline } from './Subline';
 
 const Post = styled.article`
@@ -50,11 +51,16 @@ export class Article extends React.PureComponent<Props> {
       <Post>
         <Title>
           <Initiale>{firstChar}</Initiale>
-          <Link to={`/blog/${slug}`}>{title}</Link>
+          <Anchor as={Link} href={`/blog/${slug}`} to={`/blog/${slug}`}>
+            {title}
+          </Anchor>
         </Title>
         <Subline>
           {date} &mdash; {timeToRead} Min Read &mdash; In
-          <Link to={`/categories/${kebabCase(category)}`}> {category}</Link>
+          <Anchor as={Link} href={`/categories/${kebabCase(category)}`} to={`/categories/${kebabCase(category)}`}>
+            {' '}
+            {category}
+          </Anchor>
         </Subline>
         <Excerpt>{excerpt}</Excerpt>
       </Post>

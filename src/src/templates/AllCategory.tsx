@@ -2,6 +2,7 @@ import React from 'react';
 import Helmet from 'react-helmet';
 import { Link } from 'gatsby';
 import kebabCase from 'lodash/kebabCase';
+import { Anchor } from 'grommet';
 import { Layout, Wrapper, Header, SectionTitle, Content, Title } from '../components';
 
 import config from '../../config/SiteConfig';
@@ -15,14 +16,18 @@ export default class AllCategoryTemplate extends React.PureComponent<PageProps> 
         <>
           <Helmet title={`Categories | ${config.siteTitle}`} />
           <Header>
-            <Link to="/">{config.siteTitle}</Link>
+            <Anchor as={Link} href="/" to="/">
+              {config.siteTitle}
+            </Anchor>
             <SectionTitle>Categories</SectionTitle>
           </Header>
           <Wrapper>
             <Content>
               {categories.map((category, index: number) => (
                 <Title key={index}>
-                  <Link to={`/categories/${kebabCase(category)}`}>{category}</Link>
+                  <Anchor as={Link} href="/" to={`/categories/${kebabCase(category)}`}>
+                    {category}
+                  </Anchor>
                 </Title>
               ))}
             </Content>

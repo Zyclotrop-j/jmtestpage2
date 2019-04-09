@@ -1,6 +1,7 @@
 import React from 'react';
 import Helmet from 'react-helmet';
 import { Link } from 'gatsby';
+import { Anchor } from 'grommet';
 import { Layout, Wrapper, Header, Subline, Article, SectionTitle, Content } from '../components';
 import config from '../../config/SiteConfig';
 import kebabCase from 'lodash/kebabCase';
@@ -16,10 +17,16 @@ export default class Category extends React.PureComponent<PageProps> {
       <>
         <Helmet title={`${categoryName} | ${config.siteTitle}`} />
         <Header>
-          <Link to="/">{config.siteTitle}</Link>
+          <Anchor as={Link} href="/" to="/">
+            {config.siteTitle}
+          </Anchor>
           <SectionTitle>Category &ndash; {categoryName}</SectionTitle>
           <Subline sectionTitle light={true}>
-            {subline} (See <Link to="/categories">all categories</Link>)
+            {subline} (See{' '}
+            <Anchor as={Link} href="/categories" to="/categories">
+              all categories
+            </Anchor>
+            )
           </Subline>
         </Header>
         <Wrapper>

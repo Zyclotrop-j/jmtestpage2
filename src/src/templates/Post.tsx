@@ -3,6 +3,7 @@ import Helmet from 'react-helmet';
 import { Link, graphql } from 'gatsby';
 import styled from 'styled-components';
 import kebabCase from 'lodash/kebabCase';
+import { Anchor } from 'grommet';
 import { Layout, Wrapper, Header, Subline, SEO, PrevNext, SectionTitle, Content } from '../components';
 import config from '../../config/SiteConfig';
 import '../utils/prismjs-theme.css';
@@ -31,11 +32,19 @@ export default class PostPage extends React.PureComponent<Props> {
             <SEO postPath={post.fields.slug} postNode={post} postSEO />
             <Helmet title={`${post.frontmatter.title} | ${config.siteTitle}`} />
             <Header banner={post.frontmatter.banner}>
-              <Link to="/">{config.siteTitle}</Link>
+              <Anchor as={Link} href="/" to="/">
+                {config.siteTitle}
+              </Anchor>
               <SectionTitle>{post.frontmatter.title}</SectionTitle>
               <Subline light={true}>
                 {post.frontmatter.date} &mdash; {post.timeToRead} Min Read &mdash; In{' '}
-                <Link to={`/categories/${kebabCase(post.frontmatter.category)}`}>{post.frontmatter.category}</Link>
+                <Anchor
+                  as={Link}
+                  href={`/categories/${kebabCase(post.frontmatter.category)}`}
+                  to={`/categories/${kebabCase(post.frontmatter.category)}`}
+                >
+                  {post.frontmatter.category}
+                </Anchor>
               </Subline>
             </Header>
             <Wrapper>
@@ -45,9 +54,9 @@ export default class PostPage extends React.PureComponent<Props> {
                   <Subline>
                     Tags: &#160;
                     {post.frontmatter.tags.map((tag, i) => (
-                      <Link key={i} to={`/tags/${kebabCase(tag)}`}>
+                      <Anchor as={Link} href={`/tags/${kebabCase(tag)}`} key={i} to={`/tags/${kebabCase(tag)}`}>
                         <strong>{tag}</strong> {i < post.frontmatter.tags.length - 1 ? `, ` : ``}
-                      </Link>
+                      </Anchor>
                     ))}
                   </Subline>
                 ) : null}

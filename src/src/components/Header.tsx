@@ -1,6 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import { darken, lighten } from 'polished';
+import { graphql, StaticQuery } from 'gatsby';
+import Img from 'gatsby-image';
+import { ResponsiveContext } from 'grommet';
 import rgba from 'polished/lib/color/rgba';
 import { media } from '../utils/media';
 import config from '../../config/SiteConfig';
@@ -8,16 +11,15 @@ import config from '../../config/SiteConfig';
 const HeaderWrapper: any = styled.header`
   position: relative;
   background: linear-gradient(
-      -185deg,
-      ${props => rgba(darken(0.1, props.theme.colors.primary), 0.6)},
-      ${props => rgba(lighten(0.1, props.theme.colors.grey.dark), 0.8)}
-    ),
-    url(${(props: any) => props.banner}) no-repeat;
+    -185deg,
+    ${props => rgba(darken(0.1, props.theme.colors.primary), 0.6)},
+    ${props => rgba(lighten(0.1, props.theme.colors.grey.dark), 0.8)}
+  );
   background-size: cover;
   padding: 8rem 2rem 10rem;
   text-align: center;
   ::after {
-    background: transparent url(/assets/mask.svg) no-repeat bottom left;
+    background: transparent;
     background-size: 101%;
     bottom: -2px;
     content: '';
@@ -52,10 +54,56 @@ interface Props {
   banner?: string;
 }
 
+const query = graphql`
+  query {
+    file(relativePath: { eq: "IMG_20181111_060935.jpg" }) {
+      childImageSharp {
+        # Specify the image processing specifications right in the query.
+        # Makes it trivial to update as your page's design changes.
+        fluid(maxWidth: 2400) {
+          ...GatsbyImageSharpFluid_withWebp
+        }
+      }
+    }
+  }
+`;
+
+const ImgWrapper = styled.div`
+  position: absolute;
+  top: -${props =>
+      ({
+        small: 50,
+        medium: 100,
+        large: 150,
+      }[props.size])}%;
+  max-height: ${props =>
+    ({
+      small: 150,
+      medium: 200,
+      large: 250,
+    }[props.size])}%;
+  left: 0;
+  right: 0;
+  z-index: -1;
+  overflow-y: hidden;
+`;
+
 export class Header extends React.PureComponent<Props> {
   public render() {
     return (
-      <HeaderWrapper banner={this.props.banner || config.defaultBg}>
+      <HeaderWrapper>
+        <ResponsiveContext.Consumer>
+          {size => (
+            <ImgWrapper size={size}>
+              {this.props.banner && false ? (
+                <Img {...this.props.banner} />
+              ) : (
+                <StaticQuery query={query} render={data => <Img fluid={data.file.childImageSharp.fluid} />} />
+              )}
+            </ImgWrapper>
+          )}
+        </ResponsiveContext.Consumer>
+
         <Content>{this.props.children}</Content>
       </HeaderWrapper>
     );

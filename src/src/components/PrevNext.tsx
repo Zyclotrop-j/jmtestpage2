@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'gatsby';
 import kebabCase from 'lodash/kebabCase';
+import { Anchor } from 'grommet';
 import Post from '../models/Post';
 
 const Wrapper = styled.div`
@@ -46,17 +47,27 @@ export class PrevNext extends React.PureComponent<Props> {
         {prev && (
           <Prev>
             <span>Previous</span>
-            <Link to={`/blog/${kebabCase(prev.frontmatter.title)}`} state={{ direction: 'left' }}>
+            <Anchor
+              as={Link}
+              href={`/blog/${kebabCase(prev.frontmatter.title)}`}
+              to={`/blog/${kebabCase(prev.frontmatter.title)}`}
+              state={{ direction: 'left' }}
+            >
               {prev.frontmatter.title}
-            </Link>
+            </Anchor>
           </Prev>
         )}
         {next && (
           <Next>
             <span>Next</span>
-            <Link to={`/blog/${kebabCase(next.frontmatter.title)}`} state={{ direction: 'right' }}>
+            <Anchor
+              as={Link}
+              href={`/blog/${kebabCase(next.frontmatter.title)}`}
+              to={`/blog/${kebabCase(next.frontmatter.title)}`}
+              state={{ direction: 'right' }}
+            >
               {next.frontmatter.title}
-            </Link>
+            </Anchor>
           </Next>
         )}
       </Wrapper>

@@ -3,6 +3,7 @@ import { Content, Header, Layout, Wrapper } from '../components';
 import Helmet from 'react-helmet';
 import config from '../../config/SiteConfig';
 import { Link } from 'gatsby';
+import { Anchor } from 'grommet';
 
 export default class NotFoundPage extends React.Component<any> {
   public render() {
@@ -10,7 +11,9 @@ export default class NotFoundPage extends React.Component<any> {
       <Wrapper>
         <Helmet title={`404 not found | ${config.siteTitle}`} />
         <Header>
-          <Link to="/">{config.siteTitle}</Link>
+          <Anchor as={Link} href="/" to="/">
+            {config.siteTitle}
+          </Anchor>
         </Header>
         <Content>
           <h1>NOT FOUND</h1>

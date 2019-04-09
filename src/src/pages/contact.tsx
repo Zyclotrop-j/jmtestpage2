@@ -1,6 +1,7 @@
 import React from 'react';
 import Helmet from 'react-helmet';
 import { Link } from 'gatsby';
+import { Anchor } from 'grommet';
 import { Layout, Wrapper, Header, Button, Content, SectionTitle } from '../components';
 
 import config from '../../config/SiteConfig';
@@ -12,9 +13,9 @@ export default class ContactPage extends React.Component<PageProps> {
       <>
         <Helmet title={`Contact | ${config.siteTitle}`} />
         <Header>
-          <Link to="/" state={{ toHome: true }}>
+          <Anchor as={Link} href="/" to="/" state={{ toHome: true }}>
             {config.siteTitle}
-          </Link>
+          </Anchor>
           <SectionTitle uppercase={true}>Contact</SectionTitle>
         </Header>
         <Wrapper>

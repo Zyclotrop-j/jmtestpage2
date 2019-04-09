@@ -24,6 +24,8 @@ module.exports = {
     'gatsby-plugin-catch-links',
     'gatsby-plugin-sitemap',
     'gatsby-plugin-lodash',
+    'gatsby-transformer-sharp',
+    'gatsby-plugin-sharp',
     /*
     // can't use, because it breaks pre-load, see https://bugs.chromium.org/p/chromium/issues/detail?id=677022
     {
@@ -37,6 +39,13 @@ module.exports = {
       options: {
         name: 'post',
         path: `${__dirname}/blog`,
+      },
+    },
+    {
+      resolve: 'gatsby-source-filesystem',
+      options: {
+        name: 'img',
+        path: `${__dirname}/img`,
       },
     },
     {

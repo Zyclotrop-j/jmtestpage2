@@ -3,8 +3,9 @@ import { Link, graphql } from 'gatsby';
 import styled from 'styled-components';
 import { transitions } from 'polished';
 import { Transition, config as animationConfig } from 'react-spring/renderprops';
-import { Button, Heading, Paragraph, Text, Anchor, Grid } from 'grommet';
+import { Button, Heading, Paragraph, Text, Anchor, Grid, ResponsiveContext } from 'grommet';
 import { Apps, BlockQuote, ContactInfo } from 'grommet-icons';
+import Img from 'gatsby-image';
 import { Layout, Wrapper, Article, AboutMe } from '../components';
 import PageProps from '../models/PageProps';
 import Helmet from 'react-helmet';
@@ -33,6 +34,7 @@ const GridRow: any = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
   background: ${(props: any) =>
     props.background
       ? `linear-gradient(
@@ -206,6 +208,26 @@ const BlogIcon = styled.div`
   }
 `;
 
+const ImgWrapper = styled.div`
+  position: absolute;
+  top: -${props =>
+      ({
+        small: 50,
+        medium: 100,
+        large: 150,
+      }[props.size])}%;
+  max-height: ${props =>
+    ({
+      small: 150,
+      medium: 200,
+      large: 250,
+    }[props.size])}%;
+  left: 0;
+  right: 0;
+  z-index: -1;
+  overflow-y: hidden;
+`;
+
 export default class IndexPage extends React.Component<PageProps> {
   public render() {
     const { data } = this.props;
@@ -216,10 +238,18 @@ export default class IndexPage extends React.Component<PageProps> {
         <Homepage>
           <GridRow background={true}>
             <HomepageContent center={true}>
-              {config.siteLogo && <img src={config.siteLogo} alt={config.siteLogoAlt} />}
+              {config.siteLogo && (
+                <ResponsiveContext.Consumer>
+                  {size => (
+                    <ImgWrapper size={size}>
+                      <Img fluid={data.file.childImageSharp.fluid} alt={config.siteLogoAlt} />
+                    </ImgWrapper>
+                  )}
+                </ResponsiveContext.Consumer>
+              )}
               <Heading level={1} underline={false}>
                 Hi. I am <br />
-                <Anchor as={Link} color="inherit" to="/contact">
+                <Anchor as={Link} href="/contact" color="inherit" to="/contact">
                   <IconHover interactive size="inherit" underline signature underlineColor="color-secondary-1-0">
                     <ContactIcon>
                       <div />
@@ -232,7 +262,7 @@ export default class IndexPage extends React.Component<PageProps> {
                 I'm techy, Web developer, Architect, Consultant, Team Lead, UX (CX) advocate, visionary, renegade and optimist.
                 <br />
                 Let's{' '}
-                <StyledAnchor as={Link} to="/meet" color="inherit">
+                <StyledAnchor as={Link} to="/showcase/meet" color="inherit">
                   <Text interactive as="span" size="inherit" underline underlineColor="color-secondary-1-0">
                     <IconPin>
                       <i />
@@ -242,35 +272,77 @@ export default class IndexPage extends React.Component<PageProps> {
                 </StyledAnchor>{' '}
                 and see the awesome things we&nbsp;can&nbsp;do&nbsp;together!
               </Paragraph>
-              <Grid
-                columns={{
-                  count: 3,
-                  size: 'auto',
-                }}
-                gap="small"
-              >
-                <Button
-                  // icon={<ContactInfo />}
-                  href="/contact"
-                  as={Link}
-                  to="/contact"
-                  label={'Contact'}
-                />
-                <Button
-                  // icon={<Apps />}
-                  href="/showcase"
-                  as={Link}
-                  to="/showcase"
-                  label={'Showcase'}
-                />
-                <Button
-                  // icon={<BlockQuote />}
-                  href="/blog"
-                  as={Link}
-                  to="/blog"
-                  label={'Blog'}
-                />
-              </Grid>
+              <ResponsiveContext.Consumer>
+                {size => (
+                  <Grid
+                    columns={['flex', 'flex', 'flex']}
+                    rows={['flex', 'flex', 'flex']}
+                    gap="small"
+                    areas={
+                      size === 'small'
+                        ? [
+                            {
+                              name: 'A1',
+                              start: [0, 0],
+                              end: [2, 0],
+                            },
+                            {
+                              name: 'A2',
+                              start: [0, 1],
+                              end: [2, 1],
+                            },
+                            {
+                              name: 'A3',
+                              start: [0, 2],
+                              end: [2, 2],
+                            },
+                          ]
+                        : [
+                            {
+                              name: 'A1',
+                              start: [0, 0],
+                              end: [0, 2],
+                            },
+                            {
+                              name: 'A2',
+                              start: [1, 0],
+                              end: [1, 2],
+                            },
+                            {
+                              name: 'A3',
+                              start: [2, 0],
+                              end: [2, 2],
+                            },
+                          ]
+                    }
+                  >
+                    <Button
+                      // icon={<ContactInfo />}
+                      gridArea="A1"
+                      href="/contact"
+                      as={Link}
+                      to="/contact"
+                      label={'Contact'}
+                    />
+                    <Button
+                      // icon={<Apps />}
+                      gridArea="A2"
+                      href="/showcase"
+                      as={Link}
+                      to="/showcase"
+                      label={'Showcase'}
+                    />
+                    <Button
+                      // icon={<BlockQuote />}
+                      gridArea="A3"
+                      href="/blog"
+                      as={Link}
+                      to="/blog"
+                      label={'Blog'}
+                    />
+                  </Grid>
+                )}
+              </ResponsiveContext.Consumer>
             </HomepageContent>
           </GridRow>
           <GridRow>
@@ -305,6 +377,15 @@ export default class IndexPage extends React.Component<PageProps> {
 }
 export const IndexQuery = graphql`
   query {
+    file(relativePath: { eq: "IMG_20181111_060935.jpg" }) {
+      childImageSharp {
+        # Specify the image processing specifications right in the query.
+        # Makes it trivial to update as your page's design changes.
+        fluid(maxWidth: 1200, maxHeight: 2400) {
+          ...GatsbyImageSharpFluid_withWebp
+        }
+      }
+    }
     allMarkdownRemark(sort: { fields: [frontmatter___date], order: DESC }, limit: 1) {
       totalCount
       edges {

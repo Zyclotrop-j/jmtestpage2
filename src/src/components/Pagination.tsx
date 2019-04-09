@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { media } from '../utils/media';
 import theme from '../../config/Theme';
 import curriedDarken from 'polished/lib/color/darken';
+import { Anchor } from 'grommet';
 
 export const PaginationContainer = styled.div`
   text-align: center;
@@ -98,23 +99,25 @@ export class Pagination extends React.PureComponent<Props> {
       <PaginationContainer>
         <PaginationContent>
           {!isFirst && (
-            <Link className="prev page-numbers" to={prevPage} state={{ direction: 'left' }} rel="prev">
+            <Anchor as={Link} href={prevPage} className="prev page-numbers" to={prevPage} state={{ direction: 'left' }} rel="prev">
               ← Prev
-            </Link>
+            </Anchor>
           )}
           {Array.from({ length: totalPages }, (_, i) => (
-            <Link
+            <Anchor
+              as={Link}
+              href={`/${url}/${i === 0 ? '' : i + 1}`}
               className={currentPage === i + 1 ? 'page-numbers current' : 'page-numbers'}
               key={`pagination-number${i + 1}`}
               to={`/${url}/${i === 0 ? '' : i + 1}`}
             >
               {i + 1}
-            </Link>
+            </Anchor>
           ))}
           {!isLast && (
-            <Link className="next page-numbers" to={nextPage} state={{ direction: 'right' }} rel="next">
+            <Anchor as={Link} href={nextPage} className="next page-numbers" to={nextPage} state={{ direction: 'right' }} rel="next">
               Next →
-            </Link>
+            </Anchor>
           )}
         </PaginationContent>
       </PaginationContainer>

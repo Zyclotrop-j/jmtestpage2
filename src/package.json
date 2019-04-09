@@ -76,6 +76,9 @@
   "dependencies": {
     "babel-plugin-ramda": "^2.0.0",
     "flubber": "^0.4.2",
+    "gatsby-image": "^2.0.37",
+    "gatsby-plugin-sharp": "^2.0.32",
+    "gatsby-transformer-sharp": "^2.1.17",
     "grommet": "^2.6.5",
     "grommet-icons": "^4.2.0",
     "ramda": "^0.26.1",
