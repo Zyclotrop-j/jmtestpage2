@@ -20,7 +20,7 @@ export default class ContactPage extends React.Component<PageProps> {
         </Header>
         <Wrapper>
           <Content>
-            <p>Super cool intro text to get people contacting me!</p>
+            <p>Jannes Mingram</p>
             <a href="https://www.linkedin.com/in/jannesmingram">
               <Button big>
                 <svg width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">

@@ -152,6 +152,15 @@ const myTheme = {
             transform: translateY(-2px) skewY(-0.3deg);
         }`
             : ''
+        }
+        ${
+          props.underlineColor
+            ? `::after {
+          border-bottom-color: ${props.theme.colors[props.underlineColor] ||
+            props.theme.global.colors[props.underlineColor] ||
+            props.underlineColor};
+        }`
+            : ''
         }`
       }
       `,

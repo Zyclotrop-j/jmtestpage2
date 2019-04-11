@@ -12,6 +12,6 @@ const SectionHeading: any = styled(Heading)`
 
 export const SectionTitle = props => (
   <div>
-    <SectionHeading level={2} {...props} />
+    <SectionHeading underlineColor={'color-secondary-1-2'} level={2} {...props} />
   </div>
 );
