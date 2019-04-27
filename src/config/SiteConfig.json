@@ -1,8 +1,8 @@
 {
   "pathPrefix": "/",
-  "siteTitle": "The Weird Web and other interesting things",
-  "siteTitleAlt": "The Weird Web and other interesting things - Jannes' Website",
-  "siteUrl": "https://jannes.mingram.net",
+  "siteTitle": "The Weird wild Web and other interesting things",
+  "siteTitleAlt": "The Weird wild Web and other interesting things - Jannes' Website",
+  "siteUrl": "https://www.jannes.mingram.net",
   "siteLanguage": "en",
   "siteBanner": "/assets/banner.jpg",
   "defaultBg": "/assets/bg.png",
@@ -19,5 +19,6 @@
   "baseFontSize": "18px",
   "siteFBAppID": "",
   "Google_Tag_Manager_ID": "GTM-MVP42QK",
-  "POST_PER_PAGE": 4
+  "POST_PER_PAGE": 4,
+  "reCAPTCHA": "6Lc6_Z0UAAAAAN2uttOYGZfmXntCLxW_y5S22sKd"
 }

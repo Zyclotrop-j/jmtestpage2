@@ -4,6 +4,8 @@ import { Link } from 'gatsby';
 import { Anchor } from 'grommet';
 import { Layout, Wrapper, Header, Button, Content, SectionTitle } from '../components';
 
+import { RichText } from "../Widget/RichText";
+
 import config from '../../config/SiteConfig';
 import PageProps from '../models/PageProps';
 
@@ -22,6 +24,7 @@ export default class ContactPage extends React.Component<PageProps> {
           <Content>
             <p>Super cool intro text to get people contacting me!</p>
             Put stuff here...
+            <RichText />
           </Content>
         </Wrapper>
       </>

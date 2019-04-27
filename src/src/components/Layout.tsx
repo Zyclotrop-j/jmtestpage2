@@ -54,6 +54,9 @@ const GlobalStyle = createGlobalStyle`
   samp {
     font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace
   }
+  b {
+    font-weight: bold;
+  }
 `;
 
 const Footer = styled.footer`

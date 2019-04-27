@@ -15,6 +15,24 @@ module.exports = {
     siteUrl: config.siteUrl + pathPrefix,
   },
   plugins: [
+    {
+      resolve: "gatsby-source-graphql-universal",
+      options: {
+        // This type will contain remote schema Query type
+        typeName: "DATA",
+        // This is field under which it's accessible
+        fieldName: "data",
+        // Url to query from
+        url: "https://zcmsapi.herokuapp.com/apig/graphql" // "http://localhost:4000/apig/graphql",
+      },
+    },
+    {
+      resolve: `gatsby-plugin-remote-images`,
+      options: {
+        nodeType: 'DATA',
+        imagePath: 'componentpictures.src',
+      },
+    },
     'gatsby-plugin-react-helmet',
     'gatsby-plugin-styled-components',
     'gatsby-plugin-offline',
@@ -70,6 +88,12 @@ module.exports = {
           },
           'gatsby-remark-prismjs',
           'gatsby-remark-autolink-headers',
+          {
+            resolve: "gatsby-remark-smartypants",
+            options: {
+              dashes: "oldschool",
+            },
+          },
         ],
       },
     },
@@ -86,5 +110,26 @@ module.exports = {
         icon: config.favicon,
       },
     },
+    {
+      resolve: 'gatsby-plugin-robots-txt',
+      options: {
+        host: config.siteUrl,
+        sitemap: config.siteUrl + '/sitemap.xml',
+        env: {
+          development: {
+            policy: [{ userAgent: '*', disallow: ['/'] }]
+          },
+          production: {
+            policy: [{ userAgent: '*', allow: '/' }]
+          }
+        }
+      }
+    },
+    {
+      resolve: `gatsby-plugin-canonical-urls`,
+      options: {
+        siteUrl: config.siteUrl,
+      },
+    }
   ]
 };
