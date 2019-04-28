@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { Link } from 'gatsby';
 import Img from "gatsby-image";
 import { Markdown, Paragraph, Anchor } from 'grommet';
+import Image from 'react-shimmer';
+import LazyLoad from 'react-lazyload';
 
 const Initiale = styled.span`
   position: absolute;
@@ -24,6 +26,14 @@ interface Props {
 
 const text = `## Grommet **heart**s markdown
 
+Inline-style:
+![alt text](https://via.placeholder.com/250x100.png "Logo Title Text 1")
+
+Reference-style:
+![alt text][logo]
+
+[logo]: https://via.placeholder.com/250x100.png "Logo Title Text 2"
+
 Favorite thing, [link](https://twitter.com/grommet_io)`;
 
 export class RichText extends React.PureComponent<Props> {
@@ -40,8 +50,13 @@ export class RichText extends React.PureComponent<Props> {
       },
       "img": {
         "component": props => {
-          optimisedImages
-
+          return (<LazyLoad height={200} once offset={100}>
+            <Image
+              {...props}
+              width={250}
+              height={100}
+            />
+          </LazyLoad>);
         }
       }
     };

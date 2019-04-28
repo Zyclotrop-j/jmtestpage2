@@ -1,5 +1,6 @@
 const path = require('path');
 const _ = require('lodash');
+const { createRemoteFileNode } = require(`gatsby-source-filesystem`);
 const config = require('./config/SiteConfig');
 
 exports.onCreateNode = ({ node, actions }) => {
@@ -8,6 +9,33 @@ exports.onCreateNode = ({ node, actions }) => {
     const slug = `${_.kebabCase(node.frontmatter.title)}`;
     createNodeField({ node, name: 'slug', value: slug });
   }
+};
+
+exports.createResolvers = ({
+  actions,
+  cache,
+  createNodeId,
+  createResolvers,
+  store,
+}) => {
+  const { createNode } = actions;
+  createResolvers({
+    DATA_Componentpicture: {
+      srcFile: {
+        type: `File`,
+        // projection: { url: true },
+        async resolve(source, args, context, info) {
+          return createRemoteFileNode({
+            url: source.src,
+            store,
+            cache,
+            createNode,
+            createNodeId,
+          })
+        }
+      }
+    }
+  });
 };
 
 const getPostsByType = (posts, classificationType) => {

@@ -26,13 +26,6 @@ module.exports = {
         url: "https://zcmsapi.herokuapp.com/apig/graphql" // "http://localhost:4000/apig/graphql",
       },
     },
-    {
-      resolve: `gatsby-plugin-remote-images`,
-      options: {
-        nodeType: 'DATA',
-        imagePath: 'componentpictures.src',
-      },
-    },
     'gatsby-plugin-react-helmet',
     'gatsby-plugin-styled-components',
     'gatsby-plugin-offline',
