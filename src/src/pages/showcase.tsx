@@ -5,7 +5,7 @@ import { Anchor } from 'grommet';
 import { Layout, Wrapper, Header, Button, Content, SectionTitle } from '../components';
 
 import { RichText } from '../Widget/RichText';
-import { Teaser } from "../Widget/Teaser";
+import { Teaser } from '../Widget/Teaser';
 
 import config from '../../config/SiteConfig';
 import PageProps from '../models/PageProps';

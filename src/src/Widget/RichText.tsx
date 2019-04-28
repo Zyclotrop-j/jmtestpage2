@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'gatsby';
-import Img from "gatsby-image";
+import Img from 'gatsby-image';
 import { Markdown, Paragraph, Anchor } from 'grommet';
 import Image from 'react-shimmer';
 import LazyLoad from 'react-lazyload';
@@ -41,28 +41,24 @@ export class RichText extends React.PureComponent<Props> {
     const { markdown, optimisedImages } = this.props;
 
     const components = {
-      "a": {
-        "component": (props) => {
+      a: {
+        component: props => {
           console.log(props);
           const MDLink = styled(Link)``;
           return <Anchor {...props} as={MDLink} href={props.href} to={props.href} />;
-        }
+        },
       },
-      "img": {
-        "component": props => {
-          return (<LazyLoad height={200} once offset={100}>
-            <Image
-              {...props}
-              width={250}
-              height={100}
-            />
-          </LazyLoad>);
-        }
-      }
+      img: {
+        component: props => {
+          return (
+            <LazyLoad height={200} once offset={100}>
+              <Image {...props} width={250} height={100} />
+            </LazyLoad>
+          );
+        },
+      },
     };
 
-    return (
-      <Markdown components={components}>{text}</Markdown>
-    );
+    return <Markdown components={components}>{text}</Markdown>;
   }
 }
