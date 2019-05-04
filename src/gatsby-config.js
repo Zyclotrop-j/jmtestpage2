@@ -102,7 +102,7 @@ module.exports = {
         icon: config.favicon,
       },
     },
-    "gatsby-plugin-offline",
+    
     {
       resolve: 'gatsby-plugin-robots-txt',
       options: {
