@@ -22,7 +22,7 @@ jobs:
           command: if [ -z ${CUSTOMER+x} ]; then exit 1; else echo "CUSTOMER found"; fi
       - run:
           name: Install pip
-          command: apt-get update -y && apt-get install -y python3-pip
+          command: apt-get update -y && apt-get install -y python-pip python-dev build-essential
       - checkout
       - restore_cache: # special step to restore the dependency cache
           key: dependency-cache-v1-{{ checksum "./src/yarn.lock" }}
