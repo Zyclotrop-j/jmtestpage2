@@ -19,6 +19,9 @@
     - name: Set tName variable
       set_fact:
         tName: "{{ pagename }}-{{ lookup('env','CIRCLE_BRANCH') }}-{{ lookup('env','CIRCLE_BUILD_NUM') }}"
+    - name: Set tName variable
+      set_fact:
+        bucketname: "{{ pagename }}{{ tCustomer }}JannesWebsitesBucket"
     - name: Set tVersion variable
       set_fact:
         tVersion: "{{ pagename }}-{{ lookup('env','CIRCLE_SHA1') }}"
@@ -46,7 +49,7 @@
         aws acm request-certificate --domain-name {{ pagename }}.{{ suffix }}
         --validation-method DNS
         --subject-alternative-names www.{{ pagename }}.{{ suffix }}
-        --idempotency-token {{ pagename }}
+        --idempotency-token {{ bucketname }}
         --region us-east-1
       register: cert
     - name: Safe cert details (new cert)
@@ -64,7 +67,7 @@
         --region us-east-1
     - name: Create an Bucket
       s3_bucket:
-        name: "{{ pagename }}"
+        name: "{{ bucketname }}"
         region: eu-central-1
         tags:
           Customer: "{{ tCustomer }}"
@@ -74,13 +77,13 @@
       register: bucket_details
     - name: Configure bucket as website
       s3_website :
-        name: "{{ pagename }}"
+        name: "{{ bucketname }}"
         region: eu-central-1
         error_key: 404.html
         state: present
     - name: Configure CORS on the bucket
       aws_s3_cors:
-        name: "{{ pagename }}"
+        name: "{{ bucketname }}"
         state: present
         region: eu-central-1
         rules:
@@ -92,7 +95,7 @@
               - "*"
     - name: Upload files
       s3_sync:
-        bucket: "{{ pagename }}"
+        bucket: "{{ bucketname }}"
         region: eu-central-1
         file_root: ../target/
         permission: public-read
@@ -103,7 +106,7 @@
         exclude: ".*,*.html,icon-*.png,idb-keyval-iife.min.js,sw.js,chunk-map.json,manifest.webmanifest,robots.txt,sitemap.xml,webpack.stats.json"
     - name: Upload files
       s3_sync:
-        bucket: "{{ pagename }}"
+        bucket: "{{ bucketname }}"
         region: eu-central-1
         file_root: ../target/
         permission: public-read
@@ -114,7 +117,7 @@
         exclude: ".*"
     - name: PUT sw.js with different meta data
       aws_s3:
-        bucket: "{{ pagename }}"
+        bucket: "{{ bucketname }}"
         object: /sw.js
         src: ../target/sw.js
         permission: public-read
@@ -172,8 +175,8 @@
         state: present
         enabled: yes
         origins:
-          - domain_name: "{{ pagename }}.s3-website.eu-central-1.amazonaws.com"
-            id: "{{ pagename }}"
+          - domain_name: "{{ bucketname }}.s3-website.eu-central-1.amazonaws.com"
+            id: "{{ bucketname }}"
             custom_origin_config:
               origin_protocol_policy: http-only
         aliases: [ '{{ pagename }}.{{ suffix }}', 'www.{{ pagename }}.{{ suffix }}' ]
@@ -200,7 +203,7 @@
           Git: "{{ tGit }}"
           Customer: "{{ tCustomer }}"
         default_cache_behavior:
-          target_origin_id: "{{ pagename }}"
+          target_origin_id: "{{ bucketname }}"
           compress: true
           viewer_protocol_policy: redirect-to-https
           lambda_function_associations:
