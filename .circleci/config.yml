@@ -19,12 +19,12 @@ jobs:
           paths:
             - ./src/node_modules
       - restore_cache: # special step to restore the dependency cache
-          key: gatsby-cache-v1-{{ checksum "./src/yarn.lock" }}-{{ checksum "./src/gatsby-config.js" }}
+          key: gatsby-cache-v1-{{ checksum "./src/package.json" }}-{{ checksum "./src/yarn.lock" }}-{{ checksum "./src/gatsby-config.js" }}-{{ checksum "./src/src/Widget/index.tsx" }}
       - run:
           name: Build
           command: cd src && gatsby build && node ./compileSHAs.js
       - save_cache: # special step to save the dependency cache
-          key: gatsby-cache-v1-{{ checksum "./src/yarn.lock" }}-{{ checksum "./src/gatsby-config.js" }}
+          key: gatsby-cache-v1-{{ checksum "./src/package.json" }}-{{ checksum "./src/yarn.lock" }}-{{ checksum "./src/gatsby-config.js" }}-{{ checksum "./src/src/Widget/index.tsx" }}
           paths:
             - /root/src/.cache
       - store_artifacts:

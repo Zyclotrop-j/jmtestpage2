@@ -2,20 +2,32 @@
   hosts: localhost
   connection: local
   gather_facts: False
-  
+
   tasks:
     - name: Set pagename variable
       set_fact:
-        pagename: deadbears
+        pagename: "{{ lookup('env','PAGENAME') }}"
+    - name: End play if missing env-vars
+        when: pagename is not defined
+        meta: end_play
     - name: Set suffix variable
       set_fact:
-        suffix: de
+        suffix: "{{ lookup('env','SUFFIX') }}"
+    - name: End play if missing env-vars
+        when: suffix is not defined
+        meta: end_play
     - name: Set dnsname variable
       set_fact:
-        dnsname: deadbears.de
+        dnsname: "{{ lookup('env','DNSNAME') }}"
+    - name: End play if missing env-vars
+        when: dnsname is not defined
+        meta: end_play
     - name: Set tCustomer variable
       set_fact:
-        tCustomer: dead_and_bears
+        tCustomer: "{{ lookup('env','CUSTOMER') }}"
+    - name: End play if missing env-vars
+        when: tCustomer is not defined
+        meta: end_play
     - name: Set tName variable
       set_fact:
         tName: "{{ pagename }}-{{ lookup('env','CIRCLE_BRANCH') }}-{{ lookup('env','CIRCLE_BUILD_NUM') }}"
@@ -25,7 +37,7 @@
     - name: Set tGit variable
       set_fact:
         tGit: "{{ lookup('env','CIRCLE_REPOSITORY_URL') }}"
-        
+
     - name: Install AWSCLI
       pip: name=awscli state=present
     - name: Install boto
@@ -171,7 +183,7 @@
       cloudfront_distribution:
         state: present
         enabled: yes
-        origins: 
+        origins:
           - domain_name: "{{ pagename }}.s3-website.eu-central-1.amazonaws.com"
             id: "{{ pagename }}"
             custom_origin_config:
@@ -262,5 +274,4 @@
         body_format: json
         headers:
           Content-Type: "application/json"
-          X-Api-Key: "{{ lookup('env','GANDI') }}"     
-        
+          X-Api-Key: "{{ lookup('env','GANDI') }}"
