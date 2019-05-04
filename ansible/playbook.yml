@@ -21,7 +21,7 @@
         tName: "{{ pagename }}-{{ lookup('env','CIRCLE_BRANCH') }}-{{ lookup('env','CIRCLE_BUILD_NUM') }}"
     - name: Set tName variable
       set_fact:
-        bucketname: "{{ pagename }}{{ tCustomer }}JannesWebsitesBucket"
+        bucketname: "{{ pagename }}{{ tCustomer }}janneswebsitesbucket"
     - name: Set tVersion variable
       set_fact:
         tVersion: "{{ pagename }}-{{ lookup('env','CIRCLE_SHA1') }}"
