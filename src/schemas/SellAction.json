@@ -1,0 +1,170 @@
+{
+  "id": "SellAction.json",
+  "title": "sellaction",
+  "format": "http://schema.org/SellAction",
+  "media": {
+    "type": "application/json;profile=http://schema.org/SellAction"
+  },
+  "type": "object",
+  "properties": {
+    "price": {
+      "title": "Price",
+      "description": "The offer price of a product, or of a price component when attached to PriceSpecification and its subtypes.",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        }
+      ]
+    },
+    "agent": {
+      "title": "Agent",
+      "description": "The direct performer or driver of the action (animate or inanimate). e.g. *John* wrote a book.",
+      "anyOf": [
+        {
+          "type": "string",
+          "x-$ref": "organization"
+        },
+        {
+          "type": "string",
+          "x-$ref": "person"
+        }
+      ]
+    },
+    "endTime": {
+      "title": "End Time",
+      "description": "When the Action was performed: end time. This is for actions that span a period of time. e.g. John wrote a book from January to *December*.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "instrument": {
+      "type": "string",
+      "x-$ref": "thing"
+    },
+    "location": {
+      "title": "Location",
+      "description": "The location of the event, organization or action.",
+      "anyOf": [
+        {
+          "type": "string",
+          "x-$ref": "postaladdress"
+        },
+        {
+          "type": "string",
+          "x-$ref": "place"
+        }
+      ]
+    },
+    "object": {
+      "type": "string",
+      "x-$ref": "thing"
+    },
+    "participant": {
+      "type": "array",
+      "items": {
+        "title": "Participant",
+        "description": "Other co-agents that participated in the action indirectly. e.g. John wrote a book with *Steve*.",
+        "anyOf": [
+          {
+            "type": "string",
+            "x-$ref": "organization"
+          },
+          {
+            "type": "string",
+            "x-$ref": "person"
+          }
+        ]
+      }
+    },
+    "result": {
+      "type": "string",
+      "x-$ref": "thing"
+    },
+    "startTime": {
+      "title": "Start Time",
+      "description": "When the Action was performed: start time. This is for actions that span a period of time. e.g. John wrote a book from *January* to December.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "additionalType": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/additionalType",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "alternateName": {
+      "type": "array",
+      "items": {
+        "title": "Alternate Name",
+        "description": "An alias for the item.",
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "array",
+      "items": {
+        "title": "Description",
+        "description": "A short description of the item.",
+        "type": "string"
+      }
+    },
+    "image": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/image",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "name": {
+      "title": "Name",
+      "description": "The name of the item.",
+      "type": "string"
+    },
+    "sameAs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/sameAs",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "buyer": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "person"
+      }
+    },
+    "warrantyPromise": {
+      "type": "string",
+      "x-$ref": "warrantypromise"
+    }
+  }
+}

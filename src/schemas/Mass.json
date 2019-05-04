@@ -1,0 +1,9 @@
+{
+  "id": "Mass.json",
+  "title": "mass",
+  "format": "http://schema.org/Mass",
+  "media": {
+    "type": "application/json;profile=http://schema.org/Mass"
+  },
+  "properties": {}
+}

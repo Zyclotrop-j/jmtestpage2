@@ -6,15 +6,6 @@ import { Markdown, Paragraph, Anchor } from 'grommet';
 import Image from 'react-shimmer';
 import LazyLoad from 'react-lazyload';
 
-const Initiale = styled.span`
-  position: absolute;
-  font-size: 7rem;
-  transform: translate(-50%, -50%);
-  opacity: 0.08;
-  user-select: none;
-  z-index: -1;
-`;
-
 interface Props {
   title: string;
   date: string;
@@ -24,21 +15,18 @@ interface Props {
   category: string;
 }
 
-const text = `## Grommet **heart**s markdown
-
-Inline-style:
-![alt text](https://via.placeholder.com/250x100.png "Logo Title Text 1")
-
-Reference-style:
-![alt text][logo]
-
-[logo]: https://via.placeholder.com/250x100.png "Logo Title Text 2"
-
-Favorite thing, [link](https://twitter.com/grommet_io)`;
+const newline = `\n`;
 
 export class RichText extends React.PureComponent<Props> {
   public render() {
-    const { markdown, optimisedImages } = this.props;
+    const { markdown, urlescaped, escaped, b64 } = this.props;
+
+    // encode = window.btoa(unescape(encodeURIComponent(str)))
+    // decode = decodeURIComponent(escape(window.atob(b64)));
+    const pipeline = [[b64, window.atob], [escaped, window.escape], [urlescaped, window.decodeURIComponent]]
+      .filter(([t]) => t === true)
+      .map(([__, f]) => f)
+      .reduce((p, f) => x => f(p(x)), x => x);
 
     const components = {
       a: {
@@ -58,7 +46,6 @@ export class RichText extends React.PureComponent<Props> {
         },
       },
     };
-
-    return <Markdown components={components}>{text}</Markdown>;
+    return <Markdown components={components}>{pipeline(markdown)}</Markdown>;
   }
 }

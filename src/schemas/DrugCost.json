@@ -1,0 +1,152 @@
+{
+  "id": "DrugCost.json",
+  "title": "drugcost",
+  "format": "http://schema.org/DrugCost",
+  "media": {
+    "type": "application/json;profile=http://schema.org/DrugCost"
+  },
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalcode"
+      }
+    },
+    "guideline": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalguideline"
+      }
+    },
+    "medicineSystem": {
+      "type": "string",
+      "x-$ref": "medicinesystem"
+    },
+    "recognizingAuthority": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "organization"
+      }
+    },
+    "relevantSpecialty": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalspecialty"
+      }
+    },
+    "study": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalstudy"
+      }
+    },
+    "additionalType": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/additionalType",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "alternateName": {
+      "type": "array",
+      "items": {
+        "title": "Alternate Name",
+        "description": "An alias for the item.",
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "array",
+      "items": {
+        "title": "Description",
+        "description": "A short description of the item.",
+        "type": "string"
+      }
+    },
+    "image": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/image",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "name": {
+      "title": "Name",
+      "description": "The name of the item.",
+      "type": "string"
+    },
+    "sameAs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/sameAs",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "applicableLocation": {
+      "type": "string",
+      "x-$ref": "administrativearea"
+    },
+    "costCategory": {
+      "type": "string",
+      "x-$ref": "drugcostcategory"
+    },
+    "costCurrency": {
+      "title": "Cost Currency",
+      "description": "The currency (in 3-letter ISO 4217 format) of the drug cost.",
+      "type": "string"
+    },
+    "costOrigin": {
+      "title": "Cost Origin",
+      "description": "Additional details to capture the origin of the cost data. For example, 'Medicare Part B'.",
+      "type": "string"
+    },
+    "costPerUnit": {
+      "title": "Cost Per Unit",
+      "description": "The cost per unit of the drug.",
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "drugUnit": {
+      "title": "Drug Unit",
+      "description": "The unit in which the drug is measured, e.g. '5 mg tablet'.",
+      "type": "string"
+    }
+  }
+}

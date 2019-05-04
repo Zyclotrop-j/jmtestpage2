@@ -1,0 +1,13 @@
+{
+  "id": "MedicalEvidenceLevel.json",
+  "title": "medicalevidencelevel",
+  "format": "http://schema.org/MedicalEvidenceLevel",
+  "media": {
+    "type": "application/json;profile=http://schema.org/MedicalEvidenceLevel"
+  },
+  "enum": [
+    "EvidenceLevelA",
+    "EvidenceLevelB",
+    "EvidenceLevelC"
+  ]
+}

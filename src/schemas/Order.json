@@ -1,0 +1,185 @@
+{
+  "id": "Order.json",
+  "title": "order",
+  "format": "http://schema.org/Order",
+  "media": {
+    "type": "application/json;profile=http://schema.org/Order"
+  },
+  "type": "object",
+  "properties": {
+    "additionalType": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/additionalType",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "alternateName": {
+      "type": "array",
+      "items": {
+        "title": "Alternate Name",
+        "description": "An alias for the item.",
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "array",
+      "items": {
+        "title": "Description",
+        "description": "A short description of the item.",
+        "type": "string"
+      }
+    },
+    "image": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/image",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "name": {
+      "title": "Name",
+      "description": "The name of the item.",
+      "type": "string"
+    },
+    "sameAs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/sameAs",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "acceptedOffer": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "offer"
+      }
+    },
+    "billingAddress": {
+      "type": "string",
+      "x-$ref": "postaladdress"
+    },
+    "confirmationNumber": {
+      "title": "Confirmation Number",
+      "description": "A number that confirms the given order.",
+      "type": "string"
+    },
+    "customer": {
+      "title": "Customer",
+      "description": "Party placing the order.",
+      "anyOf": [
+        {
+          "type": "string",
+          "x-$ref": "organization"
+        },
+        {
+          "type": "string",
+          "x-$ref": "person"
+        }
+      ]
+    },
+    "discount": {
+      "title": "Discount",
+      "description": "Any discount applied (to an Order).",
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "discountCode": {
+      "title": "Discount Code",
+      "description": "Code used to redeem a discount.",
+      "type": "string"
+    },
+    "discountCurrency": {
+      "title": "Discount Currency",
+      "description": "The currency (in 3-letter ISO 4217 format) of the discount.",
+      "type": "string"
+    },
+    "isGift": {
+      "title": "Is Gift",
+      "description": "Was the offer accepted as a gift for someone other than the buyer.",
+      "type": "boolean"
+    },
+    "orderDate": {
+      "title": "Order Date",
+      "description": "Date order was placed.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "orderNumber": {
+      "title": "Order Number",
+      "description": "The identifier of the transaction.",
+      "type": "string"
+    },
+    "orderStatus": {
+      "type": "string",
+      "x-$ref": "orderstatus"
+    },
+    "orderedItem": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "product"
+      }
+    },
+    "paymentDue": {
+      "title": "Payment Due",
+      "description": "The date that payment is due.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "paymentMethod": {
+      "type": "string",
+      "x-$ref": "paymentmethod"
+    },
+    "paymentMethodId": {
+      "type": "array",
+      "items": {
+        "title": "Payment Method Id",
+        "description": "An identifier for the method of payment used (e.g. the last 4 digits of the credit card).",
+        "type": "string"
+      }
+    },
+    "paymentUrl": {
+      "type": "string",
+      "format": "uri"
+    }
+  },
+  "links": [
+    {
+      "rel": "http://schema.org/paymentUrl",
+      "href": "{+paymentUrl}"
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "id": "QuantitativeValue.json",
+  "title": "quantitativevalue",
+  "format": "http://schema.org/QuantitativeValue",
+  "media": {
+    "type": "application/json;profile=http://schema.org/QuantitativeValue"
+  },
+  "type": "object",
+  "properties": {
+    "additionalType": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/additionalType",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "alternateName": {
+      "type": "array",
+      "items": {
+        "title": "Alternate Name",
+        "description": "An alias for the item.",
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "array",
+      "items": {
+        "title": "Description",
+        "description": "A short description of the item.",
+        "type": "string"
+      }
+    },
+    "image": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/image",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "name": {
+      "title": "Name",
+      "description": "The name of the item.",
+      "type": "string"
+    },
+    "sameAs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/sameAs",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "maxValue": {
+      "title": "Max Value",
+      "description": "The upper of the product characteristic.",
+      "type": "number"
+    },
+    "minValue": {
+      "title": "Min Value",
+      "description": "The lower value of the product characteristic.",
+      "type": "number"
+    },
+    "unitCode": {
+      "title": "Unit Code",
+      "description": "The unit of measurement given using the UN/CEFACT Common Code (3 characters).",
+      "type": "string"
+    },
+    "value": {
+      "title": "Value",
+      "description": "The value of the product characteristic.",
+      "type": "number"
+    },
+    "valueReference": {
+      "type": "array",
+      "items": {
+        "title": "Value Reference",
+        "description": "A pointer to a secondary value that provides additional information on the original value, e.g. a reference temperature.",
+        "anyOf": [
+          {
+            "type": "string",
+            "x-$ref": "enumeration"
+          },
+          {
+            "type": "string",
+            "x-$ref": "structuredvalue"
+          }
+        ]
+      }
+    }
+  }
+}

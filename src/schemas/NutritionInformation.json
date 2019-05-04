@@ -1,0 +1,127 @@
+{
+  "id": "NutritionInformation.json",
+  "title": "nutritioninformation",
+  "format": "http://schema.org/NutritionInformation",
+  "media": {
+    "type": "application/json;profile=http://schema.org/NutritionInformation"
+  },
+  "type": "object",
+  "properties": {
+    "additionalType": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/additionalType",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "alternateName": {
+      "type": "array",
+      "items": {
+        "title": "Alternate Name",
+        "description": "An alias for the item.",
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "array",
+      "items": {
+        "title": "Description",
+        "description": "A short description of the item.",
+        "type": "string"
+      }
+    },
+    "image": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/image",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "name": {
+      "title": "Name",
+      "description": "The name of the item.",
+      "type": "string"
+    },
+    "sameAs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/sameAs",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "calories": {
+      "type": "string",
+      "x-$ref": "energy"
+    },
+    "carbohydrateContent": {
+      "type": "string",
+      "x-$ref": "mass"
+    },
+    "cholesterolContent": {
+      "type": "string",
+      "x-$ref": "mass"
+    },
+    "fatContent": {
+      "type": "string",
+      "x-$ref": "mass"
+    },
+    "fiberContent": {
+      "type": "string",
+      "x-$ref": "mass"
+    },
+    "proteinContent": {
+      "type": "string",
+      "x-$ref": "mass"
+    },
+    "saturatedFatContent": {
+      "type": "string",
+      "x-$ref": "mass"
+    },
+    "servingSize": {
+      "title": "Serving Size",
+      "description": "The serving size, in terms of the number of volume or mass",
+      "type": "string"
+    },
+    "sodiumContent": {
+      "type": "string",
+      "x-$ref": "mass"
+    },
+    "sugarContent": {
+      "type": "string",
+      "x-$ref": "mass"
+    },
+    "transFatContent": {
+      "type": "string",
+      "x-$ref": "mass"
+    },
+    "unsaturatedFatContent": {
+      "type": "string",
+      "x-$ref": "mass"
+    }
+  }
+}

@@ -1,0 +1,309 @@
+{
+  "id": "Drug.json",
+  "title": "drug",
+  "format": "http://schema.org/Drug",
+  "media": {
+    "type": "application/json;profile=http://schema.org/Drug"
+  },
+  "type": "object",
+  "properties": {
+    "adverseOutcome": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalentity"
+      }
+    },
+    "contraindication": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalcontraindication"
+      }
+    },
+    "duplicateTherapy": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicaltherapy"
+      }
+    },
+    "indication": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalindication"
+      }
+    },
+    "seriousAdverseOutcome": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalentity"
+      }
+    },
+    "code": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalcode"
+      }
+    },
+    "guideline": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalguideline"
+      }
+    },
+    "medicineSystem": {
+      "type": "string",
+      "x-$ref": "medicinesystem"
+    },
+    "recognizingAuthority": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "organization"
+      }
+    },
+    "relevantSpecialty": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalspecialty"
+      }
+    },
+    "study": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalstudy"
+      }
+    },
+    "additionalType": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/additionalType",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "alternateName": {
+      "type": "array",
+      "items": {
+        "title": "Alternate Name",
+        "description": "An alias for the item.",
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "array",
+      "items": {
+        "title": "Description",
+        "description": "A short description of the item.",
+        "type": "string"
+      }
+    },
+    "image": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/image",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "name": {
+      "title": "Name",
+      "description": "The name of the item.",
+      "type": "string"
+    },
+    "sameAs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/sameAs",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "activeIngredient": {
+      "type": "array",
+      "items": {
+        "title": "Active Ingredient",
+        "description": "An active ingredient, typically chemical compounds and/or biologic substances.",
+        "type": "string"
+      }
+    },
+    "administrationRoute": {
+      "type": "array",
+      "items": {
+        "title": "Administration Route",
+        "description": "A route by which this drug may be administered, e.g. 'oral'.",
+        "type": "string"
+      }
+    },
+    "alcoholWarning": {
+      "title": "Alcohol Warning",
+      "description": "Any precaution, guidance, contraindication, etc. related to consumption of alcohol while taking this drug.",
+      "type": "string"
+    },
+    "availableStrength": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "drugstrength"
+      }
+    },
+    "breastfeedingWarning": {
+      "title": "Breastfeeding Warning",
+      "description": "Any precaution, guidance, contraindication, etc. related to this drug's use by breastfeeding mothers.",
+      "type": "string"
+    },
+    "clincalPharmacology": {
+      "title": "Clincal Pharmacology",
+      "description": "Description of the absorption and elimination of drugs, including their concentration (pharmacokinetics, pK) and biological effects (pharmacodynamics, pD).",
+      "type": "string"
+    },
+    "cost": {
+      "type": "string",
+      "x-$ref": "drugcost"
+    },
+    "dosageForm": {
+      "type": "array",
+      "items": {
+        "title": "Dosage Form",
+        "description": "A dosage form in which this drug/supplement is available, e.g. 'tablet', 'suspension', 'injection'.",
+        "type": "string"
+      }
+    },
+    "doseSchedule": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "doseschedule"
+      }
+    },
+    "drugClass": {
+      "type": "string",
+      "x-$ref": "drugclass"
+    },
+    "foodWarning": {
+      "title": "Food Warning",
+      "description": "Any precaution, guidance, contraindication, etc. related to consumption of specific foods while taking this drug.",
+      "type": "string"
+    },
+    "interactingDrug": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "drug"
+      }
+    },
+    "isAvailableGenerically": {
+      "title": "Is Available Generically",
+      "description": "True if the drug is available in a generic form (regardless of name).",
+      "type": "boolean"
+    },
+    "isProprietary": {
+      "title": "Is Proprietary",
+      "description": "True if this item's name is a proprietary/brand name (vs. generic name).",
+      "type": "boolean"
+    },
+    "labelDetails": {
+      "type": "string",
+      "format": "uri"
+    },
+    "legalStatus": {
+      "type": "string",
+      "x-$ref": "druglegalstatus"
+    },
+    "manufacturer": {
+      "type": "string",
+      "x-$ref": "organization"
+    },
+    "mechanismOfAction": {
+      "title": "Mechanism of Action",
+      "description": "The specific biochemical interaction through which this drug or supplement produces its pharmacological effect.",
+      "type": "string"
+    },
+    "nonProprietaryName": {
+      "title": "Non Proprietary Name",
+      "description": "The generic name of this drug or supplement.",
+      "type": "string"
+    },
+    "overdosage": {
+      "title": "Overdosage",
+      "description": "Any information related to overdose on a drug, including signs or symptoms, treatments, contact information for emergency response.",
+      "type": "string"
+    },
+    "pregnancyCategory": {
+      "type": "string",
+      "x-$ref": "drugpregnancycategory"
+    },
+    "pregnancyWarning": {
+      "title": "Pregnancy Warning",
+      "description": "Any precaution, guidance, contraindication, etc. related to this drug's use during pregnancy.",
+      "type": "string"
+    },
+    "prescribingInfo": {
+      "type": "string",
+      "format": "uri"
+    },
+    "prescriptionStatus": {
+      "type": "string",
+      "x-$ref": "drugprescriptionstatus"
+    },
+    "relatedDrug": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "drug"
+      }
+    },
+    "warning": {
+      "title": "Warning",
+      "description": "Any FDA or other warnings about the drug (text or URL).",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "string",
+          "format": "uri"
+        }
+      ]
+    }
+  },
+  "links": [
+    {
+      "rel": "http://schema.org/labelDetails",
+      "href": "{+labelDetails}"
+    },
+    {
+      "rel": "http://schema.org/prescribingInfo",
+      "href": "{+prescribingInfo}"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "id": "MedicineSystem.json",
+  "title": "medicinesystem",
+  "format": "http://schema.org/MedicineSystem",
+  "media": {
+    "type": "application/json;profile=http://schema.org/MedicineSystem"
+  },
+  "enum": [
+    "Ayurvedic",
+    "Chiropractic",
+    "Homeopathic",
+    "Osteopathic",
+    "TraditionalChinese",
+    "WesternConventional"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "id": "BookFormatType.json",
+  "title": "bookformattype",
+  "format": "http://schema.org/BookFormatType",
+  "media": {
+    "type": "application/json;profile=http://schema.org/BookFormatType"
+  },
+  "enum": [
+    "EBook",
+    "Hardcover",
+    "Paperback"
+  ]
+}

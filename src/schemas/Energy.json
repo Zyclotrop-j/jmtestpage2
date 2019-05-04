@@ -1,0 +1,9 @@
+{
+  "id": "Energy.json",
+  "title": "energy",
+  "format": "http://schema.org/Energy",
+  "media": {
+    "type": "application/json;profile=http://schema.org/Energy"
+  },
+  "properties": {}
+}

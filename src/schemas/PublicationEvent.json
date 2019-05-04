@@ -1,0 +1,205 @@
+{
+  "id": "PublicationEvent.json",
+  "title": "publicationevent",
+  "format": "http://schema.org/PublicationEvent",
+  "media": {
+    "type": "application/json;profile=http://schema.org/PublicationEvent"
+  },
+  "type": "object",
+  "properties": {
+    "attendee": {
+      "type": "array",
+      "items": {
+        "title": "Attendee",
+        "description": "A person or organization attending the event.",
+        "anyOf": [
+          {
+            "type": "string",
+            "x-$ref": "organization"
+          },
+          {
+            "type": "string",
+            "x-$ref": "person"
+          }
+        ]
+      }
+    },
+    "doorTime": {
+      "title": "Door Time",
+      "description": "The time admission will commence.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "duration": {
+      "type": "string",
+      "x-$ref": "duration"
+    },
+    "endDate": {
+      "title": "End Date",
+      "description": "The end date and time of the event or item (in ISO 8601 date format).",
+      "type": "string",
+      "format": "date-time"
+    },
+    "eventStatus": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "eventstatustype"
+      }
+    },
+    "location": {
+      "title": "Location",
+      "description": "The location of the event, organization or action.",
+      "anyOf": [
+        {
+          "type": "string",
+          "x-$ref": "postaladdress"
+        },
+        {
+          "type": "string",
+          "x-$ref": "place"
+        }
+      ]
+    },
+    "offers": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "offer"
+      }
+    },
+    "performer": {
+      "type": "array",
+      "items": {
+        "title": "Performer",
+        "description": "A performer at the event—for example, a presenter, musician, musical group or actor.",
+        "anyOf": [
+          {
+            "type": "string",
+            "x-$ref": "organization"
+          },
+          {
+            "type": "string",
+            "x-$ref": "person"
+          }
+        ]
+      }
+    },
+    "previousStartDate": {
+      "type": "array",
+      "items": {
+        "title": "Previous Start Date",
+        "description": "Used in conjunction with eventStatus for rescheduled or cancelled events. This property contains the previously scheduled start date. For rescheduled events, the startDate property should be used for the newly scheduled start date. In the (rare) case of an event that has been postponed and rescheduled multiple times, this field may be repeated.",
+        "type": "string",
+        "format": "date"
+      }
+    },
+    "startDate": {
+      "title": "Start Date",
+      "description": "The start date and time of the event or item (in ISO 8601 date format).",
+      "type": "string",
+      "format": "date-time"
+    },
+    "subEvent": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "event"
+      }
+    },
+    "superEvent": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "event"
+      }
+    },
+    "typicalAgeRange": {
+      "title": "Typical Age Range",
+      "description": "The typical expected age range, e.g. '7-9', '11-'.",
+      "type": "string"
+    },
+    "additionalType": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/additionalType",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "alternateName": {
+      "type": "array",
+      "items": {
+        "title": "Alternate Name",
+        "description": "An alias for the item.",
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "array",
+      "items": {
+        "title": "Description",
+        "description": "A short description of the item.",
+        "type": "string"
+      }
+    },
+    "image": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/image",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "name": {
+      "title": "Name",
+      "description": "The name of the item.",
+      "type": "string"
+    },
+    "sameAs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/sameAs",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "free": {
+      "type": "array",
+      "items": {
+        "title": "Free",
+        "description": "A flag to signal that the publication is accessible for free.",
+        "type": "boolean"
+      }
+    },
+    "publishedOn": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "broadcastservice"
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "id": "EducationalAudience.json",
+  "title": "educationalaudience",
+  "format": "http://schema.org/EducationalAudience",
+  "media": {
+    "type": "application/json;profile=http://schema.org/EducationalAudience"
+  },
+  "type": "object",
+  "properties": {
+    "educationalRole": {
+      "type": "array",
+      "items": {
+        "title": "Educational Role",
+        "description": "An educationalRole of an EducationalAudience",
+        "type": "string"
+      }
+    }
+  }
+}

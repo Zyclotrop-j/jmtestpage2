@@ -1,0 +1,96 @@
+{
+  "id": "TypeAndQuantityNode.json",
+  "title": "typeandquantitynode",
+  "format": "http://schema.org/TypeAndQuantityNode",
+  "media": {
+    "type": "application/json;profile=http://schema.org/TypeAndQuantityNode"
+  },
+  "type": "object",
+  "properties": {
+    "additionalType": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/additionalType",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "alternateName": {
+      "type": "array",
+      "items": {
+        "title": "Alternate Name",
+        "description": "An alias for the item.",
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "array",
+      "items": {
+        "title": "Description",
+        "description": "A short description of the item.",
+        "type": "string"
+      }
+    },
+    "image": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/image",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "name": {
+      "title": "Name",
+      "description": "The name of the item.",
+      "type": "string"
+    },
+    "sameAs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/sameAs",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "amountOfThisGood": {
+      "title": "Amount of This Good",
+      "description": "The quantity of the goods included in the offer.",
+      "type": "number"
+    },
+    "businessFunction": {
+      "type": "string",
+      "x-$ref": "businessfunction"
+    },
+    "typeOfGood": {
+      "type": "string",
+      "x-$ref": "product"
+    },
+    "unitCode": {
+      "title": "Unit Code",
+      "description": "The unit of measurement given using the UN/CEFACT Common Code (3 characters).",
+      "type": "string"
+    }
+  }
+}

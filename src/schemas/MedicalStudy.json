@@ -1,0 +1,149 @@
+{
+  "id": "MedicalStudy.json",
+  "title": "medicalstudy",
+  "format": "http://schema.org/MedicalStudy",
+  "media": {
+    "type": "application/json;profile=http://schema.org/MedicalStudy"
+  },
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalcode"
+      }
+    },
+    "guideline": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalguideline"
+      }
+    },
+    "medicineSystem": {
+      "type": "string",
+      "x-$ref": "medicinesystem"
+    },
+    "recognizingAuthority": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "organization"
+      }
+    },
+    "relevantSpecialty": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalspecialty"
+      }
+    },
+    "study": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalstudy"
+      }
+    },
+    "additionalType": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/additionalType",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "alternateName": {
+      "type": "array",
+      "items": {
+        "title": "Alternate Name",
+        "description": "An alias for the item.",
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "array",
+      "items": {
+        "title": "Description",
+        "description": "A short description of the item.",
+        "type": "string"
+      }
+    },
+    "image": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/image",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "name": {
+      "title": "Name",
+      "description": "The name of the item.",
+      "type": "string"
+    },
+    "sameAs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/sameAs",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "outcome": {
+      "title": "Outcome",
+      "description": "Expected or actual outcomes of the study.",
+      "type": "string"
+    },
+    "population": {
+      "title": "Population",
+      "description": "Any characteristics of the population used in the study, e.g. 'males under 65'.",
+      "type": "string"
+    },
+    "sponsor": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "organization"
+      }
+    },
+    "status": {
+      "type": "string",
+      "x-$ref": "medicalstudystatus"
+    },
+    "studyLocation": {
+      "type": "string",
+      "x-$ref": "administrativearea"
+    },
+    "studySubject": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalentity"
+      }
+    }
+  }
+}

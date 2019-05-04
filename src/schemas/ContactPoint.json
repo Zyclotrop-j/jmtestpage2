@@ -1,0 +1,139 @@
+{
+  "id": "ContactPoint.json",
+  "title": "contactpoint",
+  "format": "http://schema.org/ContactPoint",
+  "media": {
+    "type": "application/json;profile=http://schema.org/ContactPoint"
+  },
+  "type": "object",
+  "properties": {
+    "additionalType": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/additionalType",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "alternateName": {
+      "type": "array",
+      "items": {
+        "title": "Alternate Name",
+        "description": "An alias for the item.",
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "array",
+      "items": {
+        "title": "Description",
+        "description": "A short description of the item.",
+        "type": "string"
+      }
+    },
+    "image": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/image",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "name": {
+      "title": "Name",
+      "description": "The name of the item.",
+      "type": "string"
+    },
+    "sameAs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/sameAs",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "areaServed": {
+      "type": "string",
+      "x-$ref": "administrativearea"
+    },
+    "availableLanguage": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "language"
+      }
+    },
+    "contactOption": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "contactpointoption"
+      }
+    },
+    "contactType": {
+      "type": "array",
+      "items": {
+        "title": "Contact Type",
+        "description": "A person or organization can have different contact points, for different purposes. For example, a sales contact point, a PR contact point and so on. This property is used to specify the kind of contact point.",
+        "type": "string"
+      }
+    },
+    "email": {
+      "type": "array",
+      "items": {
+        "title": "Email",
+        "description": "Email address.",
+        "type": "string"
+      }
+    },
+    "faxNumber": {
+      "title": "Fax Number",
+      "description": "The fax number.",
+      "type": "string"
+    },
+    "hoursAvailable": {
+      "type": "string",
+      "x-$ref": "openinghoursspecification"
+    },
+    "productSupported": {
+      "title": "Product Supported",
+      "description": "The product or service this support contact point is related to (such as product support for a particular product line). This can be a specific product or product line (e.g. \"iPhone\") or a general category of products or services (e.g. \"smartphones\").",
+      "anyOf": [
+        {
+          "type": "string",
+          "x-$ref": "product"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "telephone": {
+      "title": "Telephone",
+      "description": "The telephone number.",
+      "type": "string"
+    }
+  }
+}

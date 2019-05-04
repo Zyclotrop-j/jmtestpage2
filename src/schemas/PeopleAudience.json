@@ -1,0 +1,45 @@
+{
+  "id": "PeopleAudience.json",
+  "title": "peopleaudience",
+  "format": "http://schema.org/PeopleAudience",
+  "media": {
+    "type": "application/json;profile=http://schema.org/PeopleAudience"
+  },
+  "type": "object",
+  "properties": {
+    "healthCondition": {
+      "type": "string",
+      "x-$ref": "medicalcondition"
+    },
+    "requiredGender": {
+      "title": "Required Gender",
+      "description": "Audiences defined by a person's gender.",
+      "type": "string"
+    },
+    "requiredMaxAge": {
+      "title": "Required Max Age",
+      "description": "Audiences defined by a person's maximum age.",
+      "type": "integer"
+    },
+    "requiredMinAge": {
+      "title": "Required Min Age",
+      "description": "Audiences defined by a person's minimum age.",
+      "type": "integer"
+    },
+    "suggestedGender": {
+      "title": "Suggested Gender",
+      "description": "The gender of the person or audience.",
+      "type": "string"
+    },
+    "suggestedMaxAge": {
+      "title": "Suggested Max Age",
+      "description": "Maximal age recommended for viewing content",
+      "type": "number"
+    },
+    "suggestedMinAge": {
+      "title": "Suggested Min Age",
+      "description": "Minimal age recommended for viewing content",
+      "type": "number"
+    }
+  }
+}

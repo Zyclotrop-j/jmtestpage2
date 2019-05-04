@@ -1,0 +1,139 @@
+{
+  "id": "MaximumDoseSchedule.json",
+  "title": "maximumdoseschedule",
+  "format": "http://schema.org/MaximumDoseSchedule",
+  "media": {
+    "type": "application/json;profile=http://schema.org/MaximumDoseSchedule"
+  },
+  "properties": {
+    "doseUnit": {
+      "title": "Dose Unit",
+      "description": "The unit of the dose, e.g. 'mg'.",
+      "type": "string"
+    },
+    "doseValue": {
+      "title": "Dose Value",
+      "description": "The value of the dose, e.g. 500.",
+      "type": "number"
+    },
+    "frequency": {
+      "title": "Frequency",
+      "description": "How often the dose is taken, e.g. 'daily'.",
+      "type": "string"
+    },
+    "targetPopulation": {
+      "type": "array",
+      "items": {
+        "title": "Target Population",
+        "description": "Characteristics of the population for which this is intended, or which typically uses it, e.g. 'adults'.",
+        "type": "string"
+      }
+    },
+    "code": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalcode"
+      }
+    },
+    "guideline": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalguideline"
+      }
+    },
+    "medicineSystem": {
+      "type": "string",
+      "x-$ref": "medicinesystem"
+    },
+    "recognizingAuthority": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "organization"
+      }
+    },
+    "relevantSpecialty": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalspecialty"
+      }
+    },
+    "study": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalstudy"
+      }
+    },
+    "additionalType": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/additionalType",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "alternateName": {
+      "type": "array",
+      "items": {
+        "title": "Alternate Name",
+        "description": "An alias for the item.",
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "array",
+      "items": {
+        "title": "Description",
+        "description": "A short description of the item.",
+        "type": "string"
+      }
+    },
+    "image": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/image",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "name": {
+      "title": "Name",
+      "description": "The name of the item.",
+      "type": "string"
+    },
+    "sameAs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/sameAs",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "url": {
+      "type": "string",
+      "format": "uri"
+    }
+  }
+}

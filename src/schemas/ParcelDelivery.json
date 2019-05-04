@@ -1,0 +1,131 @@
+{
+  "id": "ParcelDelivery.json",
+  "title": "parceldelivery",
+  "format": "http://schema.org/ParcelDelivery",
+  "media": {
+    "type": "application/json;profile=http://schema.org/ParcelDelivery"
+  },
+  "type": "object",
+  "properties": {
+    "additionalType": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/additionalType",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "alternateName": {
+      "type": "array",
+      "items": {
+        "title": "Alternate Name",
+        "description": "An alias for the item.",
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "array",
+      "items": {
+        "title": "Description",
+        "description": "A short description of the item.",
+        "type": "string"
+      }
+    },
+    "image": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/image",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "name": {
+      "title": "Name",
+      "description": "The name of the item.",
+      "type": "string"
+    },
+    "sameAs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/sameAs",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "deliveryAddress": {
+      "type": "string",
+      "x-$ref": "postaladdress"
+    },
+    "deliveryStatus": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "deliveryevent"
+      }
+    },
+    "expectedArrivalFrom": {
+      "title": "Expected Arrival From",
+      "description": "The earliest date the package may arrive.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "expectedArrivalUntil": {
+      "title": "Expected Arrival Until",
+      "description": "The latest date the package may arrive.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "hasDeliveryMethod": {
+      "type": "string",
+      "x-$ref": "deliverymethod"
+    },
+    "itemShipped": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "product"
+      }
+    },
+    "originAddress": {
+      "type": "string",
+      "x-$ref": "postaladdress"
+    },
+    "trackingNumber": {
+      "title": "Tracking Number",
+      "description": "Shipper tracking number.",
+      "type": "string"
+    },
+    "trackingUrl": {
+      "type": "string",
+      "format": "uri"
+    }
+  },
+  "links": [
+    {
+      "rel": "http://schema.org/trackingUrl",
+      "href": "{+trackingUrl}"
+    }
+  ]
+}

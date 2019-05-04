@@ -1,0 +1,119 @@
+{
+  "id": "ServiceChannel.json",
+  "title": "servicechannel",
+  "format": "http://schema.org/ServiceChannel",
+  "media": {
+    "type": "application/json;profile=http://schema.org/ServiceChannel"
+  },
+  "type": "object",
+  "properties": {
+    "additionalType": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/additionalType",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "alternateName": {
+      "type": "array",
+      "items": {
+        "title": "Alternate Name",
+        "description": "An alias for the item.",
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "array",
+      "items": {
+        "title": "Description",
+        "description": "A short description of the item.",
+        "type": "string"
+      }
+    },
+    "image": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/image",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "name": {
+      "title": "Name",
+      "description": "The name of the item.",
+      "type": "string"
+    },
+    "sameAs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/sameAs",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "availableLanguage": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "language"
+      }
+    },
+    "processingTime": {
+      "type": "string",
+      "x-$ref": "duration"
+    },
+    "providesService": {
+      "type": "string",
+      "x-$ref": "service"
+    },
+    "serviceLocation": {
+      "type": "string",
+      "x-$ref": "place"
+    },
+    "servicePhone": {
+      "type": "string",
+      "x-$ref": "contactpoint"
+    },
+    "servicePostalAddress": {
+      "type": "string",
+      "x-$ref": "postaladdress"
+    },
+    "serviceSmsNumber": {
+      "type": "string",
+      "x-$ref": "contactpoint"
+    },
+    "serviceUrl": {
+      "type": "string",
+      "format": "uri"
+    }
+  },
+  "links": [
+    {
+      "rel": "http://schema.org/serviceUrl",
+      "href": "{+serviceUrl}"
+    }
+  ]
+}

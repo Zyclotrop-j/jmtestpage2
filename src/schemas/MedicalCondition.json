@@ -1,0 +1,234 @@
+{
+  "id": "MedicalCondition.json",
+  "title": "medicalcondition",
+  "format": "http://schema.org/MedicalCondition",
+  "media": {
+    "type": "application/json;profile=http://schema.org/MedicalCondition"
+  },
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalcode"
+      }
+    },
+    "guideline": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalguideline"
+      }
+    },
+    "medicineSystem": {
+      "type": "string",
+      "x-$ref": "medicinesystem"
+    },
+    "recognizingAuthority": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "organization"
+      }
+    },
+    "relevantSpecialty": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalspecialty"
+      }
+    },
+    "study": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalstudy"
+      }
+    },
+    "additionalType": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/additionalType",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "alternateName": {
+      "type": "array",
+      "items": {
+        "title": "Alternate Name",
+        "description": "An alias for the item.",
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "array",
+      "items": {
+        "title": "Description",
+        "description": "A short description of the item.",
+        "type": "string"
+      }
+    },
+    "image": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/image",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "name": {
+      "title": "Name",
+      "description": "The name of the item.",
+      "type": "string"
+    },
+    "sameAs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/sameAs",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "associatedAnatomy": {
+      "title": "Associated Anatomy",
+      "description": "The anatomy of the underlying organ system or structures associated with this entity.",
+      "anyOf": [
+        {
+          "type": "string",
+          "x-$ref": "anatomicalsystem"
+        },
+        {
+          "type": "string",
+          "x-$ref": "superficialanatomy"
+        },
+        {
+          "type": "string",
+          "x-$ref": "anatomicalstructure"
+        }
+      ]
+    },
+    "cause": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalcause"
+      }
+    },
+    "differentialDiagnosis": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "ddxelement"
+      }
+    },
+    "epidemiology": {
+      "title": "Epidemiology",
+      "description": "The characteristics of associated patients, such as age, gender, race etc.",
+      "type": "string"
+    },
+    "expectedPrognosis": {
+      "title": "Expected Prognosis",
+      "description": "The likely outcome in either the short term or long term of the medical condition.",
+      "type": "string"
+    },
+    "naturalProgression": {
+      "title": "Natural Progression",
+      "description": "The expected progression of the condition if it is not treated and allowed to progress naturally.",
+      "type": "string"
+    },
+    "pathophysiology": {
+      "type": "array",
+      "items": {
+        "title": "Pathophysiology",
+        "description": "Changes in the normal mechanical, physical, and biochemical functions that are associated with this activity or condition.",
+        "type": "string"
+      }
+    },
+    "possibleComplication": {
+      "type": "array",
+      "items": {
+        "title": "Possible Complication",
+        "description": "A possible unexpected and unfavorable evolution of a medical condition. Complications may include worsening of the signs or symptoms of the disease, extension of the condition to other organ systems, etc.",
+        "type": "string"
+      }
+    },
+    "possibleTreatment": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicaltherapy"
+      }
+    },
+    "primaryPrevention": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicaltherapy"
+      }
+    },
+    "riskFactor": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalriskfactor"
+      }
+    },
+    "secondaryPrevention": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicaltherapy"
+      }
+    },
+    "signOrSymptom": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalsignorsymptom"
+      }
+    },
+    "stage": {
+      "type": "string",
+      "x-$ref": "medicalconditionstage"
+    },
+    "subtype": {
+      "type": "array",
+      "items": {
+        "title": "Subtype",
+        "description": "A more specific type of the condition, where applicable, for example 'Type 1 Diabetes', 'Type 2 Diabetes', or 'Gestational Diabetes' for Diabetes.",
+        "type": "string"
+      }
+    },
+    "typicalTest": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicaltest"
+      }
+    }
+  }
+}

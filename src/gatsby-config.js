@@ -9,6 +9,10 @@ require('ts-node').register({
 const config = require('./config/SiteConfig');
 const pathPrefix = config.pathPrefix === '/' ? '' : config.pathPrefix;
 
+var request = require('sync-request');
+var res = request('GET', 'http://example.com');
+console.log("!!!", res.getBody());
+
 module.exports = {
   pathPrefix: config.pathPrefix,
   siteMetadata: {

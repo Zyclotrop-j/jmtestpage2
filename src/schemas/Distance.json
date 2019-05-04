@@ -1,0 +1,9 @@
+{
+  "id": "Distance.json",
+  "title": "distance",
+  "format": "http://schema.org/Distance",
+  "media": {
+    "type": "application/json;profile=http://schema.org/Distance"
+  },
+  "properties": {}
+}

@@ -1,0 +1,9 @@
+{
+  "id": "Duration.json",
+  "title": "duration",
+  "format": "http://schema.org/Duration",
+  "media": {
+    "type": "application/json;profile=http://schema.org/Duration"
+  },
+  "properties": {}
+}

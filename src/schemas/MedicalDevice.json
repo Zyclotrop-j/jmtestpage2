@@ -1,0 +1,186 @@
+{
+  "id": "MedicalDevice.json",
+  "title": "medicaldevice",
+  "format": "http://schema.org/MedicalDevice",
+  "media": {
+    "type": "application/json;profile=http://schema.org/MedicalDevice"
+  },
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalcode"
+      }
+    },
+    "guideline": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalguideline"
+      }
+    },
+    "medicineSystem": {
+      "type": "string",
+      "x-$ref": "medicinesystem"
+    },
+    "recognizingAuthority": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "organization"
+      }
+    },
+    "relevantSpecialty": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalspecialty"
+      }
+    },
+    "study": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalstudy"
+      }
+    },
+    "additionalType": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/additionalType",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "alternateName": {
+      "type": "array",
+      "items": {
+        "title": "Alternate Name",
+        "description": "An alias for the item.",
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "array",
+      "items": {
+        "title": "Description",
+        "description": "A short description of the item.",
+        "type": "string"
+      }
+    },
+    "image": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/image",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "name": {
+      "title": "Name",
+      "description": "The name of the item.",
+      "type": "string"
+    },
+    "sameAs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/sameAs",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "adverseOutcome": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalentity"
+      }
+    },
+    "contraindication": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalcontraindication"
+      }
+    },
+    "indication": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalindication"
+      }
+    },
+    "postOp": {
+      "type": "array",
+      "items": {
+        "title": "Post Op",
+        "description": "A description of the postoperative procedures, care, and/or followups for this device.",
+        "type": "string"
+      }
+    },
+    "preOp": {
+      "type": "array",
+      "items": {
+        "title": "Pre Op",
+        "description": "A description of the workup, testing, and other preparations required before implanting this device.",
+        "type": "string"
+      }
+    },
+    "procedure": {
+      "type": "array",
+      "items": {
+        "title": "Procedure",
+        "description": "A description of the procedure involved in setting up, using, and/or installing the device.",
+        "type": "string"
+      }
+    },
+    "purpose": {
+      "type": "array",
+      "items": {
+        "title": "Purpose",
+        "description": "A goal towards an action is taken. Can be concrete or abstract.",
+        "anyOf": [
+          {
+            "type": "string",
+            "x-$ref": "thing"
+          },
+          {
+            "type": "string",
+            "x-$ref": "medicaldevicepurpose"
+          }
+        ]
+      }
+    },
+    "seriousAdverseOutcome": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalentity"
+      }
+    }
+  }
+}

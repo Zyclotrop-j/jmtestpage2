@@ -1,0 +1,201 @@
+{
+  "id": "Museum.json",
+  "title": "museum",
+  "format": "http://schema.org/Museum",
+  "media": {
+    "type": "application/json;profile=http://schema.org/Museum"
+  },
+  "properties": {
+    "openingHours": {
+      "type": "string",
+      "x-$ref": "duration"
+    },
+    "address": {
+      "type": "string",
+      "x-$ref": "postaladdress"
+    },
+    "aggregateRating": {
+      "type": "string",
+      "x-$ref": "aggregaterating"
+    },
+    "containedIn": {
+      "type": "string",
+      "x-$ref": "place"
+    },
+    "event": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "event"
+      }
+    },
+    "faxNumber": {
+      "title": "Fax Number",
+      "description": "The fax number.",
+      "type": "string"
+    },
+    "geo": {
+      "title": "Geo",
+      "description": "The geo coordinates of the place.",
+      "anyOf": [
+        {
+          "type": "string",
+          "x-$ref": "geocoordinates"
+        },
+        {
+          "type": "string",
+          "x-$ref": "geoshape"
+        }
+      ]
+    },
+    "globalLocationNumber": {
+      "title": "Global Location Number",
+      "description": "The Global Location Number (GLN, sometimes also referred to as International Location Number or ILN) of the respective organization, person, or place. The GLN is a 13-digit number used to identify parties and physical locations.",
+      "type": "string"
+    },
+    "interactionCount": {
+      "type": "array",
+      "items": {
+        "title": "Interaction Count",
+        "description": "A count of a specific user interactions with this item—for example, 20 UserLikes, 5 UserComments, or 300 UserDownloads. The user interaction type should be one of the sub types of UserInteraction.",
+        "type": "string"
+      }
+    },
+    "isicV4": {
+      "title": "Isic V4",
+      "description": "The International Standard of Industrial Classification of All Economic Activities (ISIC), Revision 4 code for a particular organization, business person, or place.",
+      "type": "string"
+    },
+    "logo": {
+      "type": "array",
+      "items": {
+        "title": "Logo",
+        "description": "A logo associated with an organization.",
+        "anyOf": [
+          {
+            "type": "string",
+            "format": "uri"
+          },
+          {
+            "type": "string",
+            "x-$ref": "imageobject"
+          }
+        ]
+      }
+    },
+    "map": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/map",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "openingHoursSpecification": {
+      "type": "string",
+      "x-$ref": "openinghoursspecification"
+    },
+    "photo": {
+      "type": "array",
+      "items": {
+        "title": "Photo",
+        "description": "A photograph of this place.",
+        "anyOf": [
+          {
+            "type": "string",
+            "x-$ref": "imageobject"
+          },
+          {
+            "type": "string",
+            "x-$ref": "photograph"
+          }
+        ]
+      }
+    },
+    "review": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "review"
+      }
+    },
+    "telephone": {
+      "title": "Telephone",
+      "description": "The telephone number.",
+      "type": "string"
+    },
+    "additionalType": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/additionalType",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "alternateName": {
+      "type": "array",
+      "items": {
+        "title": "Alternate Name",
+        "description": "An alias for the item.",
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "array",
+      "items": {
+        "title": "Description",
+        "description": "A short description of the item.",
+        "type": "string"
+      }
+    },
+    "image": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/image",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "name": {
+      "title": "Name",
+      "description": "The name of the item.",
+      "type": "string"
+    },
+    "sameAs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/sameAs",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "url": {
+      "type": "string",
+      "format": "uri"
+    }
+  }
+}

@@ -1,0 +1,387 @@
+{
+  "id": "Person.json",
+  "title": "person",
+  "format": "http://schema.org/Person",
+  "media": {
+    "type": "application/json;profile=http://schema.org/Person"
+  },
+  "type": "object",
+  "properties": {
+    "additionalType": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/additionalType",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "alternateName": {
+      "type": "array",
+      "items": {
+        "title": "Alternate Name",
+        "description": "An alias for the item.",
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "array",
+      "items": {
+        "title": "Description",
+        "description": "A short description of the item.",
+        "type": "string"
+      }
+    },
+    "image": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/image",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "name": {
+      "title": "Name",
+      "description": "The name of the item.",
+      "type": "string"
+    },
+    "sameAs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/sameAs",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "additionalName": {
+      "type": "array",
+      "items": {
+        "title": "Additional Name",
+        "description": "An additional name for a Person, can be used for a middle name.",
+        "type": "string"
+      }
+    },
+    "address": {
+      "type": "string",
+      "x-$ref": "postaladdress"
+    },
+    "affiliation": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "organization"
+      }
+    },
+    "alumniOf": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "educationalorganization"
+      }
+    },
+    "award": {
+      "type": "array",
+      "items": {
+        "title": "Award",
+        "description": "An award won by this person or for this creative work.",
+        "type": "string"
+      }
+    },
+    "birthDate": {
+      "title": "Birth Date",
+      "description": "Date of birth.",
+      "type": "string",
+      "format": "date"
+    },
+    "brand": {
+      "title": "Brand",
+      "description": "The brand(s) associated with a product or service, or the brand(s) maintained by an organization or business person.",
+      "anyOf": [
+        {
+          "type": "string",
+          "x-$ref": "organization"
+        },
+        {
+          "type": "string",
+          "x-$ref": "brand"
+        }
+      ]
+    },
+    "children": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "person"
+      }
+    },
+    "colleague": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "person"
+      }
+    },
+    "contactPoint": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "contactpoint"
+      }
+    },
+    "deathDate": {
+      "title": "Death Date",
+      "description": "Date of death.",
+      "type": "string",
+      "format": "date"
+    },
+    "duns": {
+      "title": "Duns",
+      "description": "The Dun & Bradstreet DUNS number for identifying an organization or business person.",
+      "type": "string"
+    },
+    "email": {
+      "type": "array",
+      "items": {
+        "title": "Email",
+        "description": "Email address.",
+        "type": "string"
+      }
+    },
+    "familyName": {
+      "title": "Family Name",
+      "description": "Family name. In the U.S., the last name of an Person. This can be used along with givenName instead of the Name property.",
+      "type": "string"
+    },
+    "faxNumber": {
+      "title": "Fax Number",
+      "description": "The fax number.",
+      "type": "string"
+    },
+    "follows": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "person"
+      }
+    },
+    "gender": {
+      "title": "Gender",
+      "description": "Gender of the person.",
+      "type": "string"
+    },
+    "givenName": {
+      "type": "array",
+      "items": {
+        "title": "Given Name",
+        "description": "Given name. In the U.S., the first name of a Person. This can be used along with familyName instead of the Name property.",
+        "type": "string"
+      }
+    },
+    "globalLocationNumber": {
+      "title": "Global Location Number",
+      "description": "The Global Location Number (GLN, sometimes also referred to as International Location Number or ILN) of the respective organization, person, or place. The GLN is a 13-digit number used to identify parties and physical locations.",
+      "type": "string"
+    },
+    "hasPOS": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "place"
+      }
+    },
+    "homeLocation": {
+      "type": "array",
+      "items": {
+        "title": "Home Location",
+        "description": "A contact location for a person's residence.",
+        "anyOf": [
+          {
+            "type": "string",
+            "x-$ref": "contactpoint"
+          },
+          {
+            "type": "string",
+            "x-$ref": "place"
+          }
+        ]
+      }
+    },
+    "honorificPrefix": {
+      "type": "array",
+      "items": {
+        "title": "Honorific Prefix",
+        "description": "An honorific prefix preceding a Person's name such as Dr/Mrs/Mr.",
+        "type": "string"
+      }
+    },
+    "honorificSuffix": {
+      "type": "array",
+      "items": {
+        "title": "Honorific Suffix",
+        "description": "An honorific suffix preceding a Person's name such as M.D. /PhD/MSCSW.",
+        "type": "string"
+      }
+    },
+    "interactionCount": {
+      "type": "array",
+      "items": {
+        "title": "Interaction Count",
+        "description": "A count of a specific user interactions with this item—for example, 20 UserLikes, 5 UserComments, or 300 UserDownloads. The user interaction type should be one of the sub types of UserInteraction.",
+        "type": "string"
+      }
+    },
+    "isicV4": {
+      "title": "Isic V4",
+      "description": "The International Standard of Industrial Classification of All Economic Activities (ISIC), Revision 4 code for a particular organization, business person, or place.",
+      "type": "string"
+    },
+    "jobTitle": {
+      "title": "Job Title",
+      "description": "The job title of the person (for example, Financial Manager).",
+      "type": "string"
+    },
+    "knows": {
+      "type": "string",
+      "x-$ref": "person"
+    },
+    "makesOffer": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "offer"
+      }
+    },
+    "memberOf": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "organization"
+      }
+    },
+    "naics": {
+      "title": "Naics",
+      "description": "The North American Industry Classification System (NAICS) code for a particular organization or business person.",
+      "type": "string"
+    },
+    "nationality": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "country"
+      }
+    },
+    "owns": {
+      "type": "array",
+      "items": {
+        "title": "Owns",
+        "description": "Products owned by the organization or person.",
+        "anyOf": [
+          {
+            "type": "string",
+            "x-$ref": "ownershipinfo"
+          },
+          {
+            "type": "string",
+            "x-$ref": "product"
+          }
+        ]
+      }
+    },
+    "parent": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "person"
+      }
+    },
+    "performerIn": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "event"
+      }
+    },
+    "relatedTo": {
+      "type": "string",
+      "x-$ref": "person"
+    },
+    "seeks": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "demand"
+      }
+    },
+    "sibling": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "person"
+      }
+    },
+    "spouse": {
+      "type": "string",
+      "x-$ref": "person"
+    },
+    "taxID": {
+      "title": "Tax ID",
+      "description": "The Tax / Fiscal ID of the organization or person, e.g. the TIN in the US or the CIF/NIF in Spain.",
+      "type": "string"
+    },
+    "telephone": {
+      "title": "Telephone",
+      "description": "The telephone number.",
+      "type": "string"
+    },
+    "vatID": {
+      "title": "Vat ID",
+      "description": "The Value-added Tax ID of the organisation or person.",
+      "type": "string"
+    },
+    "workLocation": {
+      "type": "array",
+      "items": {
+        "title": "Work Location",
+        "description": "A contact location for a person's place of work.",
+        "anyOf": [
+          {
+            "type": "string",
+            "x-$ref": "contactpoint"
+          },
+          {
+            "type": "string",
+            "x-$ref": "place"
+          }
+        ]
+      }
+    },
+    "worksFor": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "organization"
+      }
+    }
+  }
+}

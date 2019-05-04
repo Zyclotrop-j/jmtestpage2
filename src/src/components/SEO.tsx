@@ -12,94 +12,54 @@ interface SEO {
 
 export const SEO = (props: SEO) => {
   const { postNode, postPath, postSEO } = props;
-  let title;
-  let description;
-  let image;
-  let postURL;
-  const realPrefix = config.pathPrefix === '/' ? '' : config.pathPrefix;
-  if (postSEO) {
-    const postMeta = postNode.frontmatter;
-    title = postMeta.title;
-    description = postNode.excerpt;
-    image = config.siteBanner;
-    postURL = config.siteUrl + realPrefix + postPath;
-  } else {
-    title = config.siteTitle;
-    description = config.siteDescription;
-    image = config.siteBanner;
-  }
-  image = config.siteUrl + realPrefix + image;
-  const blogURL = config.siteUrl + config.pathPrefix;
-  let schemaOrgJSONLD = [
-    {
-      '@context': 'http://schema.org',
-      '@type': 'WebSite',
-      '@id': blogURL,
-      url: blogURL,
-      name: title,
-      alternateName: config.siteTitleAlt ? config.siteTitleAlt : '',
-    },
-  ];
-  if (postSEO) {
-    schemaOrgJSONLD = [
-      {
-        '@context': 'http://schema.org',
-        '@type': 'BlogPosting',
-        // @ts-ignore
-        '@id': postURL,
-        // @ts-ignore
-        url: postURL,
-        name: title,
-        alternateName: config.siteTitleAlt ? config.siteTitleAlt : '',
-        headline: title,
-        image: {
-          '@type': 'ImageObject',
-          url: image,
-        },
-        description: config.siteDescription,
-        datePublished: postNode.frontmatter.date,
-        dateModified: postNode.frontmatter.date,
-        author: {
-          '@type': 'Person',
-          name: config.author,
-        },
-        publisher: {
-          '@type': 'Organization',
-          name: config.author,
-          logo: {
-            '@type': 'ImageObject',
-            url: config.siteUrl + realPrefix + config.siteLogo,
-          },
-        },
-        isPartOf: blogURL,
-        mainEntityOfPage: {
-          '@type': 'WebSite',
-          '@id': blogURL,
-        },
-      },
-    ];
-  }
+  const schemaOrgJSONLD = {
+    '@context': 'http://schema.org',
+    '@type': 'WebSite',
+    '@id': domain,
+    url: domain,
+    name: title,
+    alternateName: titleAlt ? titleAlt : '',
+  };
   return (
     <Helmet>
-      <html lang={config.siteLanguage} />
-      <title>{config.siteTitle}</title>
+      <html lang={lang} dir={dir} />
       <meta name="description" content={description} />
       <meta name="image" content={image} />
+      <meta name="keywords" content={keywords || ''} />
       <script type="application/ld+json">{JSON.stringify(schemaOrgJSONLD)}</script>
-      <meta property="og:locale" content={config.ogLanguage} />
-      <meta property="og:site_name" content={config.ogSiteName ? config.ogSiteName : ''} />
-      <meta property="og:url" content={postSEO ? postURL : blogURL} />
-      {postSEO ? <meta property="og:type" content="article" /> : null}
-      <meta property="og:title" content={title} />
-      <meta property="og:description" content={description} />
-      <meta property="og:image" content={image} />
-      <meta property="fb:app_id" content={config.siteFBAppID ? config.siteFBAppID : ''} />
+      <meta property="og:locale" content={lang} />
+      <meta property="og:site_name" content={title} />
+      <meta property="og:type" content="website" /> {/* // profile or article - add to widgets to overwrite */}
+      <meta property="og:image" content={image} /> {/* add to widgets to overwrite */}
+      <meta property="fb:app_id" content={siteFBAppID} />
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:creator" content={config.userTwitter ? config.userTwitter : ''} />
-      <meta name="twitter:title" content={title} />
-      <meta name="twitter:url" content={config.siteUrl} />
+      <meta name="twitter:site" content={coorpTwitter} />
+      <meta name="twitter:creator" content={userTwitter} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={image} />
+      <meta name="index" content={`${domain}/`} />
+      <meta name="alternate" type="application/json" content={jsonRepresentationOfWebsite} />
+      {/* <meta name="canonical" content={description} /> */}
+      <meta name="author" content={author} />
+      <meta name="designer" content={designer} />
+      <meta name="generator" content={generator} />
+      <meta name="copyright" content={copyright} />
+      {/* Add this to locality widgets */}
+      <meta name="ICBM" content={`${place.geo.latitude}, ${geo.position.longitude}`} />
+      <meta name="geo.position" content={`${place.geo.latitude};${place.geo.longitude}`} />
+      <meta name="geo.placename" content={`${place.address.addressLocality}`} />
+      <meta
+        name="geo.region"
+        content={
+          place.address.addressRegion ? `${place.address.addressRegion}-${place.address.addressCountry}` : `${place.address.addressCountry}`
+        }
+      />
+      <meta name="DC.title" content={title} />
+      <meta name="target" content={aud.target || 'all'} />
+      <meta name="audience" content={aud.audience || 'all'} />
+      <meta name="coverage" content={aud.converage || 'Worldwide'} />
+      <meta name="rating" content={aud.rating || 'safe for kids'} />
+      <meta name="twitter:dnt" content="on" />
     </Helmet>
   );
 };

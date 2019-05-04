@@ -1,0 +1,171 @@
+{
+  "id": "AnatomicalStructure.json",
+  "title": "anatomicalstructure",
+  "format": "http://schema.org/AnatomicalStructure",
+  "media": {
+    "type": "application/json;profile=http://schema.org/AnatomicalStructure"
+  },
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalcode"
+      }
+    },
+    "guideline": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalguideline"
+      }
+    },
+    "medicineSystem": {
+      "type": "string",
+      "x-$ref": "medicinesystem"
+    },
+    "recognizingAuthority": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "organization"
+      }
+    },
+    "relevantSpecialty": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalspecialty"
+      }
+    },
+    "study": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalstudy"
+      }
+    },
+    "additionalType": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/additionalType",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "alternateName": {
+      "type": "array",
+      "items": {
+        "title": "Alternate Name",
+        "description": "An alias for the item.",
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "array",
+      "items": {
+        "title": "Description",
+        "description": "A short description of the item.",
+        "type": "string"
+      }
+    },
+    "image": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/image",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "name": {
+      "title": "Name",
+      "description": "The name of the item.",
+      "type": "string"
+    },
+    "sameAs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/sameAs",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "associatedPathophysiology": {
+      "title": "Associated Pathophysiology",
+      "description": "If applicable, a description of the pathophysiology associated with the anatomical system, including potential abnormal changes in the mechanical, physical, and biochemical functions of the system.",
+      "type": "string"
+    },
+    "bodyLocation": {
+      "title": "Body Location",
+      "description": "Location in the body of the anatomical structure.",
+      "type": "string"
+    },
+    "connectedTo": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "anatomicalstructure"
+      }
+    },
+    "diagram": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "imageobject"
+      }
+    },
+    "function": {
+      "title": "Function",
+      "description": "Function of the anatomical structure.",
+      "type": "string"
+    },
+    "partOfSystem": {
+      "type": "string",
+      "x-$ref": "anatomicalsystem"
+    },
+    "relatedCondition": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalcondition"
+      }
+    },
+    "relatedTherapy": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicaltherapy"
+      }
+    },
+    "subStructure": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "anatomicalstructure"
+      }
+    }
+  }
+}

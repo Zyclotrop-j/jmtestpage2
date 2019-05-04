@@ -1,0 +1,23 @@
+{
+  "id": "BusinessAudience.json",
+  "title": "businessaudience",
+  "format": "http://schema.org/BusinessAudience",
+  "media": {
+    "type": "application/json;profile=http://schema.org/BusinessAudience"
+  },
+  "type": "object",
+  "properties": {
+    "numberofEmployees": {
+      "type": "string",
+      "x-$ref": "quantitativevalue"
+    },
+    "yearlyRevenue": {
+      "type": "string",
+      "x-$ref": "quantitativevalue"
+    },
+    "yearsInOperation": {
+      "type": "string",
+      "x-$ref": "quantitativevalue"
+    }
+  }
+}

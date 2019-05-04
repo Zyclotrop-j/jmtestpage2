@@ -1,0 +1,203 @@
+{
+  "id": "PhysicalActivity.json",
+  "title": "physicalactivity",
+  "format": "http://schema.org/PhysicalActivity",
+  "media": {
+    "type": "application/json;profile=http://schema.org/PhysicalActivity"
+  },
+  "type": "object",
+  "properties": {
+    "adverseOutcome": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalentity"
+      }
+    },
+    "contraindication": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalcontraindication"
+      }
+    },
+    "duplicateTherapy": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicaltherapy"
+      }
+    },
+    "indication": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalindication"
+      }
+    },
+    "seriousAdverseOutcome": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalentity"
+      }
+    },
+    "code": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalcode"
+      }
+    },
+    "guideline": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalguideline"
+      }
+    },
+    "medicineSystem": {
+      "type": "string",
+      "x-$ref": "medicinesystem"
+    },
+    "recognizingAuthority": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "organization"
+      }
+    },
+    "relevantSpecialty": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalspecialty"
+      }
+    },
+    "study": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "medicalstudy"
+      }
+    },
+    "additionalType": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/additionalType",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "alternateName": {
+      "type": "array",
+      "items": {
+        "title": "Alternate Name",
+        "description": "An alias for the item.",
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "array",
+      "items": {
+        "title": "Description",
+        "description": "A short description of the item.",
+        "type": "string"
+      }
+    },
+    "image": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/image",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "name": {
+      "title": "Name",
+      "description": "The name of the item.",
+      "type": "string"
+    },
+    "sameAs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/sameAs",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "associatedAnatomy": {
+      "title": "Associated Anatomy",
+      "description": "The anatomy of the underlying organ system or structures associated with this entity.",
+      "anyOf": [
+        {
+          "type": "string",
+          "x-$ref": "anatomicalsystem"
+        },
+        {
+          "type": "string",
+          "x-$ref": "superficialanatomy"
+        },
+        {
+          "type": "string",
+          "x-$ref": "anatomicalstructure"
+        }
+      ]
+    },
+    "category": {
+      "type": "array",
+      "items": {
+        "title": "Category",
+        "description": "A category for the item. Greater signs or slashes can be used to informally indicate a category hierarchy.",
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "string",
+            "x-$ref": "physicalactivitycategory"
+          },
+          {
+            "type": "string",
+            "x-$ref": "thing"
+          }
+        ]
+      }
+    },
+    "epidemiology": {
+      "title": "Epidemiology",
+      "description": "The characteristics of associated patients, such as age, gender, race etc.",
+      "type": "string"
+    },
+    "pathophysiology": {
+      "type": "array",
+      "items": {
+        "title": "Pathophysiology",
+        "description": "Changes in the normal mechanical, physical, and biochemical functions that are associated with this activity or condition.",
+        "type": "string"
+      }
+    }
+  }
+}

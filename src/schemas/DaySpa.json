@@ -1,0 +1,380 @@
+{
+  "id": "DaySpa.json",
+  "title": "dayspa",
+  "format": "http://schema.org/DaySpa",
+  "media": {
+    "type": "application/json;profile=http://schema.org/DaySpa"
+  },
+  "properties": {
+    "branchOf": {
+      "type": "string",
+      "x-$ref": "organization"
+    },
+    "currenciesAccepted": {
+      "title": "Currencies Accepted",
+      "description": "The currency accepted (in ISO 4217 currency format).",
+      "type": "string"
+    },
+    "openingHours": {
+      "type": "string",
+      "x-$ref": "duration"
+    },
+    "paymentAccepted": {
+      "type": "array",
+      "items": {
+        "title": "Payment Accepted",
+        "description": "Cash, credit card, etc.",
+        "type": "string"
+      }
+    },
+    "priceRange": {
+      "title": "Price Range",
+      "description": "The price range of the business, for example $$$.",
+      "type": "string"
+    },
+    "address": {
+      "type": "string",
+      "x-$ref": "postaladdress"
+    },
+    "aggregateRating": {
+      "type": "string",
+      "x-$ref": "aggregaterating"
+    },
+    "containedIn": {
+      "type": "string",
+      "x-$ref": "place"
+    },
+    "event": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "event"
+      }
+    },
+    "faxNumber": {
+      "title": "Fax Number",
+      "description": "The fax number.",
+      "type": "string"
+    },
+    "geo": {
+      "title": "Geo",
+      "description": "The geo coordinates of the place.",
+      "anyOf": [
+        {
+          "type": "string",
+          "x-$ref": "geocoordinates"
+        },
+        {
+          "type": "string",
+          "x-$ref": "geoshape"
+        }
+      ]
+    },
+    "globalLocationNumber": {
+      "title": "Global Location Number",
+      "description": "The Global Location Number (GLN, sometimes also referred to as International Location Number or ILN) of the respective organization, person, or place. The GLN is a 13-digit number used to identify parties and physical locations.",
+      "type": "string"
+    },
+    "interactionCount": {
+      "type": "array",
+      "items": {
+        "title": "Interaction Count",
+        "description": "A count of a specific user interactions with this item—for example, 20 UserLikes, 5 UserComments, or 300 UserDownloads. The user interaction type should be one of the sub types of UserInteraction.",
+        "type": "string"
+      }
+    },
+    "isicV4": {
+      "title": "Isic V4",
+      "description": "The International Standard of Industrial Classification of All Economic Activities (ISIC), Revision 4 code for a particular organization, business person, or place.",
+      "type": "string"
+    },
+    "logo": {
+      "type": "array",
+      "items": {
+        "title": "Logo",
+        "description": "A logo associated with an organization.",
+        "anyOf": [
+          {
+            "type": "string",
+            "format": "uri"
+          },
+          {
+            "type": "string",
+            "x-$ref": "imageobject"
+          }
+        ]
+      }
+    },
+    "map": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/map",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "openingHoursSpecification": {
+      "type": "string",
+      "x-$ref": "openinghoursspecification"
+    },
+    "photo": {
+      "type": "array",
+      "items": {
+        "title": "Photo",
+        "description": "A photograph of this place.",
+        "anyOf": [
+          {
+            "type": "string",
+            "x-$ref": "imageobject"
+          },
+          {
+            "type": "string",
+            "x-$ref": "photograph"
+          }
+        ]
+      }
+    },
+    "review": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "review"
+      }
+    },
+    "telephone": {
+      "title": "Telephone",
+      "description": "The telephone number.",
+      "type": "string"
+    },
+    "additionalType": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/additionalType",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "alternateName": {
+      "type": "array",
+      "items": {
+        "title": "Alternate Name",
+        "description": "An alias for the item.",
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "array",
+      "items": {
+        "title": "Description",
+        "description": "A short description of the item.",
+        "type": "string"
+      }
+    },
+    "image": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/image",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "name": {
+      "title": "Name",
+      "description": "The name of the item.",
+      "type": "string"
+    },
+    "sameAs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/sameAs",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "brand": {
+      "title": "Brand",
+      "description": "The brand(s) associated with a product or service, or the brand(s) maintained by an organization or business person.",
+      "anyOf": [
+        {
+          "type": "string",
+          "x-$ref": "organization"
+        },
+        {
+          "type": "string",
+          "x-$ref": "brand"
+        }
+      ]
+    },
+    "contactPoint": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "contactpoint"
+      }
+    },
+    "department": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "organization"
+      }
+    },
+    "duns": {
+      "title": "Duns",
+      "description": "The Dun & Bradstreet DUNS number for identifying an organization or business person.",
+      "type": "string"
+    },
+    "email": {
+      "type": "array",
+      "items": {
+        "title": "Email",
+        "description": "Email address.",
+        "type": "string"
+      }
+    },
+    "employee": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "person"
+      }
+    },
+    "founder": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "person"
+      }
+    },
+    "foundingDate": {
+      "title": "Founding Date",
+      "description": "The date that this organization was founded.",
+      "type": "string",
+      "format": "date"
+    },
+    "hasPOS": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "place"
+      }
+    },
+    "legalName": {
+      "title": "Legal Name",
+      "description": "The official name of the organization, e.g. the registered company name.",
+      "type": "string"
+    },
+    "location": {
+      "title": "Location",
+      "description": "The location of the event, organization or action.",
+      "anyOf": [
+        {
+          "type": "string",
+          "x-$ref": "postaladdress"
+        },
+        {
+          "type": "string",
+          "x-$ref": "place"
+        }
+      ]
+    },
+    "makesOffer": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "offer"
+      }
+    },
+    "member": {
+      "type": "array",
+      "items": {
+        "title": "Member",
+        "description": "A member of this organization.",
+        "anyOf": [
+          {
+            "type": "string",
+            "x-$ref": "organization"
+          },
+          {
+            "type": "string",
+            "x-$ref": "person"
+          }
+        ]
+      }
+    },
+    "naics": {
+      "title": "Naics",
+      "description": "The North American Industry Classification System (NAICS) code for a particular organization or business person.",
+      "type": "string"
+    },
+    "owns": {
+      "type": "array",
+      "items": {
+        "title": "Owns",
+        "description": "Products owned by the organization or person.",
+        "anyOf": [
+          {
+            "type": "string",
+            "x-$ref": "ownershipinfo"
+          },
+          {
+            "type": "string",
+            "x-$ref": "product"
+          }
+        ]
+      }
+    },
+    "seeks": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "demand"
+      }
+    },
+    "subOrganization": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "organization"
+      }
+    },
+    "taxID": {
+      "title": "Tax ID",
+      "description": "The Tax / Fiscal ID of the organization or person, e.g. the TIN in the US or the CIF/NIF in Spain.",
+      "type": "string"
+    },
+    "vatID": {
+      "title": "Vat ID",
+      "description": "The Value-added Tax ID of the organisation or person.",
+      "type": "string"
+    }
+  }
+}

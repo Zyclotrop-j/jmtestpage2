@@ -1,0 +1,116 @@
+{
+  "id": "Service.json",
+  "title": "service",
+  "format": "http://schema.org/Service",
+  "media": {
+    "type": "application/json;profile=http://schema.org/Service"
+  },
+  "type": "object",
+  "properties": {
+    "additionalType": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/additionalType",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "alternateName": {
+      "type": "array",
+      "items": {
+        "title": "Alternate Name",
+        "description": "An alias for the item.",
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "array",
+      "items": {
+        "title": "Description",
+        "description": "A short description of the item.",
+        "type": "string"
+      }
+    },
+    "image": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/image",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "name": {
+      "title": "Name",
+      "description": "The name of the item.",
+      "type": "string"
+    },
+    "sameAs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/sameAs",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "availableChannel": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "servicechannel"
+      }
+    },
+    "produces": {
+      "type": "string",
+      "x-$ref": "thing"
+    },
+    "provider": {
+      "title": "Provider",
+      "description": "The organization or agency that is providing the service.",
+      "anyOf": [
+        {
+          "type": "string",
+          "x-$ref": "organization"
+        },
+        {
+          "type": "string",
+          "x-$ref": "person"
+        }
+      ]
+    },
+    "serviceArea": {
+      "type": "string",
+      "x-$ref": "administrativearea"
+    },
+    "serviceAudience": {
+      "type": "string",
+      "x-$ref": "audience"
+    },
+    "serviceType": {
+      "title": "Service Type",
+      "description": "The type of service being offered, e.g. veterans' benefits, emergency relief, etc.",
+      "type": "string"
+    }
+  }
+}

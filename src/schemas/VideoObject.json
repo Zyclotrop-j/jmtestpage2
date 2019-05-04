@@ -1,0 +1,581 @@
+{
+  "id": "VideoObject.json",
+  "title": "videoobject",
+  "format": "http://schema.org/VideoObject",
+  "media": {
+    "type": "application/json;profile=http://schema.org/VideoObject"
+  },
+  "type": "object",
+  "properties": {
+    "associatedArticle": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "newsarticle"
+      }
+    },
+    "bitrate": {
+      "title": "Bitrate",
+      "description": "The bitrate of the media object.",
+      "type": "string"
+    },
+    "contentSize": {
+      "title": "Content Size",
+      "description": "File size in (mega/kilo) bytes.",
+      "type": "string"
+    },
+    "contentUrl": {
+      "type": "string",
+      "format": "uri"
+    },
+    "duration": {
+      "type": "string",
+      "x-$ref": "duration"
+    },
+    "embedUrl": {
+      "type": "string",
+      "format": "uri"
+    },
+    "encodesCreativeWork": {
+      "type": "string",
+      "x-$ref": "creativework"
+    },
+    "encodingFormat": {
+      "title": "Encoding Format",
+      "description": "mp3, mpeg4, etc.",
+      "type": "string"
+    },
+    "expires": {
+      "title": "Expires",
+      "description": "Date the content expires and is no longer useful or available. Useful for videos.",
+      "type": "string",
+      "format": "date"
+    },
+    "height": {
+      "title": "Height",
+      "description": "The height of the item.",
+      "anyOf": [
+        {
+          "type": "string",
+          "x-$ref": "distance"
+        },
+        {
+          "type": "string",
+          "x-$ref": "quantitativevalue"
+        }
+      ]
+    },
+    "playerType": {
+      "type": "array",
+      "items": {
+        "title": "Player Type",
+        "description": "Player type required—for example, Flash or Silverlight.",
+        "type": "string"
+      }
+    },
+    "productionCompany": {
+      "type": "string",
+      "x-$ref": "organization"
+    },
+    "publication": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "publicationevent"
+      }
+    },
+    "regionsAllowed": {
+      "type": "string",
+      "x-$ref": "place"
+    },
+    "requiresSubscription": {
+      "title": "Requires Subscription",
+      "description": "Indicates if use of the media require a subscription  (either paid or free). Allowed values are true or false (note that an earlier version had 'yes', 'no').",
+      "type": "boolean"
+    },
+    "uploadDate": {
+      "title": "Upload Date",
+      "description": "Date when this media object was uploaded to this site.",
+      "type": "string",
+      "format": "date"
+    },
+    "width": {
+      "title": "Width",
+      "description": "The width of the item.",
+      "anyOf": [
+        {
+          "type": "string",
+          "x-$ref": "distance"
+        },
+        {
+          "type": "string",
+          "x-$ref": "quantitativevalue"
+        }
+      ]
+    },
+    "about": {
+      "type": "string",
+      "x-$ref": "thing"
+    },
+    "accessibilityAPI": {
+      "type": "array",
+      "items": {
+        "title": "Accessibility API",
+        "description": "Indicates that the resource is compatible with the referenced accessibility API (WebSchemas wiki lists possible values).\n     ",
+        "type": "string"
+      }
+    },
+    "accessibilityControl": {
+      "type": "array",
+      "items": {
+        "title": "Accessibility Control",
+        "description": "Identifies input methods that are sufficient to fully control the described resource (WebSchemas wiki lists possible values).",
+        "type": "string"
+      }
+    },
+    "accessibilityFeature": {
+      "type": "array",
+      "items": {
+        "title": "Accessibility Feature",
+        "description": "Content features of the resource, such as accessible media, alternatives and supported enhancements for accessibility (WebSchemas wiki lists possible values).",
+        "type": "string"
+      }
+    },
+    "accessibilityHazard": {
+      "type": "array",
+      "items": {
+        "title": "Accessibility Hazard",
+        "description": "A characteristic of the described resource that is physiologically dangerous to some users. Related to WCAG 2.0 guideline 2.3. (WebSchemas wiki lists possible values)",
+        "type": "string"
+      }
+    },
+    "accountablePerson": {
+      "type": "string",
+      "x-$ref": "person"
+    },
+    "aggregateRating": {
+      "type": "string",
+      "x-$ref": "aggregaterating"
+    },
+    "alternativeHeadline": {
+      "type": "array",
+      "items": {
+        "title": "Alternative Headline",
+        "description": "A secondary title of the CreativeWork.",
+        "type": "string"
+      }
+    },
+    "associatedMedia": {
+      "type": "string",
+      "x-$ref": "mediaobject"
+    },
+    "audience": {
+      "type": "string",
+      "x-$ref": "audience"
+    },
+    "audio": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "audioobject"
+      }
+    },
+    "author": {
+      "title": "Author",
+      "description": "The author of this content. Please note that author is special in that HTML 5 provides a special mechanism for indicating authorship via the rel tag. That is equivalent to this and may be used interchangeably.",
+      "anyOf": [
+        {
+          "type": "string",
+          "x-$ref": "organization"
+        },
+        {
+          "type": "string",
+          "x-$ref": "person"
+        }
+      ]
+    },
+    "award": {
+      "type": "array",
+      "items": {
+        "title": "Award",
+        "description": "An award won by this person or for this creative work.",
+        "type": "string"
+      }
+    },
+    "citation": {
+      "type": "array",
+      "items": {
+        "title": "Citation",
+        "description": "A citation or reference to another creative work, such as another publication, web page, scholarly article, etc.",
+        "anyOf": [
+          {
+            "type": "string",
+            "x-$ref": "creativework"
+          },
+          {
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "comment": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "usercomments"
+      }
+    },
+    "contentLocation": {
+      "type": "string",
+      "x-$ref": "place"
+    },
+    "contentRating": {
+      "type": "array",
+      "items": {
+        "title": "Content Rating",
+        "description": "Official rating of a piece of content—for example,'MPAA PG-13'.",
+        "type": "string"
+      }
+    },
+    "contributor": {
+      "type": "array",
+      "items": {
+        "title": "Contributor",
+        "description": "A secondary contributor to the CreativeWork.",
+        "anyOf": [
+          {
+            "type": "string",
+            "x-$ref": "organization"
+          },
+          {
+            "type": "string",
+            "x-$ref": "person"
+          }
+        ]
+      }
+    },
+    "copyrightHolder": {
+      "title": "Copyright Holder",
+      "description": "The party holding the legal copyright to the CreativeWork.",
+      "anyOf": [
+        {
+          "type": "string",
+          "x-$ref": "organization"
+        },
+        {
+          "type": "string",
+          "x-$ref": "person"
+        }
+      ]
+    },
+    "copyrightYear": {
+      "title": "Copyright Year",
+      "description": "The year during which the claimed copyright for the CreativeWork was first asserted.",
+      "type": "number"
+    },
+    "creator": {
+      "title": "Creator",
+      "description": "The creator/author of this CreativeWork or UserComments. This is the same as the Author property for CreativeWork.",
+      "anyOf": [
+        {
+          "type": "string",
+          "x-$ref": "organization"
+        },
+        {
+          "type": "string",
+          "x-$ref": "person"
+        }
+      ]
+    },
+    "dateCreated": {
+      "title": "Date Created",
+      "description": "The date on which the CreativeWork was created.",
+      "type": "string",
+      "format": "date"
+    },
+    "dateModified": {
+      "title": "Date Modified",
+      "description": "The date on which the CreativeWork was most recently modified.",
+      "type": "string",
+      "format": "date"
+    },
+    "datePublished": {
+      "title": "Date Published",
+      "description": "Date of first broadcast/publication.",
+      "type": "string",
+      "format": "date"
+    },
+    "discussionUrl": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/discussionUrl",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "editor": {
+      "type": "string",
+      "x-$ref": "person"
+    },
+    "educationalAlignment": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "alignmentobject"
+      }
+    },
+    "educationalUse": {
+      "title": "Educational Use",
+      "description": "The purpose of a work in the context of education; for example, 'assignment', 'group work'.",
+      "type": "string"
+    },
+    "encoding": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "mediaobject"
+      }
+    },
+    "genre": {
+      "title": "Genre",
+      "description": "Genre of the creative work",
+      "type": "string"
+    },
+    "headline": {
+      "title": "Headline",
+      "description": "Headline of the article",
+      "type": "string"
+    },
+    "inLanguage": {
+      "title": "In Language",
+      "description": "The language of the content. please use one of the language codes from the IETF BCP 47 standard.",
+      "type": "string"
+    },
+    "interactionCount": {
+      "type": "array",
+      "items": {
+        "title": "Interaction Count",
+        "description": "A count of a specific user interactions with this item—for example, 20 UserLikes, 5 UserComments, or 300 UserDownloads. The user interaction type should be one of the sub types of UserInteraction.",
+        "type": "string"
+      }
+    },
+    "interactivityType": {
+      "title": "Interactivity Type",
+      "description": "The predominant mode of learning supported by the learning resource. Acceptable values are 'active', 'expositive', or 'mixed'.",
+      "type": "string"
+    },
+    "isBasedOnUrl": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/isBasedOnUrl",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "isFamilyFriendly": {
+      "title": "Is Family Friendly",
+      "description": "Indicates whether this content is family friendly.",
+      "type": "boolean"
+    },
+    "keywords": {
+      "title": "Keywords",
+      "description": "The keywords/tags used to describe this content.",
+      "type": "string"
+    },
+    "learningResourceType": {
+      "title": "Learning Resource Type",
+      "description": "The predominant type or kind characterizing the learning resource. For example, 'presentation', 'handout'.",
+      "type": "string"
+    },
+    "mentions": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "thing"
+      }
+    },
+    "offers": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "offer"
+      }
+    },
+    "provider": {
+      "title": "Provider",
+      "description": "The organization or agency that is providing the service.",
+      "anyOf": [
+        {
+          "type": "string",
+          "x-$ref": "organization"
+        },
+        {
+          "type": "string",
+          "x-$ref": "person"
+        }
+      ]
+    },
+    "publisher": {
+      "type": "string",
+      "x-$ref": "organization"
+    },
+    "publishingPrinciples": {
+      "type": "string",
+      "format": "uri"
+    },
+    "review": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "review"
+      }
+    },
+    "sourceOrganization": {
+      "type": "string",
+      "x-$ref": "organization"
+    },
+    "text": {
+      "title": "Text",
+      "description": "The textual content of this CreativeWork.",
+      "type": "string"
+    },
+    "thumbnailUrl": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/thumbnailUrl",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "timeRequired": {
+      "type": "string",
+      "x-$ref": "duration"
+    },
+    "typicalAgeRange": {
+      "title": "Typical Age Range",
+      "description": "The typical expected age range, e.g. '7-9', '11-'.",
+      "type": "string"
+    },
+    "version": {
+      "title": "Version",
+      "description": "The version of the CreativeWork embodied by a specified resource.",
+      "type": "number"
+    },
+    "video": {
+      "type": "string",
+      "items": {
+        "type": "string",
+        "x-$ref": "videoobject"
+      }
+    },
+    "additionalType": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/additionalType",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "alternateName": {
+      "type": "array",
+      "items": {
+        "title": "Alternate Name",
+        "description": "An alias for the item.",
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "array",
+      "items": {
+        "title": "Description",
+        "description": "A short description of the item.",
+        "type": "string"
+      }
+    },
+    "image": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/image",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "name": {
+      "title": "Name",
+      "description": "The name of the item.",
+      "type": "string"
+    },
+    "sameAs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "links": [
+          {
+            "rel": "http://schema.org/sameAs",
+            "href": "{+$}",
+            "linkSource": 2
+          }
+        ]
+      }
+    },
+    "url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "caption": {
+      "title": "Caption",
+      "description": "The caption for this object.",
+      "type": "string"
+    },
+    "thumbnail": {
+      "type": "string",
+      "x-$ref": "imageobject"
+    },
+    "transcript": {
+      "title": "Transcript",
+      "description": "If this MediaObject is an AudioObject or VideoObject, the transcript of that object.",
+      "type": "string"
+    },
+    "videoFrameSize": {
+      "title": "Video Frame Size",
+      "description": "The frame size of the video.",
+      "type": "string"
+    },
+    "videoQuality": {
+      "title": "Video Quality",
+      "description": "The quality of the video.",
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,506 @@
+{
+  "global": {
+    "animation": {
+      "ui:description": "The animation configuration for the Box. default: {\n  \"duration\": \"1s\",\n  \"jiggle\": {\"duration\": \"0.1s\"}\n}"
+    },
+    "borderSize": {
+      "ui:description": "The size of the border. default: {\n  \"xsmall\": \"1px\",\n  \"small\": \"2px\",\n  \"medium\": \"4px\",\n  \"large\": \"12px\",\n  \"xlarge\": \"24px\"\n}"
+    },
+    "breakpoints": {
+      "ui:description": "The possible breakpoints that could affect font-size and max-width default: {\n  \"small\": {\n    \"value\": 768,\n    \"borderSize\": {\n      \"xsmall\": \"1px\",\n      \"small\": \"2px\",\n      \"medium\": \"4px\",\n      \"large\": \"6px\",\n      \"xlarge\": \"12px\"\n    },\n    \"edgeSize\": {\n      \"none\": \"0px\",\n      \"hair\": \"1px\",\n      \"xxsmall\": \"2px\",\n      \"xsmall\": \"3px\",\n      \"small\": \"6px\",\n      \"medium\": \"12px\",\n      \"large\": \"24px\",\n      \"xlarge\": \"48px\"\n    },\n    \"size\": {\n      \"xxsmall\": \"24px\",\n      \"xsmall\": \"48px\",\n      \"small\": \"96px\",\n      \"medium\": \"192px\",\n      \"large\": \"384px\",\n      \"xlarge\": \"768px\",\n      \"full\": \"100%\"\n    }\n  },\n  \"medium\": {\"value\": 1536},\n  \"large\": {}\n}"
+    },
+    "colors": {
+      "active": {
+        "ui:description": "color used on active hover state. Type: string. Default: \"rgba(221, 221, 221, 0.5)\". Affected: Button, Calendar, Carousel, Video"
+      },
+      "black": {
+        "ui:description": "shade of black. Type: string. Default: \"#000000\". Affected: Anchor, Button, CheckBox, RadioButton, Tab"
+      },
+      "border": {
+        "ui:description": "The color of the border. default: {\n  \"dark\": \"rgba(255,255,255,0.33)\",\n  \"light\": \"rgba(0,0,0,0.33)\"\n}"
+      },
+      "brand": {
+        "ui:description": "The light version of the border. default: \"#7D4CDB\""
+      },
+      "control": {
+        "ui:description": "The color for the edge controls. default: {\"dark\": \"accent-1\", \"light\": \"brand\"}"
+      },
+      "focus": {
+        "ui:description": "The color of the focus. default: \"#6FFFB0\""
+      },
+      "placeholder": {
+        "ui:description": "The placeholder color used for the component. default: \"#AAAAAA\""
+      },
+      "text": {
+        "ui:description": "The color of the text label. default: {\"dark\": \"#f8f8f8\", \"light\": \"#444444\"}"
+      },
+      "white": {
+        "ui:description": "shade of white. Type: string. Default: \"#FFFFFF\". Affected: Anchor, Button, CheckBox, RadioButton, Tab"
+      },
+      "icon": {
+        "ui:description": "The color used for Carousel icons. default: {\n  \"0\": \"#\",\n  \"1\": \"6\",\n  \"2\": \"6\",\n  \"3\": \"6\",\n  \"4\": \"6\",\n  \"5\": \"6\",\n  \"6\": \"6\",\n  \"dark\": \"#f8f8f8\",\n  \"light\": \"#666666\"\n}"
+      }
+    },
+    "elevation": {
+      "ui:description": "The possible shadows in Box elevation. default: {\n  \"light\": {\n    \"none\": \"none\",\n    \"xsmall\": \"0px 1px 2px rgba(0, 0, 0, 0.20)\",\n    \"small\": \"0px 2px 4px rgba(0, 0, 0, 0.20)\",\n    \"medium\": \"0px 4px 8px rgba(0, 0, 0, 0.20)\",\n    \"large\": \"0px 8px 16px rgba(0, 0, 0, 0.20)\",\n    \"xlarge\": \"0px 12px 24px rgba(0, 0, 0, 0.20)\"\n  },\n  \"dark\": {\n    \"none\": \"none\",\n    \"xsmall\": \"0px 2px 2px rgba(255, 255, 255, 0.40)\",\n    \"small\": \"0px 4px 4px rgba(255, 255, 255, 0.40)\",\n    \"medium\": \"0px 6px 8px rgba(255, 255, 255, 0.40)\",\n    \"large\": \"0px 8px 16px rgba(255, 255, 255, 0.40)\",\n    \"xlarge\": \"0px 12px 24px rgba(255, 255, 255, 0.40)\"\n  }\n}"
+    },
+    "opacity": {
+      "medium": {
+        "ui:description": "The value used when opacity is set to true. default: 0.4"
+      }
+    },
+    "size": {
+      "ui:description": "The possible sizes for Circle Meter width. default: {\n  \"xxsmall\": \"48px\",\n  \"xsmall\": \"96px\",\n  \"small\": \"192px\",\n  \"medium\": \"384px\",\n  \"large\": \"768px\",\n  \"xlarge\": \"1152px\",\n  \"xxlarge\": \"1536px\",\n  \"full\": \"100%\"\n}"
+    },
+    "edgeSize": {
+      "ui:description": "The possible sizes for margin. default: {\n  \"none\": \"0px\",\n  \"hair\": \"1px\",\n  \"xxsmall\": \"3px\",\n  \"xsmall\": \"6px\",\n  \"small\": \"12px\",\n  \"medium\": \"24px\",\n  \"large\": \"48px\",\n  \"xlarge\": \"96px\",\n  \"responsiveBreakpoint\": \"small\"\n}",
+      "responsiveBreakpoint": {
+        "ui:description": "The actual breakpoint to trigger changes in the video component layout. default: \"small\""
+      },
+      "xsmall": {
+        "ui:description": "The width of the video scrubber. default: \"6px\""
+      }
+    },
+    "focus": {
+      "border": {
+        "color": {
+          "ui:description": "The color around the component when in focus. default: \"focus\""
+        }
+      }
+    },
+    "hover": {
+      "color": {
+        "ui:description": "The background color when hovering. default: {\"dark\": \"white\", \"light\": \"black\"}"
+      }
+    },
+    "control": {
+      "disabled": {
+        "opacity": {
+          "ui:description": "The opacity when a component is disabled. default: 0.3"
+        }
+      },
+      "border": {
+        "color": {
+          "ui:description": "The border color. default: \"border\""
+        },
+        "radius": {
+          "ui:description": "The border radius. default: \"4px\""
+        },
+        "width": {
+          "ui:description": "The border width. default: \"1px\""
+        }
+      }
+    },
+    "drop": {
+      "background": {
+        "ui:description": "The background color of Drop default: \"#ffffff\""
+      },
+      "border": {
+        "radius": {
+          "ui:description": "The corner radius default: \"0px\""
+        }
+      },
+      "extend": {
+        "ui:description": "Any additional style for Drop. default: \"any CSS\"\n(props) => {}"
+      },
+      "shadowSize": {
+        "ui:description": "Elevated height of the Drop default: \"small\""
+      },
+      "zIndex": {
+        "ui:description": "The stack order of the Drop default: \"20\""
+      }
+    },
+    "input": {
+      "weight": {
+        "ui:description": "The font weight of the text entered. default: 600"
+      },
+      "padding": {
+        "ui:description": "The padding of the text. default: \"12px\""
+      }
+    },
+    "spacing": {
+      "ui:description": "The size of the edge controls thumb. default: \"24px\""
+    }
+  },
+  "box": {
+    "extend": {
+      "ui:description": "Any additional style for the Box. default: \"any CSS\"\n(props) => {}"
+    },
+    "responsiveBreakpoint": {
+      "ui:description": "The actual breakpoint to trigger changes in the border, direction, gap, margin, pad, and round. default: \"small\""
+    }
+  },
+  "grid": {
+    "extend": {
+      "ui:description": "Any additional style for the Grid. default: \"any CSS\"\n(props) => {}"
+    }
+  },
+  "layer": {
+    "background": {
+      "ui:description": "The background color of the Layer Container. default: \"white\""
+    },
+    "container": {
+      "zIndex": {
+        "ui:description": "The stack order of Layer Container. default: \"15\""
+      }
+    },
+    "extend": {
+      "ui:description": "Any additional style for Layer. default: \"any CSS\"\n(props) => {}"
+    },
+    "overlay": {
+      "background": {
+        "ui:description": "The background of the Layer overlay. default: \"rgba(0, 0, 0, 0.5)\""
+      }
+    },
+    "responsiveBreakpoint": {
+      "ui:description": "The actual breakpoint to trigger changes in the border, direction, gap, margin, pad, and round. default: \"small\""
+    },
+    "zIndex": {
+      "ui:description": "The stack order of Layer. default: \"10\""
+    }
+  },
+  "stack": {
+    "extend": {
+      "ui:description": "Any additional style for the control of the Stack component. default: \"any CSS\"\n(props) => {}"
+    }
+  },
+  "heading": {
+    "extend": {
+      "ui:description": "Any additional style for Heading. default: \"any CSS\"\n(props) => {}"
+    },
+    "level": {
+      "ui:description": "The level that impacts line height, max width, font size, weight and family of the Heading. default: {\n  \"1\": {\n    \"font\": {},\n    \"small\": {\n      \"size\": \"34px\",\n      \"height\": \"40px\",\n      \"maxWidth\": \"816px\"\n    },\n    \"medium\": {\n      \"size\": \"50px\",\n      \"height\": \"56px\",\n      \"maxWidth\": \"1200px\"\n    },\n    \"large\": {\n      \"size\": \"82px\",\n      \"height\": \"88px\",\n      \"maxWidth\": \"1968px\"\n    },\n    \"xlarge\": {\n      \"size\": \"114px\",\n      \"height\": \"120px\",\n      \"maxWidth\": \"2736px\"\n    }\n  },\n  \"2\": {\n    \"font\": {},\n    \"small\": {\n      \"size\": \"26px\",\n      \"height\": \"32px\",\n      \"maxWidth\": \"624px\"\n    },\n    \"medium\": {\n      \"size\": \"34px\",\n      \"height\": \"40px\",\n      \"maxWidth\": \"816px\"\n    },\n    \"large\": {\n      \"size\": \"50px\",\n      \"height\": \"56px\",\n      \"maxWidth\": \"1200px\"\n    },\n    \"xlarge\": {\n      \"size\": \"66px\",\n      \"height\": \"72px\",\n      \"maxWidth\": \"1584px\"\n    }\n  },\n  \"3\": {\n    \"font\": {},\n    \"small\": {\n      \"size\": \"22px\",\n      \"height\": \"28px\",\n      \"maxWidth\": \"528px\"\n    },\n    \"medium\": {\n      \"size\": \"26px\",\n      \"height\": \"32px\",\n      \"maxWidth\": \"624px\"\n    },\n    \"large\": {\n      \"size\": \"34px\",\n      \"height\": \"40px\",\n      \"maxWidth\": \"816px\"\n    },\n    \"xlarge\": {\n      \"size\": \"42px\",\n      \"height\": \"48px\",\n      \"maxWidth\": \"1008px\"\n    }\n  },\n  \"4\": {\n    \"font\": {},\n    \"small\": {\n      \"size\": \"18px\",\n      \"height\": \"24px\",\n      \"maxWidth\": \"432px\"\n    },\n    \"medium\": {\n      \"size\": \"18px\",\n      \"height\": \"24px\",\n      \"maxWidth\": \"432px\"\n    },\n    \"large\": {\n      \"size\": \"18px\",\n      \"height\": \"24px\",\n      \"maxWidth\": \"432px\"\n    },\n    \"xlarge\": {\n      \"size\": \"18px\",\n      \"height\": \"24px\",\n      \"maxWidth\": \"432px\"\n    }\n  },\n  \"5\": {\n    \"font\": {},\n    \"small\": {\n      \"size\": \"16px\",\n      \"height\": \"22px\",\n      \"maxWidth\": \"384px\"\n    },\n    \"medium\": {\n      \"size\": \"16px\",\n      \"height\": \"22px\",\n      \"maxWidth\": \"384px\"\n    },\n    \"large\": {\n      \"size\": \"16px\",\n      \"height\": \"22px\",\n      \"maxWidth\": \"384px\"\n    },\n    \"xlarge\": {\n      \"size\": \"16px\",\n      \"height\": \"22px\",\n      \"maxWidth\": \"384px\"\n    }\n  },\n  \"6\": {\n    \"font\": {},\n    \"small\": {\n      \"size\": \"14px\",\n      \"height\": \"20px\",\n      \"maxWidth\": \"336px\"\n    },\n    \"medium\": {\n      \"size\": \"14px\",\n      \"height\": \"20px\",\n      \"maxWidth\": \"336px\"\n    },\n    \"large\": {\n      \"size\": \"14px\",\n      \"height\": \"20px\",\n      \"maxWidth\": \"336px\"\n    },\n    \"xlarge\": {\n      \"size\": \"14px\",\n      \"height\": \"20px\",\n      \"maxWidth\": \"336px\"\n    }\n  }\n}"
+    },
+    "weight": {
+      "ui:description": "Default heading weight used unless a per level heading is defined. default: 600"
+    },
+    "font": {
+      "ui:description": "Default heading font used unless a per level heading is defined. default: {}"
+    },
+    "responsiveBreakpoint": {
+      "ui:description": "The breakpoint to trigger changes in the Heading layout. The actual values will be derived from global.breakpoints. default: \"small\""
+    }
+  },
+  "paragraph": {
+    "ui:description": "The possible sizes of the paragraph in terms of its max-width, font-size and line-height. default: {\n  \"small\": {\n    \"size\": \"14px\",\n    \"height\": \"20px\",\n    \"maxWidth\": \"336px\"\n  },\n  \"medium\": {\n    \"size\": \"18px\",\n    \"height\": \"24px\",\n    \"maxWidth\": \"432px\"\n  },\n  \"large\": {\n    \"size\": \"22px\",\n    \"height\": \"28px\",\n    \"maxWidth\": \"528px\"\n  },\n  \"xlarge\": {\n    \"size\": \"26px\",\n    \"height\": \"32px\",\n    \"maxWidth\": \"624px\"\n  },\n  \"xxlarge\": {\n    \"size\": \"34px\",\n    \"height\": \"40px\",\n    \"maxWidth\": \"816px\"\n  }\n}",
+    "textAlign": {
+      "ui:description": "How to align the text inside the Paragraph. default: string"
+    },
+    "extend": {
+      "ui:description": "Any additional style for the Paragraph. default: \"any CSS\"\n(props) => {}"
+    }
+  },
+  "text": {
+    "ui:description": "The possible sizes of the text in terms of its font-size and line-height. default: {\n  \"xsmall\": {\n    \"size\": \"12px\",\n    \"height\": \"18px\",\n    \"maxWidth\": \"288px\"\n  },\n  \"small\": {\n    \"size\": \"14px\",\n    \"height\": \"20px\",\n    \"maxWidth\": \"336px\"\n  },\n  \"medium\": {\n    \"size\": \"18px\",\n    \"height\": \"24px\",\n    \"maxWidth\": \"432px\"\n  },\n  \"large\": {\n    \"size\": \"22px\",\n    \"height\": \"28px\",\n    \"maxWidth\": \"528px\"\n  },\n  \"xlarge\": {\n    \"size\": \"26px\",\n    \"height\": \"32px\",\n    \"maxWidth\": \"624px\"\n  },\n  \"xxlarge\": {\n    \"size\": \"34px\",\n    \"height\": \"40px\",\n    \"maxWidth\": \"816px\"\n  }\n}"
+  },
+  "accordion": {
+    "icons": {
+      "collapse": {
+        "ui:description": "The icon to use when the panel is expanded. default: <UpIcon />"
+      },
+      "expand": {
+        "ui:description": "The icon to use when the panel is collapsed. default: <DownIcon />"
+      }
+    },
+    "border": {
+      "ui:description": "The border to use in the accordion. default: {\"side\": \"bottom\", \"color\": \"border\"}"
+    }
+  },
+  "anchor": {
+    "color": {
+      "ui:description": "The color of the label text and icon strokes. default: {\"dark\": \"accent-1\", \"light\": \"brand\"}"
+    },
+    "fontWeight": {
+      "ui:description": "The font weight of the label. default: 600"
+    },
+    "textDecoration": {
+      "ui:description": "The text decoration of the label. Refer to MDN for possible values. default: \"none\""
+    },
+    "hover": {
+      "fontWeight": {
+        "ui:description": "The font weight of the label when hovering. default: number"
+      },
+      "textDecoration": {
+        "ui:description": "The text decoration of the label when hovering. Refer to MDN for possible values. default: \"underline\""
+      },
+      "extend": {
+        "ui:description": "Any additional style for the Anchor when hovering. default: \"any CSS\"\n(props) => {}"
+      }
+    },
+    "extend": {
+      "ui:description": "Any additional style for the Anchor. default: \"any CSS\"\n(props) => {}"
+    }
+  },
+  "button": {
+    "border": {
+      "color": {
+        "ui:description": "The color of the border. default: string | { dark: string, light: string }"
+      },
+      "radius": {
+        "ui:description": "The corner radius. default: \"18px\""
+      },
+      "width": {
+        "ui:description": "The border width. default: \"2px\""
+      }
+    },
+    "color": {
+      "ui:description": "The color of the text label. default: string | { dark: string, light: string }"
+    },
+    "primary": {
+      "color": {
+        "ui:description": "The color of the background for primary buttons. default: string | { dark: string, light: string }"
+      }
+    },
+    "disabled": {
+      "opacity": {
+        "ui:description": "The opacity when the button is disabled. default: number"
+      }
+    },
+    "padding": {
+      "horizontal": {
+        "ui:description": "The horizontal padding. default: \"22px\""
+      },
+      "vertical": {
+        "ui:description": "The vertical padding. default: \"4px\""
+      }
+    },
+    "extend": {
+      "ui:description": "Any additional style for the Button. default: \";\""
+    }
+  },
+  "drop": {
+    "maxHeight": {
+      "ui:description": "The max height of the Drop container default: string"
+    }
+  },
+  "menu": {
+    "background": {
+      "ui:description": "The color for the background of the menu Drop when it is open. default: string"
+    },
+    "extend": {
+      "ui:description": "Any additional style for the Menu. default: \"any CSS\"\n(props) => {}"
+    },
+    "icons": {
+      "down": {
+        "ui:description": "The icon to show to the right of the label. default: "
+      }
+    }
+  },
+  "tabs": {
+    "background": {
+      "ui:description": "background styling of Tabs. default: string | object"
+    },
+    "extend": {
+      "ui:description": "Any additional style for Tabs. default: \"any CSS\"\n(props) => {}"
+    },
+    "gap": {
+      "ui:description": "The gap size between the Tabs. default: string"
+    },
+    "header": {
+      "background": {
+        "ui:description": "The background styles of Tabs header. default: string | { dark: string, light: string }"
+      },
+      "extend": {
+        "ui:description": "Any additional style for Tabs header. default: \"any CSS\"\n(props) => {}"
+      }
+    },
+    "panel": {
+      "extend": {
+        "ui:description": "Any additional style for Tabs panel. default: \"any CSS\"\n(props) => {}"
+      }
+    }
+  },
+  "maskedInput": {
+    "extend": {
+      "ui:description": "Any additional style for MaskedInput. default: \"any CSS\"\n(props) => {}"
+    }
+  },
+  "rangeInput": {
+    "extend": {
+      "ui:description": "Any additional style for the RangeInput. default: \"any CSS\"\n(props) => {}"
+    },
+    "thumb": {
+      "color": {
+        "ui:description": "The color of the thumb. default: string | { dark: undefined, light: undefined }"
+      },
+      "extend": {
+        "ui:description": "Any additional style for the thumb. default: \"any CSS\"\n(props) => {}"
+      }
+    },
+    "track": {
+      "color": {
+        "ui:description": "The color of the track. default: \";\""
+      },
+      "extend": {
+        "ui:description": "Any additional style for the track. default: \"any CSS\"\n(props) => {}"
+      },
+      "height": {
+        "ui:description": "The height of the track. default: \"4px\""
+      }
+    }
+  },
+  "rangeSelector": {
+    "background": {
+      "invert": {
+        "color": {
+          "ui:description": "The background color on an invert display. default: \"light-4\""
+        }
+      }
+    },
+    "edge": {
+      "type": {
+        "ui:description": "The edge style type. default: string"
+      }
+    }
+  },
+  "select": {
+    "background": {
+      "ui:description": "The background color used for Select. default: string"
+    },
+    "options": {
+      "container": {
+        "ui:description": "Any valid Box prop for the options container. default: object"
+      },
+      "text": {
+        "ui:description": "Any valid Text prop for text used inside the options container. default: {\"margin\": \"none\"}"
+      }
+    },
+    "container": {
+      "extend": {
+        "ui:description": "Any additional style for the container of the Select component. default: \"any CSS\"\n(props) => {}"
+      }
+    },
+    "control": {
+      "extend": {
+        "ui:description": "Any additional style for the control of the Select component. default: \"any CSS\"\n(props) => {}"
+      }
+    },
+    "icons": {
+      "color": {
+        "ui:description": "The color used for Select icons. default: string | { dark: string, light: string }"
+      },
+      "down": {
+        "ui:description": "The down icon to use for opening the Select. default: "
+      }
+    },
+    "searchInput": {
+      "ui:description": "Component for the Select search input field. default: React.Component"
+    },
+    "step": {
+      "ui:description": "How many suggestions to render at a time. default: 20"
+    }
+  },
+  "textArea": {
+    "extend": {
+      "ui:description": "Any additional style for Text. default: \"any CSS\"\n(props) => {}"
+    },
+    "disabled": {
+      "opacity": {
+        "ui:description": "The opacity when the textArea is disabled. default: number"
+      }
+    }
+  },
+  "textInput": {
+    "extend": {
+      "ui:description": "Any additional style for TextInput. default: \"any CSS\"\n(props) => {}"
+    },
+    "placeholder": {
+      "extend": {
+        "ui:description": "Any additional style for non-string placeholder inside TextInput. default: \"any CSS\"\n(props) => {}"
+      }
+    },
+    "suggestions": {
+      "extend": {
+        "ui:description": "Any additional style for TextInput suggestions. default: \"any CSS\"\n(props) => {}"
+      }
+    },
+    "disabled": {
+      "opacity": {
+        "ui:description": "The opacity when the textInput is disabled. default: number"
+      }
+    }
+  },
+  "diagram": {
+    "extend": {
+      "ui:description": "Any additional style for Diagram. default: \"any CSS\"\n(props) => {}"
+    },
+    "line": {
+      "color": {
+        "ui:description": "The color of the connection line. default: \"accent-1\""
+      }
+    }
+  },
+  "meter": {
+    "color": {
+      "ui:description": "The color used for the Meter. default: \"accent-1\""
+    },
+    "extend": {
+      "ui:description": "Any additional style for Meter. default: \"any CSS\"\n(props) => {}"
+    }
+  },
+  "worldMap": {
+    "color": {
+      "ui:description": "The color for each individual dot when a color is not passed as a prop default: \"light-3\""
+    },
+    "continent": {
+      "active": {
+        "ui:description": "The size of the visual dots belonging to a continent when the continent is being hovered. default: \"8px\""
+      },
+      "base": {
+        "ui:description": "The size of the visual dots belonging to a continent that is not being hovered. default: \"6px\""
+      }
+    },
+    "hover": {
+      "color": {
+        "ui:description": "The color for an individual dot when it is being hovered default: \"light-4\""
+      }
+    },
+    "place": {
+      "active": {
+        "ui:description": "The size of a visual dot for an individual place in the map when it is being hovered. default: \"20px\""
+      },
+      "base": {
+        "ui:description": "The size of the visual dot representing an individual place in the map when it is not being hovered. default: \"8px\""
+      }
+    },
+    "extend": {
+      "ui:description": "Any additional style for the WorldMap. default: \"any CSS\"\n(props) => {}"
+    }
+  },
+  "carousel": {
+    "icons": {
+      "next": {
+        "ui:description": "The icon to use for the next image navigation control. default: "
+      },
+      "previous": {
+        "ui:description": "The icon to use for the previous image navigation control. default: "
+      },
+      "current": {
+        "ui:description": "The icon to use on the middle navigation control. One icon per carousel image. default: "
+      },
+      "color": {
+        "ui:description": "The color used for Carousel icons. default: string"
+      }
+    }
+  },
+  "image": {
+    "extend": {
+      "ui:description": "Any additional style for the Image. default: \"any CSS\"\n(props) => {}"
+    }
+  },
+  "video": {
+    "captions": {
+      "background": {
+        "ui:description": "The caption background color of the video default: \"rgba(0, 0, 0, 0.7)\""
+      }
+    },
+    "scrubber": {
+      "color": {
+        "ui:description": "The background color of the video scrubber. default: \"light-4\""
+      }
+    },
+    "extend": {
+      "ui:description": "Any additional style for Video. default: \"any CSS\"\n(props) => {}"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "id": "Audience.json",
+  "title": "audience",
+  "format": "http://schema.org/Audience",
+  "media": {
+    "type": "application/json;profile=http://schema.org/Audience"
+  },
+  "enum": [
+    "Researcher"
+  ]
+}
