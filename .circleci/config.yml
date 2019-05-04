@@ -7,7 +7,7 @@ jobs:
     steps:
       - run:
           name: Fail job if missing env-vars
-          command: echo ${WEBSITEID} || exit 1
+          command: if [ -z ${WEBSITEID+x} ]; then echo "WEBSITEID found"; else exit 1; fi
       - checkout
       - restore_cache: # special step to restore the dependency cache
           key: dependency-cache-v1-{{ checksum "./src/yarn.lock" }}
