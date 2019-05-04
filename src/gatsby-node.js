@@ -1,16 +1,8 @@
-const websiteid = process.env.WEBSITEID;
+const websiteid = process.env.WEBSITEID || "5ccd2e75c358d60004ebe212";
 const path = require('path');
 const _ = require('lodash');
 const { createRemoteFileNode } = require(`gatsby-source-filesystem`);
 const config = require('./config/SiteConfig');
-
-exports.onCreateNode = ({ node, actions }) => {
-  const { createNodeField } = actions;
-  if (node.internal.type === 'MarkdownRemark' && _.has(node, 'frontmatter') && _.has(node.frontmatter, 'title')) {
-    const slug = `${_.kebabCase(node.frontmatter.title)}`;
-    createNodeField({ node, name: 'slug', value: slug });
-  }
-};
 
 exports.createResolvers = ({
   actions,

@@ -54,20 +54,6 @@ interface Props {
   banner?: string;
 }
 
-const query = graphql`
-  query {
-    file(relativePath: { eq: "IMG_20181111_060935.jpg" }) {
-      childImageSharp {
-        # Specify the image processing specifications right in the query.
-        # Makes it trivial to update as your page's design changes.
-        fluid(maxWidth: 2400) {
-          ...GatsbyImageSharpFluid_withWebp
-        }
-      }
-    }
-  }
-`;
-
 const ImgWrapper = styled.div`
   position: absolute;
   top: -${props =>
@@ -92,18 +78,6 @@ export class Header extends React.PureComponent<Props> {
   public render() {
     return (
       <HeaderWrapper>
-        <ResponsiveContext.Consumer>
-          {size => (
-            <ImgWrapper size={size}>
-              {this.props.banner && false ? (
-                <Img {...this.props.banner} />
-              ) : (
-                <StaticQuery query={query} render={data => <Img fluid={data.file.childImageSharp.fluid} />} />
-              )}
-            </ImgWrapper>
-          )}
-        </ResponsiveContext.Consumer>
-
         <Content>{this.props.children}</Content>
       </HeaderWrapper>
     );

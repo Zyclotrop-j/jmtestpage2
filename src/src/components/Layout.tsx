@@ -125,12 +125,31 @@ export class Layout extends React.Component<{}> {
       },
     };
     const setAnimation = (direction && presets[direction]) || !prevPage ? { from: animations.neutral } : {};
-
+    /*
+      <Header>
+        "{prevPage}" - "{currentPage}"
+      </Header>
+      */
+    /*
+      <StaticQuery
+        query={graphql`
+          query LayoutQuery {
+            site {
+              buildTime(formatString: "DD.MM.YYYY")
+            }
+          }
+        `}
+        render={data => (
+          <Footer>
+            &copy; {split(data.site.buildTime, '.')[2]} by Jannes Mingram. All rights reserved. <br />
+            <a href="https://github.com/mhadaily/gatsby-starter-typescirpt-power-blog">GitHub Repository</a> <br />
+            <span>Last build: {data.site.buildTime}</span>
+          </Footer>
+        )}
+      />
+      */
     return (
       <>
-        <Header>
-          "{prevPage}" - "{currentPage}"
-        </Header>
         <Transition
           items={children}
           keys={item => item.key}
@@ -140,22 +159,6 @@ export class Layout extends React.Component<{}> {
         >
           {ichildren => props => <Animated.div style={props}>{ichildren}</Animated.div>}
         </Transition>
-        <StaticQuery
-          query={graphql`
-            query LayoutQuery {
-              site {
-                buildTime(formatString: "DD.MM.YYYY")
-              }
-            }
-          `}
-          render={data => (
-            <Footer>
-              &copy; {split(data.site.buildTime, '.')[2]} by Jannes Mingram. All rights reserved. <br />
-              <a href="https://github.com/mhadaily/gatsby-starter-typescirpt-power-blog">GitHub Repository</a> <br />
-              <span>Last build: {data.site.buildTime}</span>
-            </Footer>
-          )}
-        />
       </>
     );
   }

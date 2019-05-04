@@ -7,16 +7,14 @@ require('ts-node').register({
 });
 
 const config = require('./config/SiteConfig');
-const pathPrefix = config.pathPrefix === '/' ? '' : config.pathPrefix;
 
 var request = require('sync-request');
 var res = request('GET', 'http://example.com');
 console.log("!!!", res.getBody());
 
 module.exports = {
-  pathPrefix: config.pathPrefix,
   siteMetadata: {
-    siteUrl: config.siteUrl + pathPrefix,
+    siteUrl: config.siteUrl,
   },
   plugins: [
     {
@@ -31,11 +29,9 @@ module.exports = {
       },
     },
     'gatsby-plugin-react-helmet',
-    'gatsby-plugin-styled-components',
     'gatsby-plugin-typescript',
     'gatsby-plugin-sass',
     'gatsby-plugin-manifest',
-    'gatsby-plugin-catch-links',
     'gatsby-plugin-sitemap',
     'gatsby-plugin-lodash',
     'gatsby-transformer-sharp',
@@ -48,13 +44,13 @@ module.exports = {
         hash: 'sha512' // 'sha256', 'sha384' or 'sha512' ('sha512' = default)
       }
     }, */
-    {
+    /* {
       resolve: 'gatsby-source-filesystem',
       options: {
         name: 'post',
         path: `${__dirname}/blog`,
       },
-    },
+    },*/
     {
       resolve: 'gatsby-source-filesystem',
       options: {
@@ -71,7 +67,7 @@ module.exports = {
         includeInDevelopment: false,
       },
     }, */
-    {
+    /* {
       resolve: 'gatsby-transformer-remark',
       options: {
         plugins: [
@@ -92,7 +88,7 @@ module.exports = {
           },
         ],
       },
-    },
+    }, */
     {
       resolve: 'gatsby-plugin-manifest',
       options: {
@@ -122,12 +118,13 @@ module.exports = {
         }
       }
     },
-    {
+    /* {
       resolve: `gatsby-plugin-canonical-urls`,
       options: {
         siteUrl: config.siteUrl,
       },
-    },
+    }, */
+    'gatsby-plugin-styled-components',
     "gatsby-plugin-remove-trailing-slashes"
   ]
 };
