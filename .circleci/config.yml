@@ -9,6 +9,18 @@ jobs:
           name: Fail job if missing env-vars
           command: if [ -z ${WEBSITEID+x} ]; then exit 1; else echo "WEBSITEID found"; fi
       - run:
+          name: Fail job if missing env-vars
+          command: if [ -z ${PAGENAME+x} ]; then exit 1; else echo "PAGENAME found"; fi
+      - run:
+          name: Fail job if missing env-vars
+          command: if [ -z ${SUFFIX+x} ]; then exit 1; else echo "SUFFIX found"; fi
+      - run:
+          name: Fail job if missing env-vars
+          command: if [ -z ${DNSNAME+x} ]; then exit 1; else echo "DNSNAME found"; fi
+      - run:
+          name: Fail job if missing env-vars
+          command: if [ -z ${CUSTOMER+x} ]; then exit 1; else echo "CUSTOMER found"; fi
+      - run:
           name: Install pip
           command: apt-get update -y && apt-get install -y python3-pip
       - checkout
