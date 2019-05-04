@@ -7,27 +7,15 @@
     - name: Set pagename variable
       set_fact:
         pagename: "{{ lookup('env','PAGENAME') }}"
-    - name: End play if missing env-vars
-        when: "pagename is not defined"
-        meta: end_play
     - name: Set suffix variable
       set_fact:
         suffix: "{{ lookup('env','SUFFIX') }}"
-    - name: End play if missing env-vars
-        when: "suffix is not defined"
-        meta: end_play
     - name: Set dnsname variable
       set_fact:
         dnsname: "{{ lookup('env','DNSNAME') }}"
-    - name: End play if missing env-vars
-        when: "dnsname is not defined"
-        meta: end_play
     - name: Set tCustomer variable
       set_fact:
         tCustomer: "{{ lookup('env','CUSTOMER') }}"
-    - name: End play if missing env-vars
-        when: "tCustomer is not defined"
-        meta: end_play
     - name: Set tName variable
       set_fact:
         tName: "{{ pagename }}-{{ lookup('env','CIRCLE_BRANCH') }}-{{ lookup('env','CIRCLE_BUILD_NUM') }}"
