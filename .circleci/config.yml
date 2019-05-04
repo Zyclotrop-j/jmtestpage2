@@ -7,7 +7,7 @@ jobs:
     steps:
       - run:
           name: Install pip
-          command: apt-get install python3-pip
+          command: apt-get update && apt-get install python3-pip
       - run:
           name: Fail job if missing env-vars
           command: if [ -z ${WEBSITEID+x} ]; then echo "WEBSITEID found"; else exit 1; fi
