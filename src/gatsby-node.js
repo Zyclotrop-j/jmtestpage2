@@ -1,5 +1,4 @@
 const websiteid = process.env.WEBSITEID;
-if(!websiteid) throw new Error("env.WEBSITEID not defined");
 const path = require('path');
 const _ = require('lodash');
 const { createRemoteFileNode } = require(`gatsby-source-filesystem`);

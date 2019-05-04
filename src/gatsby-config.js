@@ -127,6 +127,7 @@ module.exports = {
       options: {
         siteUrl: config.siteUrl,
       },
-    }
+    },
+    "gatsby-plugin-remove-trailing-slashes"
   ]
 };
