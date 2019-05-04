@@ -5,6 +5,9 @@ jobs:
     docker:
       - image: node:10.14.0
     steps:
+      - run:
+          name: Fail job if missing env-vars
+          command: echo ${WEBSITEID} || exit 1
       - checkout
       - restore_cache: # special step to restore the dependency cache
           key: dependency-cache-v1-{{ checksum "./src/yarn.lock" }}
@@ -18,20 +21,17 @@ jobs:
           key: dependency-cache-v1-{{ checksum "./src/yarn.lock" }}
           paths:
             - ./src/node_modules
-      - restore_cache: # special step to restore the dependency cache
-          key: gatsby-cache-v1-{{ checksum "./src/package.json" }}-{{ checksum "./src/yarn.lock" }}-{{ checksum "./src/gatsby-config.js" }}-{{ checksum "./src/src/Widget/index.tsx" }}
       - run:
           name: Build
           command: cd src && gatsby build && node ./compileSHAs.js
-      - save_cache: # special step to save the dependency cache
-          key: gatsby-cache-v1-{{ checksum "./src/package.json" }}-{{ checksum "./src/yarn.lock" }}-{{ checksum "./src/gatsby-config.js" }}-{{ checksum "./src/src/Widget/index.tsx" }}
-          paths:
-            - /root/src/.cache
       - store_artifacts:
           path: ./src/public/
       - run:
           name: Copy app-files
           command: cp -r ./src/public/* ./target/
+      -run:
+          name: Install python
+          command: apt-get update -y && apt-get install -y python3-pip python3-dev
       - run:
           name: Install System Packages
           # pip issue :( https://github.com/pyenv/pyenv/issues/1141#issuecomment-381421570
