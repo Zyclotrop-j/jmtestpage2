@@ -32,7 +32,6 @@ module.exports = {
     },
     'gatsby-plugin-react-helmet',
     'gatsby-plugin-styled-components',
-    'gatsby-plugin-offline',
     'gatsby-plugin-typescript',
     'gatsby-plugin-sass',
     'gatsby-plugin-manifest',
@@ -63,7 +62,7 @@ module.exports = {
         path: `${__dirname}/img`,
       },
     },
-    {
+    /* {
       resolve: `gatsby-plugin-google-tagmanager`,
       options: {
         id: config.Google_Tag_Manager_ID,
@@ -71,7 +70,7 @@ module.exports = {
         // Defaults to false meaning GTM will only be loaded in production.
         includeInDevelopment: false,
       },
-    },
+    }, */
     {
       resolve: 'gatsby-transformer-remark',
       options: {
@@ -107,6 +106,7 @@ module.exports = {
         icon: config.favicon,
       },
     },
+    "gatsby-plugin-offline",
     {
       resolve: 'gatsby-plugin-robots-txt',
       options: {
