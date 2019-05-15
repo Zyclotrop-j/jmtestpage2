@@ -1,0 +1,108 @@
+<Modal button={openbutton} focusgroup={focusgroupnr} layer={{ full: true, style: { width: "100vw", height: "100vh" } }} >
+  {close => <>
+    <Box direction="row" justify="between">
+      <Heading level={2} alignSelf="center">{saving ? "Saving" : "Add chlid"}</Heading>
+      <Button icon={<Close />} alignSelf="center" a11yTitle="Close" onClick={close} />
+    </Box>
+    <Grid
+      rows={['auto', 'autorun']}
+      columns={['1/2', '1/2']}
+      gap="small"
+      margin="small"
+      areas={[
+        { name: 'topleft', start: [0, 0], end: [0, 0] },
+        { name: 'bottomleft', start: [0, 1], end: [0, 1] },
+        { name: 'topright', start: [1, 0], end: [1, 0] },
+        { name: 'bottomright', start: [1, 1], end: [1, 1] }
+      ]}
+    >
+      <Heading gridArea="topleft" level={3} alignSelf="center">Create new</Heading>
+      <Grid
+         gridArea="bottomleft"
+        rows={['fill']}
+        columns={{"count": "fill", "size": "small"}}
+        gap="small"
+      >
+        {buttons}
+      </Grid>
+      <Heading  gridArea="topright" level={3} alignSelf="center">Use existing</Heading>
+      <PagingTable
+        gridArea="bottomright"
+        filterable
+        data={tabledata}
+        resizable={false}
+        defaultSorted={["_modified", "type"]}
+        columns={[
+          {
+            id: '_id',
+            Header: <AddCircle />,
+            accessor: '_id',
+            Cell: props => <Button plain a11yTitle="Add this to the content" icon={<AddCircle />} onClick={addChild(props.value, close)} />,
+            filterable: false,
+            width: 25+2*6,
+            sortable: false
+          },
+          {
+            id: 'type',
+            Header: 'Type',
+            accessor: row => row["x-type"].substring("component".length),
+          }, {
+            Header: 'Title',
+            accessor: 'title',
+            filterMethod: (filter, rows) => createFuse(rows, ['title']).search(filter.value),
+            filterAll: true
+          }, {
+            Header: 'Author',
+            accessor: '_author',
+          }, {
+            id: '_created',
+            Header: 'Created',
+            Cell: data => formatRelative(parseISO(data.value), new Date(), { locale: enGB }),
+            accessor: '_created',
+          },
+          {
+            id: '_modified',
+            Header: 'Last modified',
+            Cell: data => formatRelative(parseISO(data.value), new Date(), { locale: enGB }),
+            accessor: '_modified',
+          },
+        ]}
+      />
+    </Grid>
+  </>}
+</Modal>
+
+const openbutton = open => (<Tooltip target={tooltipactivator(open)}>
+  <Box pad="xsmall" round background="brand" >Add Child to {typename} ({where})</Box>
+</Tooltip>);
+
+const groupid = path(props.area[1], props.parent);
+const group = props.components.get(groupid);
+
+const focusgroupnr = groupid; // Pick this values, only because it's unique to this combo; could be anything really though
+
+const existingcomponents = props.components;
+const buttons = props.componentschemas.get().map(schema => (<WidgetForm
+  focusgroup={focusgroupnr}
+  Preview={availableComponents[schema.title] || (() => <div>No Preview available for {schema.title}</div>)}
+  schema={schema}
+  initialValues={{}}
+  button={open => <Button label={`${schema.title.substring("component".length)}`} icon={<Document />} onClick={open} />}
+  title={schema.title}
+  onSubmit={i => console.log(i)}
+  onError={i => console.log(i)}
+/>));
+
+const tabledata = Object.values(toJS(existingcomponents));
+
+const addChild = (childid, closefn) => () => {
+  setSaving(true);
+  new Promise((resolve, reject) => addComponenttoGroup(childid, groupid, resolve, reject, {
+    optimistic: true,
+    parent: props.parent,
+    parentpath: props.area[1]
+  })).then(i => { setSaving(false); closefn(); }).catch(i => { newNotification({
+    message: "Unable to add content",
+    state: i?.message
+  }); setSaving(false); closefn(); });
+};

@@ -41,10 +41,10 @@ export class Headline extends React.PureComponent<Props> {
         gridArea={gridArea}
         level={level}
         margin={{
-          top: margin.top,
-          bottom: margin.bottom,
-          left: margin.left,
-          right: margin.right,
+          top: margin?.top,
+          bottom: margin?.bottom,
+          left: margin?.left,
+          right: margin?.right,
         }}
         size={size}
         textAlign={textAlign}

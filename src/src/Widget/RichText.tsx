@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'gatsby';
 import Img from 'gatsby-image';
-import { Markdown, Paragraph, Anchor } from 'grommet';
+import { Markdown, Paragraph, Anchor, Box } from 'grommet';
 import Image from 'react-shimmer';
 import LazyLoad from 'react-lazyload';
 
@@ -13,13 +13,14 @@ interface Props {
   slug: string;
   timeToRead: number;
   category: string;
+  gridArea: string;
 }
 
 const newline = `\n`;
 
 export class RichText extends React.PureComponent<Props> {
   public render() {
-    const { markdown, urlescaped, escaped, b64 } = this.props;
+    const { markdown, urlescaped, escaped, b64, gridArea } = this.props;
 
     // encode = window.btoa(unescape(encodeURIComponent(str)))
     // decode = decodeURIComponent(escape(window.atob(b64)));
@@ -46,6 +47,10 @@ export class RichText extends React.PureComponent<Props> {
         },
       },
     };
-    return <Markdown components={components}>{pipeline(markdown)}</Markdown>;
+    return (<Box gridArea={gridArea}>
+      <Markdown components={components}>
+        {pipeline(markdown || "")}
+      </Markdown>
+    </Box>);
   }
 }

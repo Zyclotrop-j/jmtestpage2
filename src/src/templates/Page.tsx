@@ -4,29 +4,22 @@ import { graphql } from 'gatsby';
 import PageProps from '../models/PageProps';
 import Helmet from 'react-helmet';
 import { Anchor, Box, Grid, ResponsiveContext, SkipLinks, SkipLink, SkipLinkTarget } from 'grommet';
-import { mq } from '../utils/media';
 import config from '../../config/SiteConfig';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import kebabCase from 'lodash/kebabCase';
-import styled from 'styled-components';
 import Img from 'gatsby-image'; // Imports the fragments as well!
 import { renameKeysWith } from 'ramda-adjunct';
+import { ModernLayout } from "../layouts/modern";
 import components from '../Widget';
-
-const Main = styled.main`
-  position: relative;
-  padding: 0;
-  ${mq('small')(`
-   padding: 0 3rem;
-  `)}
-`;
 
 const availableComponents = renameKeysWith(key => `DATA_Component${key.toLowerCase()}`, components);
 
 export default class Page extends React.PureComponent<PageProps> {
   public render() {
     // pathContext
-    const {
+
+    const { pages, tree: { main, header = {}, footer = {} } } = this.props.pageContext;
+    const { page: {
       path,
       lang,
       tabname,
@@ -39,11 +32,9 @@ export default class Page extends React.PureComponent<PageProps> {
       lastPage,
       nextPage,
       prevPage,
-    } = this.props.pageContext.data;
-
-    const { header, main, footer } = this.props.data.data.page;
-
+    }, ...components } = this.props.data.data;
     // ltr, rtl, auto
+
     return (
       <>
         <Helmet>
@@ -70,97 +61,60 @@ export default class Page extends React.PureComponent<PageProps> {
           <SkipLink id="main" label="Main content" />
           <SkipLink id="footer" label="Footer" />
         </SkipLinks>
-        <Grid
-          as="header"
-          rows={['full']}
-          columns={['auto', 'flex', 'auto']}
-          areas={[
-            { name: 'left', start: [0, 0], end: [1, 0] },
-            { name: 'center', start: [1, 0], end: [2, 0] },
-            { name: 'right', start: [2, 0], end: [3, 0] },
-          ]}
-        >
-          <SkipLinkTarget id="header" />
-          <Box gridArea="left" background="brand">
-            {header.left && header.left.components.map(this.renderSubtree)}
-          </Box>
-          <Box gridArea="center" background="brand">
-            {header.center && header.center.components.map(this.renderSubtree)}
-          </Box>
-          <Box gridArea="right" background="brand">
-            {header.right && header.right.components.map(this.renderSubtree)}
-          </Box>
-        </Grid>
-        <Main>
-          <SkipLinkTarget id="main" />
-          <Box direction="column">{main.components.map(this.renderSubtree)}</Box>
-        </Main>
-        <Grid
-          as="footer"
-          rows={['full']}
-          columns={['auto', 'flex', 'auto']}
-          areas={[
-            { name: 'left', start: [0, 0], end: [1, 0] },
-            { name: 'center', start: [1, 0], end: [2, 0] },
-            { name: 'right', start: [2, 0], end: [3, 0] },
-          ]}
-        >
-          <SkipLinkTarget id="footer" />
-          <Box gridArea="left" background="brand">
-            {footer.left && footer.left.components.map(this.renderSubtree)}
-          </Box>
-          <Box gridArea="center" background="brand">
-            {footer.center && footer.center.components.map(this.renderSubtree)}
-          </Box>
-          <Box gridArea="right" background="brand">
-            {footer.right && footer.right.components.map(this.renderSubtree)}
-          </Box>
-        </Grid>
+        <ModernLayout {...props} __renderSubtree={this.renderSubtree.bind(this, components)} />
       </>
     );
   }
 
-  private renderSubtree({ __typename, ...sprops }) {
-    const Component = availableComponents[__typename];
+  private renderSubtree(components, compo, addProps = {}) {
+    if(!compo) return null;
+    if(Array.isArray(compo)) {
+      return compo.map(i => this.renderSubtree(components, i, addProps));
+    }
+    const { type, id, ...content } = compo;
+    const Component = availableComponents[type];
+    const typename = `${type.substring(5).toLowerCase()}s`;
+    const comp = components[typename];
+    if (!comp) {
+      throw new Error(`Couldn't find comp ${typename}, available are ${Object.keys(components).join(', ')}`);
+    }
+    const props = comp.find(i => i._id === id);
     if (!Component) {
-      throw new Error(`Couldn't find type ${__typename}, available are ${Object.keys(availableComponents).join(', ')}`);
+      throw new Error(`Couldn't find type ${type}, available are ${Object.keys(availableComponents).join(', ')}`);
     }
     return (
-      <ErrorBoundary key={sprops._id}>
-        <Component {...sprops} />
+      <ErrorBoundary key={props._id}>
+        <Component {...props} {...addProps} __children={content} __renderSubtree={this.renderSubtree.bind(this, components)} />
       </ErrorBoundary>
     );
   }
 }
 
 export const postQuery = graphql`
-  fragment components on DATA_Componentgroup {
-    components {
-      __typename
-      ... on DATA_Componenttext {
+  query($pageid: ID!, $DATA_Componentgrid: [ID!], $DATA_Componenttext: [ID!], $DATA_Componentpicture: [ID!], $DATA_Componentrichtext: [ID!], $DATA_Componentbox: [ID!], $DATA_Componentheadline: [ID!]) {
+    data {
+      page(_id: $pageid) {
+        tabname
+        path
+        lang
+        tabname
+        title
+        dir
+        description
+        keywords
+        otherLangs
+        firstPage
+        lastPage
+        nextPage
+        prevPage
+      }
+      componenttexts(_ids: $DATA_Componenttext) {
+        _id
         b64
         urlescaped
         text
       }
-      ... on DATA_Componentheadline {
-        _id
-        a11yTitle
-        alignSelf
-        color
-        href
-        level
-        size
-        textAlign
-        truncate
-      }
-      ... on DATA_Componentrichtext {
-        _id
-        markdown
-        urlescaped
-        escaped
-        b64
-      }
-      ... on DATA_Componentpicture {
+      componentpictures(_ids: $DATA_Componentpicture) {
         _id
         alt
         author {
@@ -183,44 +137,124 @@ export const postQuery = graphql`
           relativePath
           childImageSharp {
             fluid(maxWidth: 2000) {
-              ...GatsbyImageSharpFluid_withWebp
+              tracedSVG
+              base64
+              tracedSVG
+              aspectRatio
+              src
+              srcSet
+              srcWebp
+              srcSetWebp
+              originalName
+              sizes
             }
           }
         }
       }
-    }
-  }
-  query($pageid: ID!) {
-    data {
-      page(_id: $pageid) {
-        header {
-          left {
-            ...components
+      componentrichtexts(_ids: $DATA_Componentrichtext) {
+        _id
+        markdown
+        urlescaped
+        escaped
+        b64
+      }
+      componentgrids(_ids: $DATA_Componentgrid) {
+        _id
+        advanced {
+          align
+          alignContent
+          alignSelf
+          fill
+          justify
+          justifyContent
+        }
+        columns
+        content {
+          _id
+        }
+        gap
+        margin {
+          bottom
+          left
+          right
+          top
+        }
+      }
+      componentboxs(_ids: $DATA_Componentbox) {
+        _id
+        advanced {
+          align
+          alignContent
+          alignSelf
+          basis
+          fill
+          height
+          justify
+          responsive
+          width
+          flex {
+            grow
+            shrink
           }
-          right {
-            ...components
-          }
-          center {
-            ...components
+          overflow {
+            horizontal
+            vertical
           }
         }
-        footer {
-          left {
-            ...components
-          }
-          right {
-            ...components
-          }
-          center {
-            ...components
-          }
+        direction
+        elevation
+        gap
+        wrap
+        animation {
+          delay
+          duration
+          size
+          type
         }
-        main {
-          ...components
+        background {
+          color
+          dark
+          image
+          opacity
+          position
         }
+        border {
+          color
+          side
+          size
+          style
+        }
+        content {
+          _id
+        }
+        margin {
+          bottom
+          left
+          right
+          top
+        }
+        pad {
+          bottom
+          left
+          right
+          top
+        }
+        round {
+          corner
+          size
+        }
+      }
+      componentheadlines(_ids: $DATA_Componentheadline) {
+        _id
+        a11yTitle
+        alignSelf
+        color
+        href
+        level
+        size
+        textAlign
+        truncate
       }
     }
   }
 `;
-
-// Notes: worldMapplace -> place, tableheader -> header, tablefooter -> footer, tablebody -> body, tabsheader -> header

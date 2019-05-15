@@ -1,5 +1,8 @@
 import React from "react"
+// import mobx from "mobx";
 import { Layout, Provider } from "./src/components/Layout"
+
+// mobx.configure({ enforceActions: "observed" });
 
 export const wrapPageElement = ({ element, props, ...rest }, b) => {
   console.log("Browser!!!!!", props.pageContext.data);

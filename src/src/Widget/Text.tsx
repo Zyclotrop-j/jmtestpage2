@@ -8,6 +8,7 @@ interface Props {
   b64: boolean;
   urlescaped: boolean;
   text: string;
+  gridArea: string;
 }
 
 export class Text extends React.PureComponent<Props> {
@@ -21,6 +22,15 @@ export class Text extends React.PureComponent<Props> {
       .map(([__, f]) => f)
       .reduce((p, f) => x => f(p(x)), x => x);
 
-    return <GText {...{ alignSelf, color, gridArea, margin, size, textAlign, truncate, weight }}>{pipeline(text)}</GText>;
+    return <GText
+      gridArea={gridArea}
+      alignSelf={alignSelf}
+      color={color}
+      margin={margin}
+      size={size}
+      textAlign={textAlign}
+      truncate={truncate}
+      weight={weight}
+    >{pipeline(text)}</GText>;
   }
 }
