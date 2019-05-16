@@ -1,11 +1,20 @@
 import auth0 from 'auth0-js';
-import { observable, runInAction, action } from "mobx";
+import { observable, runInAction, action } from 'mobx';
 
 export default class Auth {
   accessToken = observable(new Map());
   idToken = observable(new Map());
   expiresAt = observable(new Map());
   authResult = observable(new Map());
+
+  // // TODO: Get these into env-vars
+  auth0 = new auth0.WebAuth({
+    domain: 'jannes.eu.auth0.com',
+    clientID: 'ERsPWL3VKrVGWmIZhQ30otK6h4hqv3jI',
+    redirectUri: 'http://localhost:8000/callback',
+    responseType: 'token id_token',
+    scope: 'openid email profile',
+  });
 
   constructor() {
     this.login = this.login.bind(this);
@@ -17,23 +26,14 @@ export default class Auth {
     this.renewSession = this.renewSession.bind(this);
   }
 
-  // // TODO: Get these into env-vars
-  auth0 = new auth0.WebAuth({
-    domain: 'jannes.eu.auth0.com',
-    clientID: 'ERsPWL3VKrVGWmIZhQ30otK6h4hqv3jI',
-    redirectUri: 'http://localhost:8000/callback',
-    responseType: 'token id_token',
-    scope: 'openid email profile'
-  });
-
   login() {
-    localStorage.setItem("auth0Path", `${location.pathname}`);
+    localStorage.setItem('auth0Path', `${location.pathname}`);
     this.auth0.authorize();
   }
 
   handleAuthentication() {
     return new Promise((res, rej) => {
-      const pathname = localStorage.getItem("auth0Path");
+      const pathname = localStorage.getItem('auth0Path');
       this.auth0.parseHash((err, authResult) => {
         if (authResult && authResult.accessToken && authResult.idToken) {
           this.setSession(authResult);
@@ -43,7 +43,7 @@ export default class Auth {
           rej(err);
         }
       });
-    })
+    });
   }
 
   getAccessToken() {
@@ -63,7 +63,7 @@ export default class Auth {
     localStorage.setItem('isLoggedIn', 'true');
 
     // Set the time that the Access Token will expire at
-    let expiresAt = (authResult.expiresIn * 1000) + new Date().getTime();
+    const expiresAt = authResult.expiresIn * 1000 + new Date().getTime();
     runInAction(() => {
       this.accessToken = authResult.accessToken;
       this.idToken = authResult.idToken;
@@ -75,14 +75,14 @@ export default class Auth {
   renewSession() {
     return new Promise((res, rej) => {
       this.auth0.checkSession({}, (err, authResult) => {
-         if (authResult && authResult.accessToken && authResult.idToken) {
-           this.setSession(authResult);
-           res(authResult);
-         } else if (err) {
-           this.logout();
-           console.error(err);
-           rej(err);
-         }
+        if (authResult && authResult.accessToken && authResult.idToken) {
+          this.setSession(authResult);
+          res(authResult);
+        } else if (err) {
+          this.logout();
+          console.error(err);
+          rej(err);
+        }
       });
     });
   }
@@ -98,7 +98,7 @@ export default class Auth {
     localStorage.removeItem('isLoggedIn');
 
     this.auth0.logout({
-      returnTo: window.location.origin
+      returnTo: window.location.origin,
     });
     return Promise.resolve();
   }
@@ -106,7 +106,7 @@ export default class Auth {
   isAuthenticated() {
     // Check whether the current time is past the
     // access token's expiry time
-    let expiresAt = this.expiresAt;
+    const expiresAt = this.expiresAt;
     return new Date().getTime() < expiresAt;
   }
 }

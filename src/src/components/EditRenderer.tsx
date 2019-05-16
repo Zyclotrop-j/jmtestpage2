@@ -18,7 +18,7 @@ import components from '../Widget';
 
 const availableComponents = renameKeysWith(key => `component${key.toLowerCase()}`, components);
 
-const SubtreeRenderer = observer(({ render, compo, addProps, page, components, loading, error, Layout }) => {
+const SubtreeRenderer = observer(({ render, compo, addProps, page, components: xcomponents, loading, error, Layout }) => {
   if(!compo) return null;
   if(Array.isArray(compo)) {
     console.log("addProps", addProps, addProps.___context, compo);
@@ -27,9 +27,9 @@ const SubtreeRenderer = observer(({ render, compo, addProps, page, components, l
     return compo.reduce((p, i, idx) => p.concat([render(i, { ...addProps, __pp: i }), a(idx + 1)]), [a(0)]);
   }
   if(is(String, compo)) {
-    const group = components.get(compo)?.components?.map(i => components.get(i));
+    const group = xcomponents.get(compo)?.components?.map(i => xcomponents.get(i));
     if(!group) {
-      console.error(`No group found for id ${compo}`, group, compo, components);
+      console.error(`No group found for id ${compo}`, group, compo, xcomponents);
       return (<div>Group not available {compo}</div>);
     }
     const parentids = addProps.parentids ? addProps.parentids.concat([ compo ]) : [ compo ];
@@ -50,43 +50,24 @@ const SubtreeRenderer = observer(({ render, compo, addProps, page, components, l
         __children={content}
         __renderSubtree={render}
     >
-      {({ props, addProps, __children }) => (<ErrorBoundary key={compo._id}>
-        <Component {...props} preview={true} __children={__children} __renderSubtree={render} {...addProps} />
+      {({ props, addProps: xaddProps, __children }) => (<ErrorBoundary key={compo._id}>
+        <Component {...props} preview={true} __children={__children} __renderSubtree={render} {...xaddProps} />
       </ErrorBoundary>)}
   </ComponentControlls>);
 });
 
 export default observer(class EditRenderer extends React.Component<any> {
-  private renderSubtree(compo, addProps = {}) {
-    if(compo?.___context) {
-      return <SubtreeRenderer
-        compo={compo.arg}
-        addProps={{ ...addProps, ___context: compo.___context || addProps.___context }}
-        page={currentpage}
-        components={allComponents}
-        loading={anyloading}
-        error={anyerror}
-        Layout={this.props.Layout}
-        render={this.renderSubtree.bind(this)}
-      />;
-    }
-    return <SubtreeRenderer
-      compo={compo}
-      addProps={addProps}
-      page={currentpage}
-      components={allComponents}
-      loading={anyloading}
-      error={anyerror}
-      Layout={this.props.Layout}
-      render={this.renderSubtree.bind(this)}
-    />;
+
+  public constructor(props) {
+    super(props);
+    this.renderSubtree = this.renderSubtree.bind(this);
   }
 
   public render() {
-    const { page, components, loading, error, Layout } = this.props;
+    const { page, loading, error, Layout } = this.props;
 
-    const render = this.renderSubtree.bind(this);
-    const addwf = (arg, ___context) => Array.isArray(arg) ? { arg, ___context } : arg ? { arg, ___context } : { arg: [], ___context };
+    const render = this.renderSubtree;
+    const addwf = (arg, ___context) => Array.isArray(arg) ? { arg, ___context } : arg ? { arg, ___context } : { ___context, arg: [] };
 
     const {
       header,
@@ -117,5 +98,30 @@ export default observer(class EditRenderer extends React.Component<any> {
           </div>)}
       </>
     );
+  }
+  private renderSubtree(compo, addProps = {}) {
+    const render = this.renderSubtree;
+    if(compo?.___context) {
+      return <SubtreeRenderer
+        compo={compo.arg}
+        addProps={{ ...addProps, ___context: compo.___context || addProps.___context }}
+        page={currentpage}
+        components={allComponents}
+        loading={anyloading}
+        error={anyerror}
+        Layout={this.props.Layout}
+        render={render}
+      />;
+    }
+    return <SubtreeRenderer
+      compo={compo}
+      addProps={addProps}
+      page={currentpage}
+      components={allComponents}
+      loading={anyloading}
+      error={anyerror}
+      Layout={this.props.Layout}
+      render={render}
+    />;
   }
 });

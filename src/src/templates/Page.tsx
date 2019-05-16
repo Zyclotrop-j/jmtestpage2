@@ -8,31 +8,32 @@ import config from '../../config/SiteConfig';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import kebabCase from 'lodash/kebabCase';
 import Img from 'gatsby-image'; // Imports the fragments as well!
+import { memoizeWith , identity} from "ramda";
 import { renameKeysWith } from 'ramda-adjunct';
-import { ModernLayout } from "../layouts/modern";
+import { ModernLayout } from '../layouts/modern';
 import components from '../Widget';
 
 const availableComponents = renameKeysWith(key => `DATA_Component${key.toLowerCase()}`, components);
 
 export default class Page extends React.PureComponent<PageProps> {
+
+  constructor(props) {
+    super(props);
+    const render = this.renderSubtree.bind(this);
+    this.renderSubtree = memoizeWith(identity, render);
+  }
+
   public render() {
     // pathContext
 
-    const { pages, tree: { main, header = {}, footer = {} } } = this.props.pageContext;
-    const { page: {
-      path,
-      lang,
-      tabname,
-      title,
-      dir,
-      description,
-      keywords,
-      otherLangs,
-      firstPage,
-      lastPage,
-      nextPage,
-      prevPage,
-    }, ...components } = this.props.data.data;
+    const {
+      pages,
+      tree: { main, header = {}, footer = {} },
+    } = this.props.pageContext;
+    const {
+      page: { path, lang, tabname, title, dir, description, keywords, otherLangs, firstPage, lastPage, nextPage, prevPage },
+      ...componentsx
+    } = this.props.data.data;
     // ltr, rtl, auto
 
     return (
@@ -61,37 +62,48 @@ export default class Page extends React.PureComponent<PageProps> {
           <SkipLink id="main" label="Main content" />
           <SkipLink id="footer" label="Footer" />
         </SkipLinks>
-        <ModernLayout {...props} __renderSubtree={this.renderSubtree.bind(this, components)} />
+        <ModernLayout main={main} header={header} footer={footer} __renderSubtree={this.renderSubtree(componentsx)} />
       </>
     );
   }
 
-  private renderSubtree(components, compo, addProps = {}) {
-    if(!compo) return null;
-    if(Array.isArray(compo)) {
-      return compo.map(i => this.renderSubtree(components, i, addProps));
+  private renderSubtree(components) {
+    const render = (compo, addProps = {}) => {
+      if (!compo) return null;
+      if (Array.isArray(compo)) {
+        return compo.map(i => render(i, addProps));
+      }
+      const { type, id, ...content } = compo;
+      const Component = availableComponents[type];
+      const typename = `${type.substring(5).toLowerCase()}s`;
+      const comp = components[typename];
+      if (!comp) {
+        throw new Error(`Couldn't find comp ${typename}, available are ${Object.keys(components).join(', ')}`);
+      }
+      const props = comp.find(i => i._id === id);
+      if (!Component) {
+        throw new Error(`Couldn't find type ${type}, available are ${Object.keys(availableComponents).join(', ')}`);
+      }
+      return (
+        <ErrorBoundary key={props._id}>
+          <Component {...props} {...addProps} __children={content} __renderSubtree={render} />
+        </ErrorBoundary>
+      );
     }
-    const { type, id, ...content } = compo;
-    const Component = availableComponents[type];
-    const typename = `${type.substring(5).toLowerCase()}s`;
-    const comp = components[typename];
-    if (!comp) {
-      throw new Error(`Couldn't find comp ${typename}, available are ${Object.keys(components).join(', ')}`);
-    }
-    const props = comp.find(i => i._id === id);
-    if (!Component) {
-      throw new Error(`Couldn't find type ${type}, available are ${Object.keys(availableComponents).join(', ')}`);
-    }
-    return (
-      <ErrorBoundary key={props._id}>
-        <Component {...props} {...addProps} __children={content} __renderSubtree={this.renderSubtree.bind(this, components)} />
-      </ErrorBoundary>
-    );
+    return render;
   }
 }
 
 export const postQuery = graphql`
-  query($pageid: ID!, $DATA_Componentgrid: [ID!], $DATA_Componenttext: [ID!], $DATA_Componentpicture: [ID!], $DATA_Componentrichtext: [ID!], $DATA_Componentbox: [ID!], $DATA_Componentheadline: [ID!]) {
+  query(
+    $pageid: ID!
+    $DATA_Componentgrid: [ID!]
+    $DATA_Componenttext: [ID!]
+    $DATA_Componentpicture: [ID!]
+    $DATA_Componentrichtext: [ID!]
+    $DATA_Componentbox: [ID!]
+    $DATA_Componentheadline: [ID!]
+  ) {
     data {
       page(_id: $pageid) {
         tabname

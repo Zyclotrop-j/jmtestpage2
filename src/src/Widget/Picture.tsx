@@ -22,7 +22,7 @@ export class Picture extends React.PureComponent<Props> {
     if(process.env.NODE_ENV === "development" && this.props.preview) {
       function getMeta(url){
           return new Promise((res, rej) => {
-            var img = new Image();
+            const img = new Image();
             img.addEventListener("load", function(){
                 res({
                   width: this.naturalWidth, height: this.naturalHeight
@@ -45,7 +45,7 @@ export class Picture extends React.PureComponent<Props> {
       return <Box fill gridArea={gridArea}>
         <Img
           fluid={{
-            src: src,
+            src,
             aspectRatio: this.state.width / this.state.height
           }}
           alt={alt}

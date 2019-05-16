@@ -47,10 +47,10 @@ export class RichText extends React.PureComponent<Props> {
         },
       },
     };
-    return (<Box gridArea={gridArea}>
-      <Markdown components={components}>
-        {pipeline(markdown || "")}
-      </Markdown>
-    </Box>);
+    return (
+      <Box gridArea={gridArea}>
+        <Markdown components={components}>{pipeline(markdown || '')}</Markdown>
+      </Box>
+    );
   }
 }

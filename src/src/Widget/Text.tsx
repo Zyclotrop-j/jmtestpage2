@@ -22,15 +22,19 @@ export class Text extends React.PureComponent<Props> {
       .map(([__, f]) => f)
       .reduce((p, f) => x => f(p(x)), x => x);
 
-    return <GText
-      gridArea={gridArea}
-      alignSelf={alignSelf}
-      color={color}
-      margin={margin}
-      size={size}
-      textAlign={textAlign}
-      truncate={truncate}
-      weight={weight}
-    >{pipeline(text)}</GText>;
+    return (
+      <GText
+        gridArea={gridArea}
+        alignSelf={alignSelf}
+        color={color}
+        margin={margin}
+        size={size}
+        textAlign={textAlign}
+        truncate={truncate}
+        weight={weight}
+      >
+        {pipeline(text)}
+      </GText>
+    );
   }
 }

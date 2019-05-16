@@ -10,8 +10,7 @@ import SplitPane from "react-split-pane";
 import { renameKeysWith } from 'ramda-adjunct';
 import { computed } from 'mobx';
 import { observer } from 'mobx-react';
-import { DragSource } from 'react-dnd';
-import { DragDropContextProvider } from 'react-dnd';
+import { DragSource, DragDropContextProvider } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { notifications } from "../state/notifications";
 import { fetchAllSchemas, componentschemas, loading as schemaloading, error as schemaerror } from "../state/schemas";
@@ -166,7 +165,7 @@ const Modals = observer(({ schemas, onSubmit, onError }) => {
     <>{
       schemas.get().map((i) => {
         const Component = availableComponents[i.title];
-        return <Dragger componenttype={i.title}>{({ isDragging }) => <Box>{i.title}</Box>}</Dragger>
+        return <Dragger key={i.title} componenttype={i.title}>{({ isDragging }) => <Box >{i.title}</Box>}</Dragger>
       })
     }</>);
 });

@@ -13,7 +13,7 @@ const request = (url, args) => fetch(url, {
   ...(args || {}),
   headers: {
     ...(args?.headers || {}),
-    "authorization": "Bearer " + auth.getIdToken()
+    "authorization": `Bearer ${auth.getIdToken()}`
   }
 });
 
@@ -21,9 +21,9 @@ autorun(() => {
     console.log("components:", components);
 });
 
-const fetchComponents = componentschemas => Promise.all(componentschemas.get().map(i => request(`https://zcmsapi.herokuapp.com/api/v1/${i.title}`, {
+const fetchComponents = xcomponentschemas => Promise.all(xcomponentschemas.get().map(i => request(`https://zcmsapi.herokuapp.com/api/v1/${i.title}`, {
   cache: "no-cache"
-}).then(i => i.json())));
+}).then(j => j.json())));
 
 export const fetchAllComponents = flow(function*() {
     components.clear();

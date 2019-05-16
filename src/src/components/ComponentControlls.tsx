@@ -2,15 +2,15 @@ import React, { useImperativeHandle, useRef } from 'react';
 import { findDOMNode } from 'react-dom';
 import { DragSource } from 'react-dnd';
 import styled from 'styled-components';
-import { Grid, Box, Button, Text } from "grommet";
+import { Grid, Box, Button, Text } from 'grommet';
 import { Edit, Pan, Trash } from 'grommet-icons';
-import { pick, without } from "ramda";
+import { pick, without } from 'ramda';
 import { renameKeysWith } from 'ramda-adjunct';
 import { observer } from 'mobx-react';
-import { newNotification } from "../state/notifications";
-import { removeComponentfromGroup, editComponent } from "../state/components";
-import { WidgetForm } from "../components/WidgetForm";
-import { AddWidget } from "../components/AddWidget";
+import { newNotification } from '../state/notifications';
+import { removeComponentfromGroup, editComponent } from '../state/components';
+import { WidgetForm } from '../components/WidgetForm';
+import { AddWidget } from '../components/AddWidget';
 import components from '../Widget';
 
 const ItemTypes = {
@@ -26,7 +26,7 @@ const Pad = styled.div`
   transition: border 0.5s;
   position: relative;
   *:hover > & {
-    border: 3px solid rgba(192,192,192, 0.1);
+    border: 3px solid rgba(192, 192, 192, 0.1);
   }
   *:hover > &:hover {
     border: 3px solid silver;
@@ -40,7 +40,7 @@ const Overlaybox = styled.div`
     left: 0;
     right: 0;
     z-index: 9999;
-    background: rgba(0,0,0,0.3);
+    background: rgba(0, 0, 0, 0.3);
     height: auto;
   }
 `;
@@ -58,135 +58,150 @@ const Mini = styled(Box)`
 `;
 
 const RawComponentControlls = observer(({ connectDragSource, schemas, __renderSubtree, props, addProps, __children, children }) => {
-  const type = props["x-type"];
-  if(!type) {
-    if(React.isValidElement(props)) {
+  const type = props['x-type'];
+  if (!type) {
+    if (React.isValidElement(props)) {
       return props;
     }
     console.error(props, children, __children);
-    throw new Error("Type not defined - widgets need a type to be rendered!");
+    throw new Error('Type not defined - widgets need a type to be rendered!');
   }
-  const enhancedChildren = Array.isArray(__children) ?
-    { children: [...__children].map((i, idx) => [...__renderSubtree(i, { ...addProps, ___component: props, ___context: ["children", ["content", idx]] })]) } :
-    { child: [...__renderSubtree(__children, { ...addProps, ___component: props, ___context: ["children", ["content"]] })] };
-  console.log("__children", __children, enhancedChildren);
+  const enhancedChildren = Array.isArray(__children)
+    ? {
+        children: [...__children].map((i, idx) => [
+          ...__renderSubtree(i, { ...addProps, ___component: props, ___context: ['children', ['content', idx]] }),
+        ]),
+      }
+    : { child: [...__renderSubtree(__children, { ...addProps, ___component: props, ___context: ['children', ['content']] })] };
+  console.log('__children', __children, enhancedChildren);
   const addPropsN = {
     ...addProps,
-    __renderSubtree: i => i ? <Pad>{i}</Pad> : null
+    __renderSubtree: i => (i ? <Pad>{i}</Pad> : null),
   };
   const nprops = {
     ...props,
     __children: {
-      child: [<span>Demo Content</span>],
-      children: [[<span>Demo Content</span>]]
+      child: [<span key="Demo">Demo Content</span>],
+      children: [[<span key="Demo">Demo Content</span>]],
     },
-    __renderSubtree: i => i
+    __renderSubtree: i => i,
   };
   const del = () => {
-    const opid = `opid${Math.floor(Math.random()*10e8)}`;
+    const opid = `opid${Math.floor(Math.random() * 10e8)}`;
     newNotification({
-      message: "Deleting...",
+      message: 'Deleting...',
       nid: opid,
-      status: "info"
+      status: 'info',
     });
     const { ___groupid: groupid } = addProps;
     const { _id: componentid } = props;
-    const hasDeleted = new Promise((res, rej) => removeComponentfromGroup(componentid, groupid, res, rej, {
-      optimistic: true,
-    }))
-    hasDeleted.then(() => {
-      newNotification({
-        message: "Deleted content",
-        nid: opid,
-        status: "ok"
+    const hasDeleted = new Promise((res, rej) =>
+      removeComponentfromGroup(componentid, groupid, res, rej, {
+        optimistic: true,
+      }),
+    );
+    hasDeleted
+      .then(() => {
+        newNotification({
+          message: 'Deleted content',
+          nid: opid,
+          status: 'ok',
+        });
+      })
+      .catch(() => {
+        newNotification({
+          message: 'Error deleting content',
+          nid: opid,
+          status: 'error',
+        });
       });
-    }).catch(() => {
-      newNotification({
-        message: "Error deleting content",
-        nid: opid,
-        status: "error"
-      });
-    });
   };
 
-  const onSubmit = ({ formData, schema }) => {
+  const onSubmit = ({ formData, schema: xschema }) => {
     const { _id } = formData;
-    const keys = Object.keys(schema.properties);
-    const fkeys = without(["content"], [...keys, "title"])
+    const keys = Object.keys(xschema.properties);
+    const fkeys = without(['content'], [...keys, 'title']);
     const collectedData = pick(fkeys, formData);
-    const opid = `opid${Math.floor(Math.random()*10e8)}`;
+    const opid = `opid${Math.floor(Math.random() * 10e8)}`;
     newNotification({
-      message: "Editing...",
+      message: 'Editing...',
       nid: opid,
-      status: "info"
+      status: 'info',
     });
-    const componentedited = new Promise((res, rej) => editComponent(_id, collectedData, res, rej, {
-      optimistic: true,
-    }));
-    componentedited.then(() => {
-      newNotification({
-        message: "Edited content",
-        nid: opid,
-        status: "ok"
+    const componentedited = new Promise((res, rej) =>
+      editComponent(_id, collectedData, res, rej, {
+        optimistic: true,
+      }),
+    );
+    componentedited
+      .then(() => {
+        newNotification({
+          message: 'Edited content',
+          nid: opid,
+          status: 'ok',
+        });
+      })
+      .catch(() => {
+        newNotification({
+          message: 'Error editing content',
+          nid: opid,
+          status: 'error',
+        });
       });
-    }).catch(() => {
-      newNotification({
-        message: "Error editing content",
-        nid: opid,
-        status: "error"
-      });
-    });
     return componentedited;
   };
 
   // // TODO: minimize-view
-  const minimize = true && ![
-    "componentbox",
-    "componentgrid"
-  ].includes(type);
+  const minimize = true && !['componentbox', 'componentgrid'].includes(type);
 
   const inner = children({
-    props, addProps: addPropsN, __children: enhancedChildren
+    props,
+    addProps: addPropsN,
+    __children: enhancedChildren,
   });
 
   const schema = schemas.find(x => x.title === type);
-  return (<>
-    <Overlaybox>
-      <HeaderGrid
-        rows={['full']}
-        columns={['auto', 'flex', 'flex', 'flex']}
-        fill={true}
-        areas={[
-          { name: 'title', start: [0, 0], end: [0, 0] },
-          { name: 'icon1', start: [1, 0], end: [1, 0] },
-          { name: 'icon2', start: [2, 0], end: [2, 0] },
-          { name: 'icon3', start: [3, 0], end: [3, 0] }
-        ]}
-        alignContent="between"
-        justifyContent="between"
+  return (
+    <>
+      <Overlaybox>
+        <HeaderGrid
+          rows={['full']}
+          columns={['auto', 'flex', 'flex', 'flex']}
+          fill={true}
+          areas={[
+            { name: 'title', start: [0, 0], end: [0, 0] },
+            { name: 'icon1', start: [1, 0], end: [1, 0] },
+            { name: 'icon2', start: [2, 0], end: [2, 0] },
+            { name: 'icon3', start: [3, 0], end: [3, 0] },
+          ]}
+          alignContent="between"
+          justifyContent="between"
         >
-        <Box gridArea="title" overflow="hidden">
-          <Text color="white">{type}</Text>
-        </Box>
-        <Box gridArea="icon1" overflow="hidden">
-          {connectDragSource(<div style={{ cursor: "move", paddingLeft: 10, paddingRight: 10 }}>
-            <Pan size='medium' />
-          </div>)}
-        </Box>
-        <WidgetForm
-          Preview={availableComponents[schema.title]}
-          schema={schema}
-          initialValues={nprops}
-          button={open => <RButton gridArea="icon2" a11yTitle="Edit" icon={<Edit color="white" />} plain onClick={open} />}
-          title={schema.title}
-          onSubmit={onSubmit}
-          onError={i => Promise.resolve(console.log("error", i))}
-        />
-        <RButton gridArea="icon3" a11yTitle="Delete" icon={<Trash color="white" />} plain onClick={del} />
-      </HeaderGrid>
-    </Overlaybox>
-    {minimize ? <Mini>{inner}</Mini> : inner}
-  </>);
+          <Box gridArea="title" overflow="hidden">
+            <Text color="white">{type}</Text>
+          </Box>
+          <Box gridArea="icon1" overflow="hidden">
+            {connectDragSource(
+              <div style={{ cursor: 'move', paddingLeft: 10, paddingRight: 10 }}>
+                <Pan size="medium" />
+              </div>,
+            )}
+          </Box>
+          <WidgetForm
+            Preview={availableComponents[schema.title]}
+            schema={schema}
+            initialValues={nprops}
+            button={open => <RButton gridArea="icon2" a11yTitle="Edit" icon={<Edit color="white" />} plain onClick={open} />}
+            title={schema.title}
+            onSubmit={onSubmit}
+            onError={i => Promise.resolve(console.log('error', i))}
+          />
+          <RButton gridArea="icon3" a11yTitle="Delete" icon={<Trash color="white" />} plain onClick={del} />
+        </HeaderGrid>
+      </Overlaybox>
+      {minimize ? <Mini>{inner}</Mini> : inner}
+    </>
+  );
 });
 
 const style = {
@@ -197,11 +212,9 @@ const ConnectedComponentControlls = React.forwardRef(
     const elementRef = useRef(null);
     connectDragPreview(elementRef);
     const opacity = isDragging ? 0.3 : 1;
-    const height = isDragging ? "18px" : undefined;
-    const overflow = isDragging ? "hidden" : undefined;
-    const content = isDragging ?
-      <div>Original Position</div> :
-      <RawComponentControlls connectDragSource={connectDragSource} {...rest} />;
+    const height = isDragging ? '18px' : undefined;
+    const overflow = isDragging ? 'hidden' : undefined;
+    const content = isDragging ? <div>Original Position</div> : <RawComponentControlls connectDragSource={connectDragSource} {...rest} />;
     useImperativeHandle(ref, () => ({
       getNode: () => elementRef.current,
       ...rest,
@@ -210,7 +223,7 @@ const ConnectedComponentControlls = React.forwardRef(
       <div ref={elementRef} style={Object.assign({}, style, { opacity, height, overflow })}>
         {content}
       </div>
-    )
+    );
   },
 );
 
