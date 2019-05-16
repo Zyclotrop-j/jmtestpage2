@@ -23,4 +23,4 @@ export const Modal = ({ children, box = {}, layer = {}, button, focusgroup }) =>
       )}
     </>
   );
-}
+};

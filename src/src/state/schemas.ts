@@ -18,7 +18,7 @@ export const fetchAllSchemas = flow(function*() {
   try {
     const { data } = yield fetch(`https://zcmsapi.herokuapp.com/api/v1/schema`).then(i => i.json()); // yield instead of await
     ajv.removeSchema();
-    for (let i = 0; i < data.length; i+=1) {
+    for (let i = 0; i < data.length; i += 1) {
       if (data[i].title === 'schema') {
         continue;
       }

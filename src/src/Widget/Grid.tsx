@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Link } from 'gatsby';
 import Img from 'gatsby-image';
 import { Grid as GGrid, ResponsiveContext, Box } from 'grommet';
-import { range } from "ramda";
+import { range } from 'ramda';
 import { renameKeysWith } from 'ramda-adjunct';
 import components from '../Widget';
 import { ErrorBoundary } from '../components/ErrorBoundary';
@@ -30,7 +30,11 @@ export class Grid extends React.PureComponent<Props> {
     const { align, alignContent, alignSelf, fill, justify, justifyContent } = advanced || {};
 
     // const content = child.map(__renderSubtree);
-    const content = children.map((u, idx) => <Box key={u._id || idx} gridArea={`col-${idx + 1}`}>{u.map(__renderSubtree)}</Box>);
+    const content = children.map((u, idx) => (
+      <Box key={u._id || idx} gridArea={`col-${idx + 1}`}>
+        {u.map(__renderSubtree)}
+      </Box>
+    ));
 
     const t = x =>
       ({
