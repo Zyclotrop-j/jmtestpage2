@@ -37,12 +37,12 @@ export const doDeploy = async (deploymentdata) => {
     const circlecijob = await fetch(deploymenturl, {
       body: JSON.stringify({
         "build_parameters": {
-          "PAGENAME": `${subdomain}`,
-          "SUFFIX": `${domain}.${tld}`,
-          "DNSNAME": `${domain}.${tld}`,
-          "CUSTOMER": `c_${deploymentdata.customer.replace(/[ ]/g, "_")}`, // No spaces allowed!
+          "PAGENAME": `${subdomain}`.toLowerCase(),
+          "SUFFIX": `${domain}.${tld}`.toLowerCase(),
+          "DNSNAME": `${domain}.${tld}`.toLowerCase(),
+          "CUSTOMER": `c${deploymentdata.customer.replace(/[ ]/g, "")}`.toLowerCase(), // No spaces allowed!
           "WEBSITEID": deploymentdata._id,
-          "TOKEN": `T${subdomain.replace(/[.]/g, "")}${domain}${tld}${deploymentdata.customer.replace(/[ .]/g, "")}`.substring(2, 24),
+          "TOKEN": `T${subdomain.replace(/[.]/g, "")}${domain}${tld}${deploymentdata.customer.replace(/[ .]/g, "")}${deploymentdata._id}`.substring(2, 28),
         }
       }),
       headers: {
