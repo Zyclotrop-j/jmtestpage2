@@ -1,5 +1,6 @@
 import { observable, flow, action, autorun } from "mobx";
-import { current as website } from "./websites";
+import { auth } from "../utils/auth";
+import { current as website, websites } from "./websites";
 
 export const pages = observable([]);
 export const current = observable.box(null);
@@ -11,12 +12,17 @@ autorun(() => {
 });
 
 export const fetchAllPages = flow(function* () { // <- note the star, this a generator function!
-    const { pages: pageids } = website.get();
+    const { pages: pageids = [] } = website.get();
     loading.set(true);
     error.set(null);
     pages.clear();
     try {
-        const pagedata = yield Promise.all(pageids.map(pageid => fetch(`https://zcmsapi.herokuapp.com/api/v1/page/${pageid}`).then(i => i.json())));
+        const pagedata = yield Promise.all(pageids.map(pageid => fetch(`https://zcmsapi.herokuapp.com/api/v1/page/${pageid}`, {
+          headers: {
+            "authorization": `Bearer ${auth.getIdToken()}`,
+            "x-client": website.get()._client,
+          },
+        }).then(i => i.json())));
         pages.replace(pagedata.map(i => i.data));
         current.set(null);
         loading.set(false);
@@ -32,8 +38,18 @@ export const setCurrentPage = action(page => {
     current.set(page);
 });
 
+export const setCurrentPagebyId = action(id => {
+    current.set(pages.find(page._id === id));
+});
+
 website.observe(function(change) {
-    if(change.oldValue?._id !== change.newValue?._id) {
-      fetchAllPages();
-    }
+  if(website?.get()) {
+    fetchAllPages();
+  }
+});
+
+websites.observe(function(change) {
+  if(website?.get()) {
+    fetchAllPages();
+  }
 });

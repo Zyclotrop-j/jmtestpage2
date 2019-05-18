@@ -1,6 +1,6 @@
 import { toJS, observable, flow, action, computed, autorun } from "mobx";
 import { groupBy, mergeDeepRight, assocPath, path } from "ramda";
-import { current as website } from "./websites";
+import { current as website, websites } from "./websites";
 import { componentschemas, ajv } from "./schemas";
 import { pages } from "./pages";
 import { auth } from "../utils/auth";
@@ -9,11 +9,14 @@ export const components = observable.map({});
 export const loading = observable.box(false);
 export const error = observable.box(null);
 
-const request = (url, args) => fetch(url, {
+export const request = (url, args, options = {}) => fetch(url, {
   ...(args || {}),
   headers: {
     ...(args?.headers || {}),
-    "authorization": `Bearer ${auth.getIdToken()}`
+    "authorization": `Bearer ${auth.getIdToken()}`,
+    ...(options.skipClientCheck ? {} : {
+      "x-client": website?.get()?._client
+    }),
   }
 });
 
@@ -63,9 +66,9 @@ export const fetchComponent = flow(function*(type, id, resolve, reject) {
     }
 });
 
-export const addComponent = flow(function*(type, data, resolve, reject) {
+export const addComponent = flow(function*(type, data, resolve, reject, options = {}) {
     try {
-      const client = website.get()._client;
+      const client = options.skipClientCheck ? data._client : website.get()._client;
       if(data._client && client !== data._client) {
         throw new Error(`Client mismatch - can't put components of client ${data._client} on website domain ${client}`);
       }
@@ -82,7 +85,7 @@ export const addComponent = flow(function*(type, data, resolve, reject) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify(data)
-      }).then(i => {
+      }, options).then(i => {
         return !i.ok ? Promise.reject(i) : i.json();
       });
       const { data: response } = tmp;
@@ -97,7 +100,12 @@ export const addComponent = flow(function*(type, data, resolve, reject) {
 });
 
 export const editComponent = flow(function*(id, idata, resolve, reject, options) {
-  const comp = components.get(id) || pages.find(i => i._id === id);
+  const client = website.get()._client;
+  if(idata._client && client !== idata._client) {
+    throw new Error(`Client mismatch - can't put components of client ${idata._client} on website domain ${client}`);
+  }
+  idata._client = client; // Set _client to current domain
+  const comp = components.get(id) || pages.find(i => i._id === id) || websites.find(i => i._id === id);
   const prevValue = toJS(comp);
   if(!comp) {
     console.error(`Can't find component for id ${id}`);
@@ -108,18 +116,20 @@ export const editComponent = flow(function*(id, idata, resolve, reject, options)
       const predicatedNewValue = mergeDeepRight(prevValue, idata);
       if(comp["x-type"] === "page") {
         pages[pages.findIndex(i => i._id === id)] = predicatedNewValue;
+      } else if(comp["x-type"] === "website") {
+        websites[websites.findIndex(i => i._id === id)] = predicatedNewValue;
       } else {
         components.set(id, predicatedNewValue);
       }
     }
     const { data } = yield request(`https://zcmsapi.herokuapp.com/api/v1/${comp["x-type"]}/${id}`, {
-      method: "POST",
+      method: options?.verb || "POST",
       cache: "no-cache",
       headers: {
           "Content-Type": "application/json"
       },
       body: JSON.stringify(idata)
-    }).then(i => !i.ok ? Promise.reject(i) : i.json());
+    }, options).then(i => !i.ok ? Promise.reject(i) : i.json());
     components.set(id, data);
     resolve(data);
     return data;
@@ -154,7 +164,7 @@ export const removeComponentfromGroup = flow(function*(componentid, groupid, res
         body: JSON.stringify({
           components: group.components
         })
-      }).then(i => !i.ok ? Promise.reject(i) : i.json());
+      }, options).then(i => !i.ok ? Promise.reject(i) : i.json());
       components.set(groupid, data);
       resolve(data);
       return data;
@@ -169,7 +179,6 @@ export const removeComponentfromGroup = flow(function*(componentid, groupid, res
 });
 
 export const addComponenttoGroup = flow(function*(componentid, groupid, resolve, reject, options) {
-
     if(!componentid) {
       throw new Error("componentid is a required argument!");
     }
@@ -203,7 +212,7 @@ export const addComponenttoGroup = flow(function*(componentid, groupid, resolve,
         body: JSON.stringify({
           components: group.components
         })
-      }).then(i => !i.ok ? Promise.reject(i) : i.json());
+      }, options).then(i => !i.ok ? Promise.reject(i) : i.json());
       components.set(groupid, data);
       resolve(data);
       return data;

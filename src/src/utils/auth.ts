@@ -1,11 +1,12 @@
 import auth0 from 'auth0-js';
-import { observable, runInAction, action } from 'mobx';
+import { observable, runInAction, action, decorate, computed } from 'mobx';
 
-export default class Auth {
-  accessToken = observable(new Map());
-  idToken = observable(new Map());
-  expiresAt = observable(new Map());
-  authResult = observable(new Map());
+class Auth {
+  accessToken = {};
+  idToken = {};
+  expiresAt = {};
+  authResult = {};
+  initialized = false;
 
   // // TODO: Get these into env-vars
   auth0 = new auth0.WebAuth({
@@ -65,26 +66,36 @@ export default class Auth {
     // Set the time that the Access Token will expire at
     const expiresAt = authResult.expiresIn * 1000 + new Date().getTime();
     runInAction(() => {
+      console.log("Setting", authResult);
       this.accessToken = authResult.accessToken;
       this.idToken = authResult.idToken;
       this.authResult = authResult;
       this.expiresAt = expiresAt;
+      this.initialized = true;
     });
   }
 
   renewSession() {
-    return new Promise((res, rej) => {
-      this.auth0.checkSession({}, (err, authResult) => {
-        if (authResult && authResult.accessToken && authResult.idToken) {
-          this.setSession(authResult);
-          res(authResult);
-        } else if (err) {
-          this.logout();
-          console.error(err);
-          rej(err);
-        }
-      });
+    const res = new Promise((res, rej) => {
+      if (localStorage.getItem('isLoggedIn') === 'true') {
+        this.auth0.checkSession({}, (err, authResult) => {
+          if (authResult && authResult.accessToken && authResult.idToken) {
+            this.setSession(authResult);
+            res(authResult);
+          } else if (err) {
+            this.logout();
+            console.error(err);
+            rej(err);
+          }
+        });
+      } else {
+        rej(new Error(`User not logged in; got value ${localStorage.getItem('isLoggedIn')} for isLoggedIn`));
+      }
     });
+    res.finally(() => {
+      this.initialized = true;
+    })
+    return res;
   }
 
   logout() {
@@ -93,6 +104,7 @@ export default class Auth {
       this.accessToken = null;
       this.idToken = null;
       this.expiresAt = 0;
+      this.initialized = true;
     });
     // Remove isLoggedIn flag from localStorage
     localStorage.removeItem('isLoggedIn');
@@ -111,4 +123,13 @@ export default class Auth {
   }
 }
 
-export const auth = new Auth();
+const DecoratedAuth = decorate(Auth, {
+    accessToken: observable,
+    idToken: observable,
+    expiresAt: observable,
+    authResult: observable,
+    initialized: observable,
+});
+
+export default DecoratedAuth;
+export const auth = new DecoratedAuth();

@@ -35,3 +35,5 @@ export const fetchAllSchemas = flow(function*() {
 });
 
 export const componentschemas = computed(() => schemas.filter(i => i.title.startsWith('component')));
+export const pageschema = computed(() => schemas.find(i => i.title === "page"));
+export const websiteschema = computed(() => schemas.find(i => i.title === "website"));

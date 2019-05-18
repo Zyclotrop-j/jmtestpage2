@@ -107,6 +107,7 @@
     "mobx": "^5.9.4",
     "mobx-react": "^5.4.3",
     "object-hash": "^1.3.1",
+    "parse-domain": "^2.1.7",
     "ramda": "^0.26.1",
     "ramda-adjunct": "^2.17.0",
     "react-chartjs-2": "^2.7.6",

@@ -1,3 +1,19 @@
+const memo = (rows, keys) => `${hash(new Set(rows.map(i => i._id)))}${hash(new Set(keys))}`;
+const createFuse = memoizeWith(
+  memo,
+  (rows, keys) =>
+    new Fuse(rows, {
+      keys,
+      caseSensitive: true,
+      threshold: 0.6,
+      shouldSort: true,
+      location: 0,
+      distance: 100,
+      maxPatternLength: 32,
+      minMatchCharLength: 1,
+    }),
+);
+
 <Modal button={openbutton} focusgroup={focusgroupnr} layer={{ full: true, style: { width: "100vw", height: "100vh" } }} >
   {close => <>
     <Box direction="row" justify="between">

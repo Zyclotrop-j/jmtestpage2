@@ -56,7 +56,6 @@ export class Picture extends React.PureComponent<Props> {
       </Box>
     }
     const oorig = new URL(src).origin;
-    console.log("Rendering picture with props ", this.props);
     if (!srcFile?.childImageSharp) {
       return <Text gridArea={gridArea}>Image rendering failed</Text>;
     }

@@ -5,26 +5,30 @@ import styled from 'styled-components';
 import config from '../../config/SiteConfig';
 import { Link } from 'gatsby';
 import { Box, Text, Grid, Heading, Anchor, Button, Select } from 'grommet';
-import { Close } from 'grommet-icons';
+import { New, Close, ChapterAdd, Edit, Deploy } from 'grommet-icons';
 import SplitPane from "react-split-pane";
+import { without, pick } from "ramda";
 import { renameKeysWith } from 'ramda-adjunct';
 import { computed } from 'mobx';
 import { observer } from 'mobx-react';
 import { DragSource, DragDropContextProvider } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
+import { WidgetForm } from '../components/WidgetForm';
 import { notifications } from "../state/notifications";
-import { fetchAllSchemas, componentschemas, loading as schemaloading, error as schemaerror } from "../state/schemas";
-import { fetchAllComponents, components as allComponents, loading as componentloading, error as componenterror } from "../state/components";
+import { viewmode, viewmodes, setViewmode } from "../state/viewmode";
+import { fetchAllSchemas, pageschema, websiteschema, componentschemas, loading as schemaloading, error as schemaerror } from "../state/schemas";
+import { editComponent, addComponent, fetchAllComponents, components as allComponents, loading as componentloading, error as componenterror, request } from "../state/components";
 import { pages, setCurrentPage, current as currentpage, loading as pageloading, error as pageerror } from "../state/pages";
-import { fetchAllWebsites, setCurrentWebsite, websites, current as currentwebsite, loading as websiteloading, error as websiteerror } from "../state/websites";
+import { addSite, addPage, fetchAllWebsites, setCurrentWebsite, websites, current as currentwebsite, loading as websiteloading, error as websiteerror } from "../state/websites";
 import { auth } from "../utils/auth";
 import { ModernLayout } from "../layouts/modern";
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { Notificationbar } from "../components/Notificationbar";
 import { ComponentControlls } from "../components/ComponentControlls";
-import { WidgetForm } from "../components/WidgetForm";
 import EditRenderer from "../components/EditRenderer";
 import components from '../Widget';
+import SEOPreview from "../components/SEOPreview";
+import { deployment, isDeploying, doDeploy } from "../state/deployments";
 
 const ItemTypes = {
   COMPONENT: 'component',
@@ -98,6 +102,17 @@ const StyledSplitPane = styled(SplitPane)`
       border-color: transparent;
     }`;
 
+const Viewmodechooser = observer(({ viewmode, set, options }) => {
+  return (
+      <Select
+        gridArea="viewmode"
+        options={options}
+        placeholder="Please set a viewmode"
+        value={viewmode.get()}
+        onChange={({ option }) => set(option)}
+      />);
+});
+
 const Websitechooser = observer(({ loading, error, current, options, set }) => {
   return (
       loading.get() ? <Text gridArea="site">Loading website</Text> : (<>
@@ -114,10 +129,7 @@ const Websitechooser = observer(({ loading, error, current, options, set }) => {
   );
 });
 
-
-
 const Pagechooser = observer(({ website, loading, error, current, options, set }) => {
-  console.log("Page", loading, error, current, options, set );
   return (
       loading.get() ? <Text gridArea="page">Loading pages</Text> : <>
       {error.get() && <Text gridArea="page">{error.get()}</Text>}
@@ -132,6 +144,181 @@ const Pagechooser = observer(({ website, loading, error, current, options, set }
         onChange={({ option }) => set(option)}
       /></>
     );
+});
+
+const DeployButton = observer(({ status = {}, busy, deploy, website, loading }) => {
+  if(loading && loading.get()) return <Text gridArea="deployment">Loading...</Text>;
+  if(!website || !website.get()) return <Text gridArea="deployment">Please select a website to deploy</Text>;
+  if(busy.get()) return (<Box gridArea="deployment" direction="row" pad="xsmall">
+    <Text margin={{ horizontal: "xsmall" }}>Deploying ({Math.round(status.get()*100)/100}%)</Text>
+  </Box>);
+  return <Button gridArea="deployment" label="Deploy" margin={{horizontal: "medium"}} icon={<Deploy />} onClick={() => deploy({
+    ...website.get(),
+    customer: "Jannes Mingram Test"
+  })}/>;
+});
+
+const NewWebsite = observer(({ schema }) => {
+  if(!schema || !schema.get()) {
+    return <Text gridArea="sitenew">No schema</Text>;
+  }
+  const gschema = schema.get();
+  const submit = async ({ formData: idata }) => new Promise((res, rej) =>
+    addComponent("website", {
+      ...idata,
+      pages: []
+    }, res, rej, { skipClientCheck: true })
+  );
+
+  return (<WidgetForm
+    Preview={(props) => <SEOPreview title="" domain="" path="/" description="" {...props} />}
+    schema={gschema}
+    initialValues={{ header: {}, footer: {} }}
+    button={open => <Button margin={{horizontal: "medium"}} gridArea="sitenew" label="New Website" icon={<New />} plain onClick={open} />}
+    title="page"
+    onSubmit={submit}
+    onError={i => Promise.resolve(console.log('error', i))}
+  />);
+});
+
+const NewPage = observer(({ schema, website, page }) => {
+  if(!schema || !schema.get()) {
+    return <Text gridArea="pagenew">No schema</Text>;
+  }
+  if(!website.get()) {
+    return <Text gridArea="pagenew">No website selected</Text>
+  }
+  const cpage = page.get() || {};
+  const csite = website.get();
+  const gschema = schema.get();
+  const stripContentAreas = without(["main", "footer", "header", "_client"]);
+  const keys = Object.keys(gschema.properties);
+  const fkeys = without(['main'], [...keys, 'title']);
+  const pickProperties = pick(fkeys);
+  const submit = async ({ formData: idata }) => {
+    // // TODO: Make widget to select header, footer group
+    const makeNewGroup = area => new Promise((res, rej) => addComponent("componentgroup", {
+      _draft: false,
+      _client: csite._client,
+      title: `${area} of ${idata.path} - ${idata.title} (${Math.floor(Math.random()*10e6)})`,
+      groupdesc: `Autogenerated group for ${area} of page`,
+      components: []
+    }, res, rej));
+    const { _id: mainid } = await makeNewGroup("main");
+    const selectedProperties = pickProperties(idata);
+    selectedProperties.footer = cpage.footer;
+    selectedProperties.header = cpage.header;
+    selectedProperties.main = mainid;
+    const checkgroupprop = (a, b) => new Promise((res, rej) => {
+      if(!selectedProperties?.[a]?.[b]) {
+        return makeNewGroup(`${a}-${b}`).then(({ _id: sid }) => {
+          if(!selectedProperties[a]) {
+            selectedProperties[a] = {};
+          }
+          selectedProperties[a][b] = sid;
+          res(sid);
+        }).catch(rej);
+      }
+      res();
+    });
+    const promises = [
+      checkgroupprop("footer", "left"),
+      checkgroupprop("footer", "right"),
+      checkgroupprop("footer", "center"),
+      checkgroupprop("header", "left"),
+      checkgroupprop("header", "right"),
+      checkgroupprop("header", "center"),
+    ];
+    // Create groups if they're not present yet
+    await Promise.all(promises);
+    const { _id } = await new Promise((res, rej) =>
+      addComponent("page", selectedProperties, res, rej)
+    );
+    await new Promise((res, rej) => addPage(_id, csite._id, res, rej,  {
+      optimistic: true,
+      switch: true,
+    }));
+    // fetchAllPages();
+    return "OK";
+  };
+
+  return (<WidgetForm
+    Preview={(props) => <SEOPreview title={csite.title} domain={csite.domain} path={"/"} description={csite.description} {...props} />}
+    schema={gschema}
+    initialValues={{ header: {}, footer: {} }}
+    button={open => <Button margin={{horizontal: "medium"}} gridArea="pagenew" label="New Page" icon={<ChapterAdd />} plain onClick={open} />}
+    title="page"
+    onSubmit={submit}
+    onError={i => Promise.resolve(console.log('error', i))}
+  />);
+});
+
+const ConfigureSite = observer(({ schema, website }) => {
+  if(!schema || !schema.get()) {
+    return <Text gridArea="siteedit">No schema</Text>;
+  }
+  if(!website.get()) {
+    return <Text gridArea="siteedit">No site selected</Text>
+  }
+  const csite = website.get();
+  const gschema = schema.get();
+  const keys = Object.keys(gschema.properties);
+  const fkeys = without(['pages'], [...keys, 'title']);
+  const pickProperties = pick(fkeys);
+  const submit = ({ formData: idata }) => new Promise((res, rej) =>
+    editComponent(csite._id, pickProperties(idata), res, rej, {
+      optimistic: true
+    })
+  );
+  return (<WidgetForm
+    Preview={(props) => <SEOPreview title="" domain="" path="/" description="" {...props} />}
+    schema={gschema}
+    initialValues={pickProperties(csite)}
+    button={open => <Button margin={{horizontal: "medium"}} gridArea="siteedit" label="Edit website" icon={<Edit />} plain onClick={open} />}
+    title="site"
+    onSubmit={submit}
+    onError={i => Promise.resolve(console.log('error', i))}
+  />);
+});
+
+const ConfigurePage = observer(({ schema, current, website }) => {
+  if(!schema || !schema.get()) {
+    return <Text gridArea="pageedit">No schema</Text>;
+  }
+  if(!current.get()) {
+    return <Text gridArea="pageedit">No page selected</Text>
+  }
+  const csite = website.get();
+  const cpage = current.get();
+  const gschema = schema.get();
+  const keys = Object.keys(gschema.properties);
+  const fkeys = without(['content'], [...keys, 'title']);
+  const pickProperties = pick(fkeys);
+  const submit = ({ formData: idata }) => new Promise((res, rej) =>
+    editComponent(cpage._id, pickProperties(idata), res, rej, {
+      optimistic: true
+    })
+  );
+  return (<WidgetForm
+    Preview={(props) => <SEOPreview title={csite.title} domain={csite.domain} path={"/"} description={csite.description} {...props} />}
+    schema={gschema}
+    initialValues={pickProperties(cpage)}
+    button={open => <Button margin={{horizontal: "medium"}} gridArea="pageedit" label="Edit Page" icon={<Edit />} plain onClick={open} />}
+    title="page"
+    onSubmit={submit}
+    onError={i => Promise.resolve(console.log('error', i))}
+  />);
+});
+
+const Authentication = observer(({ auth: authx }) => {
+  if(!authx.initialized) {
+    return <Text gridArea="auth">Loading....</Text>;
+  }
+  const email = authx.authResult?.idTokenPayload?.email;
+  return (<>
+    {email && <Text gridArea="user">Logged in as {email}</Text>}
+    <Button fill="horizontal" gridArea="auth" label={authx.isAuthenticated() ? "Log out" : "Log in"} onClick={authx.isAuthenticated() ? authx.logout : authx.login} />
+  </>);
 });
 
 const makeDragSource = DragSource(
@@ -177,41 +364,56 @@ export default class IndexPage extends React.Component<any> {
   }
 
   public componentDidMount() {
-    if (localStorage.getItem('isLoggedIn') === 'true') {
-      auth.renewSession();
-    }
+    auth.renewSession();
     fetchAllSchemas();
     fetchAllWebsites();
   }
 
   public render() {
 
-    const email = auth.getAuthResult()?.idTokenPayload?.email;
-
     return (
       <DragDropContextProvider backend={HTML5Backend}><Page>
         <Notificationbar notifications={notifications} />
         <StyledSplitPane split="vertical" minSize={250}>
-            <Modals schemas={componentschemas} onSubmit={() => null} onError={() => null} />
-            <StyledSplitPane split="horizontal" minSize={100}>
+            <Grid
+              rows={['auto', 'flex', 'auto', 'xsmall']}
+              columns={['auto']}
+              fill={true}
+              areas={[
+                { name: 'modals', start: [0, 0], end: [0, 0] },
+                { name: 'viewmode', start: [0, 2], end: [0, 2] },
+              ]}
+            >
+              <Box gridArea="modals">
+                <Modals schemas={componentschemas} onSubmit={() => null} onError={() => null} />
+              </Box>
+              <Viewmodechooser viewmode={viewmode} set={setViewmode} options={viewmodes} />
+            </Grid>
+            <StyledSplitPane split="horizontal" minSize={150}>
                 <Grid
-                  rows={['flex', 'flex']}
-                  columns={['flex', 'small', 'flex', 'small', 'auto', 'small']}
+                  rows={['auto', 'flex', 'flex']}
+                  columns={['flex', 'small', 'auto', 'auto', 'auto', 'small']}
                   fill="horizontal"
                   areas={[
-                    { name: 'site', start: [0, 0], end: [1, 0] },
-                    { name: 'page', start: [0, 1], end: [1, 1] },
-                    { name: 'refresh', start: [3, 0], end: [3, 0] },
-                    { name: 'user', start: [4, 1], end: [5, 1] },
-                    { name: 'auth', start: [4, 0], end: [5, 0] }
+                    { name: 'deployment', start: [0, 0], end: [5, 0] },
+                    { name: 'site', start: [0, 1], end: [1, 1] },
+                    { name: 'siteedit', start: [2, 1], end: [2, 1] },
+                    { name: 'sitenew', start: [3, 1], end: [3, 1] },
+                    { name: 'page', start: [0, 2], end: [1, 2] },
+                    { name: 'pageedit', start: [2, 2], end: [2, 2] },
+                    { name: 'pagenew', start: [3, 2], end: [3, 2] },
+                    { name: 'user', start: [4, 2], end: [5, 2] },
+                    { name: 'auth', start: [4, 1], end: [5, 1] }
                   ]}
                 >
-                  <Websitechooser loading={websiteloading} error={websiteerror} current={currentwebsite} options={websites} set={setCurrentWebsite} />
+                  <Websitechooser loading={anyloading} error={websiteerror} current={currentwebsite} options={websites} set={setCurrentWebsite} />
                   <Pagechooser loading={pageloading} error={pageerror} current={currentpage} options={pages} set={setCurrentPage} website={currentwebsite} />
-                  <Button fill="horizontal" gridArea="refresh" label="Refresh" onClick={fetchAllComponents} disabled={!currentwebsite.get() || !currentpage.get() || schemaloading.get() || websiteloading.get() || pageloading.get() || componentloading.get()} />
-
-                  {email && <Text gridArea="user">Logged in as {email}</Text>}
-                  <Button fill="horizontal" gridArea="auth" label={auth.isAuthenticated() ? "Log out" : "Log in"} onClick={auth.isAuthenticated() ? auth.logout : auth.login} />
+                  <ConfigurePage schema={pageschema} website={currentwebsite} current={currentpage} />
+                  <ConfigureSite schema={websiteschema} website={currentwebsite} />
+                  <NewPage schema={pageschema} website={currentwebsite} page={currentpage} />
+                  <NewWebsite schema={websiteschema} />
+                  <Authentication auth={auth} />
+                  <DeployButton status={deployment} busy={isDeploying} deploy={doDeploy} website={currentwebsite} loading={anyloading} />
 
                 </Grid>
                 <Box fill overflow="auto" >

@@ -1,4 +1,5 @@
-import { observable, flow, action, autorun } from 'mobx';
+import { observable, flow, action, autorun, toJS } from 'mobx';
+import { request } from "./components";
 
 export const websites = observable([]);
 export const current = observable.box(null);
@@ -11,6 +12,51 @@ autorun(() => {
 
 autorun(() => {
   console.log('websites current:', current.get());
+});
+
+export const addPage = flow(function*(pageid, websiteid, resolve, reject, options) {
+    if(!pageid) {
+      throw new Error("pageid is a required argument!");
+    }
+    if(!websiteid) {
+      throw new Error("websiteid is a required argument!");
+    }
+    const obssiteIndex = websites.findIndex(site => site._id === websiteid);
+    const obssite = websites[obssiteIndex];
+    try {
+      const site = toJS(obssite);
+      site.pages.splice(options?.pos === undefined ? -1 : options.pos, 0, pageid);
+      if(options?.optimistic) {
+        obssite.pages.splice(options?.pos === undefined ? -1 : options.pos, 0, pageid);
+      }
+      const { data } = yield request(`https://zcmsapi.herokuapp.com/api/v1/website/${websiteid}`, {
+        method: "PATCH",
+        cache: "no-cache",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          pages: site.pages
+        })
+      }).then(i => !i.ok ? Promise.reject(i) : i.json());
+      // Trigger the current-proxy by referenceing by key, not overwriting the entire thing
+      Object.entries(data).forEach(([key, val]) => {
+          websites[obssiteIndex][key] = val;
+      });
+      // trigger re-loading of pages
+      const tmpid = current.get()._id;
+      current.set(null);
+      current.set(websites.find(site => site._id === tmpid));
+      resolve(data);
+      return data;
+    } catch (err) {
+      if(options?.optimistic) { // rollback
+        obssite.pages.splice(obssite.pages.indexOf(pageid), 1);
+      }
+      console.error(err);
+      reject(err);
+      return err;
+    }
 });
 
 export const fetchAllWebsites = flow(function*() {

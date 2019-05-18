@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'gatsby';
 import Img from 'gatsby-image';
+import { tryCatch, identity } from "ramda";
 import { Markdown, Paragraph, Anchor, Box } from 'grommet';
 import Image from 'react-shimmer';
 import LazyLoad from 'react-lazyload';
@@ -24,7 +25,7 @@ export class RichText extends React.PureComponent<Props> {
 
     // encode = window.btoa(unescape(encodeURIComponent(str)))
     // decode = decodeURIComponent(escape(window.atob(b64)));
-    const pipeline = [[b64, window.atob], [escaped, window.escape], [urlescaped, window.decodeURIComponent]]
+    const pipeline = [[b64, tryCatch(window.atob, identity)], [escaped, tryCatch(window.escape, identity)], [urlescaped, tryCatch(window.decodeURIComponent, identity)]]
       .filter(([t]) => t === true)
       .map(([__, f]) => f)
       .reduce((p, f) => x => f(p(x)), x => x);

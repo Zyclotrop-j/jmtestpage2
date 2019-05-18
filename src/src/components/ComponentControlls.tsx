@@ -8,6 +8,7 @@ import { pick, without } from 'ramda';
 import { renameKeysWith } from 'ramda-adjunct';
 import { observer } from 'mobx-react';
 import { newNotification } from '../state/notifications';
+import { viewmode } from "../state/viewmode";
 import { removeComponentfromGroup, editComponent } from '../state/components';
 import { WidgetForm } from '../components/WidgetForm';
 import { AddWidget } from '../components/AddWidget';
@@ -152,13 +153,16 @@ const RawComponentControlls = observer(({ connectDragSource, schemas, __renderSu
   };
 
   // // TODO: minimize-view
-  const minimize = true && !['componentbox', 'componentgrid'].includes(type);
+  const minimize = viewmode.get() === "minimize" && !['componentbox', 'componentgrid'].includes(type);
+  const preview = viewmode.get() === "preview";
 
   const inner = children({
     props,
     addProps: addPropsN,
     __children: enhancedChildren,
   });
+
+  if(preview) return inner;
 
   const schema = schemas.find(x => x.title === type);
   return (
@@ -214,7 +218,7 @@ const ConnectedComponentControlls = React.forwardRef(
     const opacity = isDragging ? 0.3 : 1;
     const height = isDragging ? '18px' : undefined;
     const overflow = isDragging ? 'hidden' : undefined;
-    const content = isDragging ? <div>Original Position</div> : <RawComponentControlls connectDragSource={connectDragSource} {...rest} />;
+    const content = isDragging ? <div>Original Position</div> : <RawComponentControlls viewmode={viewmode} connectDragSource={connectDragSource} {...rest} />;
     useImperativeHandle(ref, () => ({
       getNode: () => elementRef.current,
       ...rest,

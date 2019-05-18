@@ -3,10 +3,8 @@ import styled from 'styled-components';
 import FocusLock from 'react-focus-lock';
 import { Box, Button, Heading, Layer, Grid } from 'grommet';
 import { ChapterAdd, Clone, Close, Document, AddCircle } from 'grommet-icons';
-import Fuse from 'fuse.js';
 import { observer } from 'mobx-react';
 import { path, memoizeWith } from 'ramda';
-import hash from 'object-hash';
 import { renameKeysWith } from 'ramda-adjunct';
 import { PagingTable } from 'grommet-controls';
 import { toJS } from 'mobx';
@@ -17,7 +15,6 @@ import { addComponent, addComponenttoGroup, removeComponentfromGroup, components
 import { componentschemas } from '../state/schemas';
 import { newNotification } from '../state/notifications';
 import Tooltip from '../components/Tooltip';
-import { WidgetForm } from '../components/WidgetForm';
 import { Modal } from '../components/Modal';
 import { default as allComponents } from '../Widget';
 
@@ -25,22 +22,6 @@ const availableComponents = renameKeysWith(key => `component${key.toLowerCase()}
 const ItemTypes = {
   COMPONENT: 'component',
 };
-
-const memo = (rows, keys) => `${hash(new Set(rows.map(i => i._id)))}${hash(new Set(keys))}`;
-const createFuse = memoizeWith(
-  memo,
-  (rows, keys) =>
-    new Fuse(rows, {
-      keys,
-      caseSensitive: true,
-      threshold: 0.6,
-      shouldSort: true,
-      location: 0,
-      distance: 100,
-      maxPatternLength: 32,
-      minMatchCharLength: 1,
-    }),
-);
 
 const StyledLayer = styled(Layer)`
   width: 80vw;
