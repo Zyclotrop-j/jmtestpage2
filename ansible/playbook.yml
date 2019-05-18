@@ -16,6 +16,9 @@
     - name: Set tCustomer variable
       set_fact:
         tCustomer: "{{ lookup('env','CUSTOMER') }}"
+    - name: Set tToken variable
+      set_fact:
+        tToken: "{{ lookup('env','TOKEN') }}"
     - name: Set tName variable
       set_fact:
         tName: "{{ pagename }}-{{ lookup('env','CIRCLE_BRANCH') }}-{{ lookup('env','CIRCLE_BUILD_NUM') }}"
@@ -49,7 +52,7 @@
         aws acm request-certificate --domain-name {{ pagename }}.{{ suffix }}
         --validation-method DNS
         --subject-alternative-names www.{{ pagename }}.{{ suffix }}
-        --idempotency-token {{ bucketname }}
+        --idempotency-token {{ tToken }}
         --region us-east-1
       register: cert
     - name: Safe cert details (new cert)
