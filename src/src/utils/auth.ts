@@ -2,9 +2,9 @@ import auth0 from 'auth0-js';
 import { observable, runInAction, action, decorate, computed } from 'mobx';
 
 class Auth {
-  accessToken = {};
-  idToken = {};
-  expiresAt = {};
+  accessToken = null;
+  idToken = null;
+  expiresAt = null;
   authResult = {};
   initialized = false;
 

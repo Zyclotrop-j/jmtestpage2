@@ -37,7 +37,7 @@ export class Picture extends React.PureComponent<Props> {
   }
 
   public render() {
-    const { src, alt, title, crossorigin, color, gridArea, srcFile, preview } = this.props;
+    const { src, alt, title, crossorigin, color, gridArea, srcFile, preview, author } = this.props;
     if(process.env.NODE_ENV === "development" && preview) {
       if(!this?.state?.width || !this?.state?.height) {
         return <span>Loading</span>
@@ -73,6 +73,7 @@ export class Picture extends React.PureComponent<Props> {
                 window.setTimeout(() => img.parentElement.removeChild(img), 10);
               }
               : noop;
+          const app_name = location.origin.origin;
           return (
             <Box fill gridArea={gridArea}>
               <Img
@@ -83,6 +84,10 @@ export class Picture extends React.PureComponent<Props> {
                 backgroundColor={color}
                 onLoad={f}
               />
+              {author?.profileurl && <>
+                <a href={`${author?.profileurl}?utm_source=${app_name}&utm_medium=referral`}>{author?.name}</a> on
+                <a href={`${author?.plattform}/?utm_source=${app_name}&utm_medium=referral`}>{author?.plattformname}</a>
+              </>}
             </Box>
           );
         }}

@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { readableColor, fontFace } from 'polished';
 import { Link, navigate } from 'gatsby';
 import { Grommet, TextInput, Markdown, Anchor, Button, Box, Grid, Heading, Text, Paragraph, RadioButton, FormField, CheckBox, RangeInput, ThemeContext, Distribution } from 'grommet';
+import { when } from "mobx";
 import { observer } from 'mobx-react';
 import WebFont from "webfontloader";
 import chroma from "chroma-js";
@@ -26,7 +27,20 @@ const worker2 = new Worker();
 const worker3 = new Worker();
 const worker4 = new Worker();
 
-const fetchFonts = fetch("https://www.googleapis.com/webfonts/v1/webfonts?sort=trending&key=AIzaSyDk9Mrpeclzx4OastCPcGS5cfZGWHe5eec")
+const req = new Promise((res, rej) => {
+  when(() => auth.idToken).then(function(change) {
+    fetch("https://zcmsapi.herokuapp.com/api/v1/clientsidesecret", {
+      cache: "no-cache",
+      headers: {
+        "authorization": `Bearer ${auth.idToken}`,
+      }
+    }).then(i => i.json()).then(i => i.data.find(i => i.title === "GoogleFontsAPIKey").secret).then(i => res(i));
+  });
+});
+
+const fetchFonts = req.then(
+    i => fetch(`https://www.googleapis.com/webfonts/v1/webfonts?sort=trending&key=${i}`)
+  )
   .then(i => i.json())
   .then(i => i.items);
 
