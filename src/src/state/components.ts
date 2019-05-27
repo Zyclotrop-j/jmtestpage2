@@ -1,5 +1,9 @@
 import { toJS, observable, flow, action, computed, autorun } from "mobx";
-import { groupBy, mergeDeepRight, assocPath, path } from "ramda";
+import { groupBy, mergeDeepRight, assocPath, path, is } from "ramda";
+import mapValuesSeries from 'async/mapValuesSeries';
+import mapSeries from 'async/mapSeries';
+import asyncify from 'async/asyncify';
+import componentTypes from '../Widget';
 import { current as website, websites } from "./websites";
 import { componentschemas, ajv } from "./schemas";
 import { pages } from "./pages";
@@ -70,13 +74,13 @@ export const addComponent = flow(function*(type, data, resolve, reject, options 
     try {
       const client = options.skipClientCheck ? data._client : website.get()._client;
       if(data._client && client !== data._client) {
-        throw new Error(`Client mismatch - can't put components of client ${data._client} on website domain ${client}`);
+        return reject(`Client mismatch - can't put components of client ${data._client} on website domain ${client}`);
       }
       data._client = client; // Set _client to current domain
       const valid = ajv.validate(type, data);
       if(!valid) {
         console.error("AJV error", ajv.errors);
-        throw new Error(ajv.errors);
+        return reject(ajv.errors);
       }
       const tmp = yield request(`https://zcmsapi.herokuapp.com/api/v1/${type}`, {
         method: "POST",
@@ -99,17 +103,55 @@ export const addComponent = flow(function*(type, data, resolve, reject, options 
     }
 });
 
-export const editComponent = flow(function*(id, idata, resolve, reject, options) {
+export const editComponent = flow(function*(id, iidata, resolve, reject, options) {
   const client = website.get()._client;
-  if(idata._client && client !== idata._client) {
-    throw new Error(`Client mismatch - can't put components of client ${idata._client} on website domain ${client}`);
+  if(iidata._client && client !== iidata._client) {
+    return reject(`Client mismatch - can't put components of client ${iidata._client} on website domain ${client}`);
   }
-  idata._client = client; // Set _client to current domain
+  iidata._client = client; // Set _client to current domain
   const comp = components.get(id) || pages.find(i => i._id === id) || websites.find(i => i._id === id);
+  console.log("iidata", iidata);
+  const isArray = is(Array);
+  const isObject = is(Object);
+  const fn = (val, key) => {
+    const componentToCreate = componentschemas.get().find(i => `___NEW_${i.title}` === val);
+    if(componentToCreate) {
+      const compP = Object.entries(componentTypes).find(([j]) => componentToCreate.title === `component${j.toLowerCase()}`);
+      const defaults = compP?.[1]?.defaultProps || {};
+      return new Promise((res, rej) => addComponent(componentToCreate.title, {
+        title: `Group ${key}: ${iidata.title} [${Math.floor(Math.random()*10e10)}]`,
+        ...defaults,
+      }, res, rej)).then(i => i._id);
+    }
+    return Promise.resolve(val);
+  };
+  const switchTypes = asyncify((value, key) => {
+    if(isArray(value)) {
+      return mapArrayValues(value)
+    }
+    if(isObject(value)) {
+      return mapValuesDeep(value);
+    }
+    return fn(value, key);
+  });
+  const mapArrayValues = arr => {
+    return Promise.all(arr.map(
+      (j, jdx) => new Promise(
+        (res, rej) => switchTypes(j, jdx, (err, val) => err ? rej(err) : res(val))
+      )
+    ));
+  };
+  // const mapArrayValues = arr => mapSeries(arr, (value, cb) => {
+  //   return switchTypes(value, null, cb);
+  // });
+  const mapValuesDeep = obj => mapValuesSeries(obj, (value, key, cb) => {
+    return switchTypes(value, key, cb);
+  });
+  const idata = yield new Promise((res, rej) => switchTypes(iidata, null, (err, d) => err ? rej(err) : res(d)));
   const prevValue = toJS(comp);
   if(!comp) {
     console.error(`Can't find component for id ${id}`);
-    throw new Error(`Component "${id}" not found!`)
+    return reject(`Component "${id}" not found!`)
   }
   try {
     if(options?.optimistic) {
@@ -145,7 +187,7 @@ export const editComponent = flow(function*(id, idata, resolve, reject, options)
 
 export const removeComponentfromGroup = flow(function*(componentid, groupid, resolve, reject, options) {
     if(!componentid) {
-      throw new Error("componentid is a required argument!");
+      return reject("componentid is a required argument!");
     }
     const obsgroup = components.get(groupid);
     const rindex = obsgroup.components.indexOf(componentid);
@@ -180,7 +222,7 @@ export const removeComponentfromGroup = flow(function*(componentid, groupid, res
 
 export const addComponenttoGroup = flow(function*(componentid, groupid, resolve, reject, options) {
     if(!componentid) {
-      throw new Error("componentid is a required argument!");
+      return reject("componentid is a required argument!");
     }
     if(!groupid) {
       const newgroup = yield new Promise((res, rej) => addComponent("componentgroup", {

@@ -8,13 +8,18 @@ import theme from '../../config/Theme';
 import { myTheme } from '../utils/themeCreator';
 import { media } from '../utils/media';
 import split from 'lodash/split';
-import './layout.scss';
 
 const NormalizedStyle = createGlobalStyle`${normalize()}`;
 const GlobalStyle = createGlobalStyle`
   ::selection {
     color: ${theme.colors.bg};
     background: ${theme.colors.primary};
+  }
+  html {
+    height: 100%;
+  }
+  body {
+    height: inherit;
   }
   body {
     background: ${theme.colors.bg};
@@ -38,7 +43,6 @@ const GlobalStyle = createGlobalStyle`
   }
   label {
     margin-bottom: .5rem;
-    color: ${theme.colors.grey.dark};
   }
   input, textarea {
     border-radius: .5rem;
@@ -79,7 +83,6 @@ export class Provider extends React.PureComponent<{}> {
     const { children } = this.props;
 
     // Use https://www.gatsbyjs.org/packages/gatsby-plugin-layout/
-
     return (
       <>
         <NormalizedStyle />

@@ -20,6 +20,12 @@ interface Props {
 const newline = `\n`;
 
 export class RichText extends React.PureComponent<Props> {
+
+  static defaultProps = {
+    urlescaped: true,
+    b64: true,
+  }
+
   public render() {
     const { markdown, urlescaped, escaped, b64, gridArea } = this.props;
 

@@ -4,10 +4,10 @@ import Helmet from 'react-helmet';
 import styled from 'styled-components';
 import config from '../../config/SiteConfig';
 import { Link } from 'gatsby';
-import { Box, Text, Grid, Heading, Anchor, Button, Select } from 'grommet';
+import { Grommet, Box, Text, Grid, Heading, Anchor, Button, Select } from 'grommet';
 import { New, Close, ChapterAdd, Edit, Deploy } from 'grommet-icons';
 import SplitPane from "react-split-pane";
-import { without, pick } from "ramda";
+import { without, pick, mergeDeepRight } from "ramda";
 import { renameKeysWith } from 'ramda-adjunct';
 import { computed } from 'mobx';
 import { observer } from 'mobx-react';
@@ -19,7 +19,7 @@ import { viewmode, viewmodes, setViewmode } from "../state/viewmode";
 import { fetchAllSchemas, pageschema, websiteschema, componentschemas, loading as schemaloading, error as schemaerror } from "../state/schemas";
 import { editComponent, addComponent, fetchAllComponents, components as allComponents, loading as componentloading, error as componenterror, request } from "../state/components";
 import { pages, setCurrentPage, current as currentpage, loading as pageloading, error as pageerror } from "../state/pages";
-import { addSite, addPage, fetchAllWebsites, setCurrentWebsite, websites, current as currentwebsite, loading as websiteloading, error as websiteerror } from "../state/websites";
+import { themes, addSite, addPage, fetchAllWebsites, setCurrentWebsite, websites, current as currentwebsite, loading as websiteloading, error as websiteerror } from "../state/websites";
 import { auth } from "../utils/auth";
 import { ModernLayout } from "../layouts/modern";
 import { ErrorBoundary } from '../components/ErrorBoundary';
@@ -102,6 +102,15 @@ const StyledSplitPane = styled(SplitPane)`
       border-color: transparent;
     }`;
 
+const OGrommet = observer(({ themes, children }) => {
+  const finalTheme = themes.reduce((p, i) => mergeDeepRight(i, p), {});
+  console.log("mergeDeepRight(...themes)", finalTheme);
+  return (
+    <Grommet theme={finalTheme}>
+      {children}
+    </Grommet>)
+});
+
 const Viewmodechooser = observer(({ viewmode, set, options }) => {
   return (
       <Select
@@ -171,6 +180,7 @@ const NewWebsite = observer(({ schema }) => {
   );
 
   return (<WidgetForm
+    allComponents={allComponents}
     Preview={(props) => <SEOPreview title="" domain="" path="/" description="" {...props} />}
     schema={gschema}
     initialValues={{ header: {}, footer: {} }}
@@ -243,6 +253,7 @@ const NewPage = observer(({ schema, website, page }) => {
   };
 
   return (<WidgetForm
+    allComponents={allComponents}
     Preview={(props) => <SEOPreview title={csite.title} domain={csite.domain} path={"/"} description={csite.description} {...props} />}
     schema={gschema}
     initialValues={{ header: {}, footer: {} }}
@@ -271,6 +282,7 @@ const ConfigureSite = observer(({ schema, website }) => {
     })
   );
   return (<WidgetForm
+    allComponents={allComponents}
     Preview={(props) => <SEOPreview title="" domain="" path="/" description="" {...props} />}
     schema={gschema}
     initialValues={pickProperties(csite)}
@@ -300,6 +312,7 @@ const ConfigurePage = observer(({ schema, current, website }) => {
     })
   );
   return (<WidgetForm
+    allComponents={allComponents}
     Preview={(props) => <SEOPreview title={csite.title} domain={csite.domain} path={"/"} description={csite.description} {...props} />}
     schema={gschema}
     initialValues={pickProperties(cpage)}
@@ -310,7 +323,7 @@ const ConfigurePage = observer(({ schema, current, website }) => {
   />);
 });
 
-const Authentication = observer(({ auth: authx }) => {
+export const Authentication = observer(({ auth: authx }) => {
   if(!authx.initialized) {
     return <Text gridArea="auth">Loading....</Text>;
   }
@@ -416,9 +429,11 @@ export default class IndexPage extends React.Component<any> {
                   <DeployButton status={deployment} busy={isDeploying} deploy={doDeploy} website={currentwebsite} loading={anyloading} />
 
                 </Grid>
-                <Box fill overflow="auto" >
-                  <EditRenderer page={currentpage} components={allComponents} loading={anyloading} error={anyerror} Layout={ModernLayout} />
-                </Box>
+                <OGrommet themes={themes}>
+                  <Box fill overflow="auto" >
+                    <EditRenderer page={currentpage} components={allComponents} loading={anyloading} error={anyerror} Layout={ModernLayout} />
+                  </Box>
+                </OGrommet>
             </StyledSplitPane>
         </StyledSplitPane>
       </Page></DragDropContextProvider>

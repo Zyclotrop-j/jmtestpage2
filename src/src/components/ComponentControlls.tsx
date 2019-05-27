@@ -9,7 +9,7 @@ import { renameKeysWith } from 'ramda-adjunct';
 import { observer } from 'mobx-react';
 import { newNotification } from '../state/notifications';
 import { viewmode } from "../state/viewmode";
-import { removeComponentfromGroup, editComponent } from '../state/components';
+import { removeComponentfromGroup, editComponent, components as allComponents } from '../state/components';
 import { WidgetForm } from '../components/WidgetForm';
 import { AddWidget } from '../components/AddWidget';
 import components from '../Widget';
@@ -121,7 +121,7 @@ const RawComponentControlls = observer(({ connectDragSource, schemas, __renderSu
   const onSubmit = ({ formData, schema: xschema }) => {
     const { _id } = formData;
     const keys = Object.keys(xschema.properties);
-    const fkeys = without(['content'], [...keys, 'title']);
+    const fkeys = [...keys, 'title'];
     const collectedData = pick(fkeys, formData);
     const opid = `opid${Math.floor(Math.random() * 10e8)}`;
     newNotification({
@@ -199,6 +199,7 @@ const RawComponentControlls = observer(({ connectDragSource, schemas, __renderSu
             title={schema.title}
             onSubmit={onSubmit}
             onError={i => Promise.resolve(console.log('error', i))}
+            allComponents={allComponents}
           />
           <RButton gridArea="icon3" a11yTitle="Delete" icon={<Trash color="white" />} plain onClick={del} />
         </HeaderGrid>

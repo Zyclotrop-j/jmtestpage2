@@ -24,13 +24,21 @@ export const doDeploy = async (deploymentdata) => {
   });
   const { data: xdata } = await req.json();
   const deploymentkey = xdata.find(i => i.title === "circleci").secret;
-  const proxyurl = "https://usjdilkblg.execute-api.eu-central-1.amazonaws.com/defaultstage";
-  const deploymenturl = `${proxyurl}/api/v1.1/project/github/Zyclotrop-j/jmtestpage2?circle-token=${deploymentkey}`;
+  const proxyurl = xdata.find(i => i.title === "ciproxy").secret;
+  const deploymentpath = xdata.find(i => i.title === "cipath").secret;
+  
+  const deploymenturl = `${proxyurl}${deploymentpath}?circle-token=${deploymentkey}`;
   const {
     subdomain = "www",
     domain,
     tld,
   } = parseDomain(deploymentdata.domain);
+
+  // // TODO: Check the 'domain' first, only submit, if it is ours
+  // https://dns.google.com/resolve?name=_w3jmtoken.mingram.net&type=TXT
+  // -> "TZD6NEHQUB8FWG9BNWX3WGD"
+  // x.Answer.some(i => JSON.parse(i.data) === "TZD6NEHQUB8FWG9BNWX3WGD")
+
   // WARNING: if subdomain is empty, we need to choose a different name
   // For that we default to "www" -> www.www.mingram.net & www.mingram.net
   try {

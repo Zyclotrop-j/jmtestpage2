@@ -8,7 +8,6 @@ import { is } from "ramda";
 import { schemas } from "../state/schemas";
 import { current as currentpage } from "../state/pages";
 import { components as allComponents, fetchComponent } from "../state/components";
-import { WidgetForm } from "../components/WidgetForm";
 import { Modal } from "../components/Modal";
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { ComponentControlls } from "../components/ComponentControlls";
@@ -21,8 +20,6 @@ const availableComponents = renameKeysWith(key => `component${key.toLowerCase()}
 const SubtreeRenderer = observer(({ render, compo, addProps, page, components: xcomponents, loading, error, Layout }) => {
   if(!compo) return null;
   if(Array.isArray(compo)) {
-    console.log("addProps", addProps, addProps.___context, compo);
-
     const a = (pos) => <AddWidget parentcomponent={addProps.___component || page.get()} parentgroup={addProps.___parentid} addProps={addProps} pos={pos} area={addProps.___context} page={page.get()} __renderSubtree={render} />
     return compo.reduce((p, i, idx) => p.concat([render(i, { ...addProps, __pp: i }), a(idx + 1)]), [a(0)]);
   }

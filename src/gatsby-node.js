@@ -34,8 +34,15 @@ exports.createResolvers = ({
   });
 };
 
-exports.onCreateWebpackConfig = ({ stage, actions }) => {
+exports.onCreateWebpackConfig = ({ stage, actions, plugins, getConfig }) => {
   const hotloader = stage.startsWith('develop') ? { alias: { 'react-dom': '@hot-loader/react-dom'  } } : {};
+  if(stage.startsWith('develop')) {
+    const config = getConfig();
+    config.output.globalObject = '(this)';
+    actions.replaceWebpackConfig({
+      ...config,
+    });
+  }
   actions.setWebpackConfig({
                              resolve: {
                                modules: [path.resolve(__dirname, 'src'), 'node_modules'],
@@ -50,11 +57,8 @@ exports.onCreateWebpackConfig = ({ stage, actions }) => {
                                 tls: 'empty',
                                 child_process: 'empty',
                                 // prevent webpack from injecting eval / new Function through global polyfill
-                                global: false,
-                                // plugins: [new webpack.DefinePlugin({
-                                //    global: 'window'		// Placeholder for global used in any node_modules
-                                // })]
-                             }
+                                global: stage.startsWith('develop')
+                             },
                            });
 };
 

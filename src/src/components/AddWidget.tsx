@@ -35,7 +35,7 @@ const addComp = props => {
   const where = props.area[1].join('->');
   const connectDropTarget = props.connectDropTarget;
   const background = props.isOverCurrent ? 'rgba(0,0,0,.8)' : undefined;
-  const height = props.isDragging ? '50px' : '0';
+  const height = props.isDragging ? '30px' : '0';
   return connectDropTarget(
     <div
       style={{
@@ -65,7 +65,6 @@ export const AddWidget = DropTarget(
       return monitor.isOver({ shallow: true });
     },
     drop(props, monitor, component) {
-      console.log('!!!! DROP', props, monitor.getItem(), component);
       const opid = `opid${Math.floor(Math.random() * 10e8)}`;
       const doSideEffects = async () => {
         newNotification({
@@ -127,7 +126,6 @@ export const AddWidget = DropTarget(
       return;
     },
     hover(props, monitor, component) {
-      console.log('HOVER');
       return;
     },
   },

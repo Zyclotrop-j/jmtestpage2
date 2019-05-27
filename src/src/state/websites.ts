@@ -2,6 +2,7 @@ import { observable, flow, action, autorun, toJS } from 'mobx';
 import { request } from "./components";
 
 export const websites = observable([]);
+export const themes = observable.array([], { deep: false });
 export const current = observable.box(null);
 export const loading = observable.box(false);
 export const error = observable.box(null);
@@ -76,7 +77,30 @@ export const fetchAllWebsites = flow(function*() {
   }
 });
 
+export const fetchAllThemes = flow(function*() {
+  // <- note the star, this a generator function!
+  loading.set(true);
+  error.set(null);
+  themes.clear();
+  try {
+    const currentThemes = current.get().themes;
+    for(let i = 0; i < currentThemes.length; i++) {
+      const { data } = yield fetch(`https://zcmsapi.herokuapp.com/api/v1/theme/${currentThemes[i]}`).then(i => i.json()); // yield instead of await
+      themes.push(data);
+    }
+    loading.set(false);
+  } catch (err) {
+    themes.clear();
+    error.set(err);
+    loading.set(false);
+  }
+});
+
 export const setCurrentWebsite = action(website => {
   console.log('Setting current website to', website);
   current.set(website);
+});
+
+current.observe(function(change) {
+    fetchAllThemes();
 });

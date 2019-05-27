@@ -89,12 +89,12 @@ class Auth {
           }
         });
       } else {
-        rej(new Error(`User not logged in; got value ${localStorage.getItem('isLoggedIn')} for isLoggedIn`));
+        rej(`User not logged in; got value ${localStorage.getItem('isLoggedIn')} for isLoggedIn`);
       }
     });
     res.finally(() => {
       this.initialized = true;
-    })
+    });
     return res;
   }
 

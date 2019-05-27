@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'gatsby';
+import { tryCatch, nthArg } from "ramda";
 import Img from 'gatsby-image';
 import { Text as GText, TextInput } from 'grommet';
 
@@ -14,7 +15,7 @@ interface Props {
 export const uiSchema = {
   text: {
     "ui:widget": "transformInput",
-     "ui:options": { "transform": ["b64", "urlescaped"] },
+    "ui:options": { "transform": ["b64", "urlescaped"] },
     "ui:title": "Content",
     "ui:description": "Type your richttext here"
   },
@@ -30,12 +31,19 @@ export const uiSchema = {
 
 
 export class Text extends React.PureComponent<Props> {
+
+  static defaultProps = {
+    urlescaped: true,
+    b64: true,
+  }
+
   public render() {
-    const { b64, urlescaped, text, alignSelf, color, gridArea, margin, size, textAlign, truncate, weight } = this.props;
+    const { b64, urlescaped, text = "", alignSelf, color, gridArea, margin, size, textAlign, truncate, weight } = this.props;
 
     // encode = window.btoa(encodeURIComponent(str))
     // decode = decodeURIComponent(window.atob(b64));
-    const pipeline = [[b64, window.atob], [urlescaped, window.decodeURIComponent]]
+
+    const pipeline = [[b64, tryCatch(window.atob, nthArg(1))], [urlescaped, tryCatch(window.decodeURIComponent, nthArg(1))]]
       .filter(([t]) => t === true)
       .map(([__, f]) => f)
       .reduce((p, f) => x => f(p(x)), x => x);

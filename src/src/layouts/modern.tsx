@@ -3,13 +3,24 @@ import styled from 'styled-components';
 import { Anchor, Box, Grid, ResponsiveContext, SkipLinks, SkipLink, SkipLinkTarget } from 'grommet';
 import { mq } from '../utils/media';
 
-const Main = styled.main`
-  position: relative;
-  padding: 0;
-  ${mq('small')(`
-   padding: 0 3rem;
-  `)}
-`;
+import { ThemeContext } from 'styled-components';
+
+const Main = ({ children, value }) => {
+  const MMain = styled.main`
+    position: relative;
+    padding: 0;
+    ${mq('small')(`
+     padding: 0 calc( 100vw - ${props => props.theme.global.size.xxlarge} / 2 );
+    `)}
+  `;
+  return (<ThemeContext.Consumer>
+      {theme => (
+        <MMain theme={theme}>
+          {children}
+        </MMain>
+      )}
+    </ThemeContext.Consumer>);
+}
 
 export const ModernLayout = (props) => {
   return (<>

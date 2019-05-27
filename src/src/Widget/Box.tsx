@@ -11,6 +11,11 @@ interface Props {
 }
 
 export class Box extends React.PureComponent<Props> {
+
+  static defaultProps = {
+    
+  }
+
   public render() {
     const {
       advanced: { align, alignContent, alignSelf, fill, justify, basis, flex, overflow, responsive, height, width } = {},

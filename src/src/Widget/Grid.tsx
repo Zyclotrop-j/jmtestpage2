@@ -17,6 +17,12 @@ interface Props {
 const availableComponents = renameKeysWith(key => `DATA_Component${key.toLowerCase()}`, components);
 
 export class Grid extends React.PureComponent<Props> {
+  
+  static defaultProps = {
+      content: [],
+      columns: []
+  }
+
   public render() {
     const {
       columns,

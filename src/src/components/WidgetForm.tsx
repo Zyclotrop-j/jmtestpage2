@@ -2,13 +2,14 @@ import * as React from 'react';
 import { Text, Box, Heading, Button, CheckBox, RadioButtonGroup, RangeInput, Select, TextInput, TextArea } from 'grommet';
 import { EmailInput, DateInput, ColorInput, PasswordInput, NumberInput } from 'grommet-controls';
 import { Close } from 'grommet-icons';
-import { compose, pipe, identity, tryCatch, dissocPath } from "ramda";
+import { compose, pipe, identity, tryCatch, dissocPath, hasPath, has, max, mergeDeepLeft } from "ramda";
 import { noop } from 'ramda-adjunct';
+import { observer } from 'mobx-react';
+import Fuse from 'fuse.js';
 import Form from 'react-jsonschema-form';
 import { uiSchema } from '../Widget/index';
 import { Modal } from '../components/Modal';
 import { ErrorBoundary } from '../components/ErrorBoundary';
-
 
 const TransformInput = ({
   value,
@@ -54,12 +55,79 @@ const ConstantInput = ({
   options,
 }) => {
   if(value !== options.constant) {
-    onChange(options.constant)
+    // If sync, the change sometimes doesn't pick up :(
+    window.setTimeout(() => onChange(options.constant), 1);
   }
   return <Text as="code" margin="small" weight="bold">{JSON.stringify(value, null, "  ")}</Text>;
 };
 
-const widgets = {
+const TextWidgetHelper = ({ value, isValidId, onSelect, getSuggestions, schema, descField, ...props }) => {
+  const [rawsuggestions, setSuggestions] = React.useState([]);
+  const filter = (event => {
+    setSuggestions(getSuggestions(event.target.value));
+    onSelect(event.target.value);
+  });
+  const availFormatted = rawsuggestions.map(i => ({ label: `${i.title} (${i._id}): ${i[descField] || ""}`, value: i._id }));
+  const suggestions = [
+    ...availFormatted,
+    {
+      label: `New ${schema["x-$ref"]}`,
+      value: `___NEW_${schema["x-$ref"]}`
+    }
+  ];
+  const onSelectFn = (event) => {
+    onSelect(event.suggestion.value);
+  };
+  const chooseFallback = () => {
+    if(isValidId(value)) return;
+    onSelect(rawsuggestions[0]?._id);
+  };
+  return <TextInput {...props} value={value} onSuggestionsClose={chooseFallback} onChange={filter} onSelect={onSelectFn} suggestions={suggestions} />;
+};
+const TextWidget = ({ onChange, schema, registry, value, ...props }) => {
+  if(schema["x-$ref"] && registry.formContext?.allComponents) {
+    // "componentgroup"
+    // observer
+    const optioncomponents = Array.from(registry.formContext.allComponents?.values() || []);
+    const descFields = ["description", "groupdesc"];
+    const descfield = descFields.find(i => has(i, optioncomponents[0])) || descFields[0];
+
+    const options = {
+      keys: [{
+        name: '_id',
+        weight: 0.05
+      }, {
+        name: 'title',
+        weight: 0.45
+      }, {
+        name: descfield,
+        weight: 0.4
+      }, {
+        name: '_author',
+        weight: 0.025
+      }, {
+        name: '_lastModifiedBy',
+        weight: 0.025
+      }, {
+        name: '_created',
+        weight: 0.025
+      }, {
+        name: '_modified',
+        weight: 0.025
+      }]
+    };
+    const availableEntries = optioncomponents.filter(i => i["x-type"] === schema["x-$ref"]);
+    const isValidId = id => availableEntries.some(i => i._id === id) || id === `___NEW_${schema["x-$ref"]}`;
+    const fuse = new Fuse(availableEntries, options);
+    return (<>
+      <TextWidgetHelper {...props} value={value} isValidId={isValidId} descField={descfield} schema={schema}  onSelect={onChange} getSuggestions={fuse.search.bind(fuse)} />
+      <Text>{availableEntries.find(({ _id }) => value === _id)?.title}</Text>
+    </>);
+  }
+  return <TextInput {...props} value={value} onChange={event => onChange(event.target.value)} />;
+};
+
+export const widgets = {
   constantInput: ConstantInput,
   transformInput: TransformInput,
   CheckboxWidget: ({ value, onChange, ...props }) => (
@@ -93,7 +161,7 @@ const widgets = {
       options={enumOptions}
     />
   ),
-  TextWidget: ({ onChange, ...props }) => <TextInput {...props} onChange={event => onChange(event.target.value)} />,
+  TextWidget,
   TextareaWidget: ({ onChange, ...props }) => <TextArea resize="vertical" {...props} onChange={event => onChange(event.target.value)} />,
   // URLWidget,
   UpDownWidget: ({ onChange, ...props }) => <NumberInput {...props} onChange={event => onChange(event.target.value)} />,
@@ -104,14 +172,13 @@ const widgets = {
   ColorWidget: ({ onChange, ...props }) => <ColorInput {...props} onChange={event => onChange(event.target.value)} />,
 };
 
-export const WidgetForm = ({ schema, initialValues, title, onSubmit, onError, Preview, button, focusgroup }) => {
+export const WidgetForm = ({ allComponents, schema, initialValues, title, onSubmit, onError, Preview, button, focusgroup }) => {
   const [currentProps, setCurrentProps] = React.useState(initialValues);
   const shorttitle = title.startsWith("component") ? title.substring("component".length) : title;
-  const fn = pipe(
-    dissocPath(["properties", "main"]),
-    dissocPath(["properties", "footer"]),
-    dissocPath(["properties", "header"]),
-  );
+  const fn = schema => mergeDeepLeft({
+    properties: { title: { type: "string" }, description: { type: "string" } }
+  }, schema);
+
   return (
     <Modal focusgroup={focusgroup} box={{}} layer={{}} button={button || (open => <Button label={`${title}`} onClick={open} />)}>
       {close => (
@@ -124,12 +191,14 @@ export const WidgetForm = ({ schema, initialValues, title, onSubmit, onError, Pr
           </Box>
           <Box>
             <Form
+              formContext={{
+                allComponents
+              }}
               schema={fn(schema)}
               widgets={widgets}
               uiSchema={uiSchema[shorttitle] || {}}
               onChange={v => setCurrentProps(v.formData)}
-              onSubmit={(...args) =>
-                onSubmit(...args)
+              onSubmit={(...args) => onSubmit(...args)
                   .then(close)
                   .catch(noop)
               }
