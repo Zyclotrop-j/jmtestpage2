@@ -70,12 +70,18 @@ export const fetchComponent = flow(function*(type, id, resolve, reject) {
     }
 });
 
+// aka createComponent = addComponent
 export const addComponent = flow(function*(type, data, resolve, reject, options = {}) {
     try {
       const client = options.skipClientCheck ? data._client : website.get()._client;
       if(data._client && client !== data._client) {
         return reject(`Client mismatch - can't put components of client ${data._client} on website domain ${client}`);
       }
+
+      const compP = Object.entries(componentTypes).find(([j]) => type === `component${j.toLowerCase()}`);
+      const defaults = compP?.[1]?.defaultProps || {};
+      data = mergeDeepRight(defaults, data);
+
       data._client = client; // Set _client to current domain
       const valid = ajv.validate(type, data);
       if(!valid) {

@@ -1,16 +1,18 @@
 import * as React from 'react';
+import styled from 'styled-components';
 import { Image, Carousel, Text, Box, Heading, Button, CheckBox, RadioButtonGroup, RangeInput, Select, TextInput, TextArea, ThemeContext } from 'grommet';
 import { EmailInput, DateInput, ColorInput, PasswordInput, NumberInput, Colors } from 'grommet-controls';
 import { Close, Search } from 'grommet-icons';
 import chroma from "chroma-js";
 import { when } from "mobx";
-import { map, compose, pipe, identity, tryCatch, dissocPath, hasPath, has, max, mergeDeepLeft, memoizeWith } from "ramda";
+import { omit, map, compose, pipe, identity, tryCatch, dissocPath, hasPath, has, max, mergeDeepLeft, memoizeWith } from "ramda";
 import { noop } from 'ramda-adjunct';
 import { observer } from 'mobx-react';
 import Fuse from 'fuse.js';
 import Unsplash, { toJson } from 'unsplash-js';
 import Form from 'react-jsonschema-form';
 import { auth } from "../utils/auth";
+import { request } from "../state/components";
 import { uiSchema } from '../Widget/index';
 import { Modal } from '../components/Modal';
 import { ErrorBoundary } from '../components/ErrorBoundary';
@@ -199,14 +201,145 @@ const GrommetColor =  ({ value, onChange, ...props }) => {
   </ThemeContext.Consumer></>)
 }
 
-const ImageInput = ({ value, onChange: modonChange, schema, ...props }) => {
+class AttributedPicture extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      picContext: {}
+    };
+  }
+
+  render() {
+    const {
+      onChange,
+      schema,
+      formData,
+      registry,
+      ...rest
+    } = this.props;
+
+    console.log("AttributedPicture", schema, formData);
+
+    const { fields: { ObjectField } } = registry;
+    const newschema = {
+      ...schema,
+      properties: {
+        ...omit(["src", "image", "crossorigin", "pingback"], schema.properties)
+      }
+    };
+    const onContext = (
+      context,
+      { plattform, plattformname }
+    ) => {
+      const altSrc = str => `${str.startsWith("url(") ? "" : "url("}${str}${str.endsWith(")") ? "" : ")"}`;
+      const picturesByUrl = {
+        ...Object.fromEntries(context.map(json => [json.fileUrl || json.urls.full, json])),
+        ...Object.fromEntries(context.map(json => [altSrc(json.fileUrl || json.urls.full), json]))
+      };
+      this.setState({
+        plattform,
+        plattformname,
+        picContext: picturesByUrl
+      });
+    };
+    const onChangeN = data => {
+      const copy = mergeDeepLeft({}, formData);
+      const imageToUse = this.state.picContext[data];
+      console.log("onChangeN", data, imageToUse, this.state);
+      const obj = {
+        pingback: data,
+        src: data,
+        image: data,
+        author: {
+          plattform: this.state.plattform || "",
+          plattformname: this.state.plattformname || "",
+          name: imageToUse?.user?.name || "",
+          username: imageToUse?.user?.username || "",
+          profileurl: imageToUse?.user?.links?.html || "",
+          portfolio_url: imageToUse?.user?.portfolio_url
+        },
+        tags: imageToUse?.tags?.map(i => i.title) || [],
+        location: {
+          city: imageToUse?.location?.city || "",
+          country: imageToUse?.location?.country || imageToUse?.user?.location || ""
+        },
+        width: imageToUse?.width,
+        height: imageToUse?.height,
+        crossorigin: " ",
+        color: imageToUse?.color || "transparent",
+        alt: imageToUse?.alt_description || imageToUse?.alt || imageToUse?.description,
+        description: formData?.description || imageToUse?.description || imageToUse?.alt || imageToUse?.alt_description,
+      };
+      unsplash.then(unsplash => {
+        tryCatch(unsplash.photos.downloadPhoto.bind(unsplash), () => "Not unspalsh")(imageToUse);
+      });
+      const newData = mergeDeepLeft(obj, copy);
+      onChange(newData);
+    };
+
+    return (
+      <>
+        <ImageInput
+          {...this.props}
+          onContext={onContext}
+          value={formData.src}
+          schema={schema.properties.src || schema.properties.image}
+          onChange={onChangeN}
+        />
+        <ObjectField {...this.props} schema={newschema} />
+      </>
+    );
+  }
+}
+
+export const fields = {
+  attributedpicture: AttributedPicture
+};
+
+const fetchOwnPictures = memoizeWith(
+  () => Math.floor(Date.now() / 200000), (opts = {}) => request("https://zcmsapi.herokuapp.com/api/v1/remotefile", opts)
+  .then(i => i.json())
+  .then(i => new Promise(resolve => {
+    const all = i.data.map(j => new Promise(res => {
+      const url = j.fileUrl;
+      const img = new window.Image();
+      img.addEventListener("load", () => {
+        console.log("Found image", url);
+        res(i);
+      });
+      img.addEventListener("error", () => {
+        console.warn("Failed to load image", url);
+        res(i);
+      });
+      img.src = url;
+    }));
+    Promise.all(all).then(() => resolve(i));
+  }))
+);
+
+const ImageInput = ({ value, onChange: modonChange, onContext: modonContext, schema, ...props }) => {
   const modifiers = ({
     css: str => `${str.startsWith("url(") ? "" : "url("}${str}${str.endsWith(")") ? "" : ")"}`
   }[schema?.["ui:options"]?.type]) || identity;
   const onChange = pipe(modifiers, modonChange);
-  const [options, setOptions] = React.useState([]);
+  const [options, setOptionsx] = React.useState([]);
   const [search, setSearch] = React.useState("");
-  const doSearch = () => unsplash
+
+  const onContext = modonContext || (() => null);
+  const setOptions = (data, source) => {
+    onContext(data, source);
+    return setOptionsx(data);
+  };
+
+  const doSearch = () => {
+    if(!search.trim()) {
+      fetchOwnPictures()
+        .then(json => {
+          setOptions(json.data, { plattform: "", plattformname: "" });
+        });
+      return;
+    }
+    unsplash
       .then(unsplash => unsplash.search.photos(search, 1, 20))
       .then((...args) => {
         console.log("...args", args);
@@ -214,44 +347,33 @@ const ImageInput = ({ value, onChange: modonChange, schema, ...props }) => {
       })
       .then(json => {
         console.log(json);
-        setOptions(json.results);
+        setOptions(json.results, { plattform: "https://unsplash.com", plattformname: "Unsplash" });
         // unsplash.photos.downloadPhoto(json["results"][0]);
       });
+    }
 
     const app_name = "JannesWebsiteEditor";
     const buttonOptions = options.map(json => ({
       label: (<Box>
-          <img src={json.urls.thumb} alt={json.alt_description || json.description} />
-          By <a target="_blank" rel="noreferrer" href={`${json.user?.profileurl}?utm_source=${app_name}&utm_medium=referral`}>{json.user?.name}</a> on <a target="_blank" rel="noreferrer" href={`https://unsplash.com/?utm_source=${app_name}&utm_medium=referral`}>Unsplash</a>
+          <img style={{ maxWidth: 120 }} src={json.fileUrl || json.urls.thumb} alt={json.alt_description || json.description} />
+          {json.user && <>
+            By <a target="_blank" rel="noreferrer" href={`${json.user?.profileurl}?utm_source=${app_name}&utm_medium=referral`}>{json.user?.name}</a> on <a target="_blank" rel="noreferrer" href={`https://unsplash.com/?utm_source=${app_name}&utm_medium=referral`}>Unsplash</a>
+          </>}
         </Box>),
-      value: json.id,
-      onClick: () => onChange(json.urls.full),
+      value: json.id || json._id,
+      onClick: () => onChange(json.fileUrl || json.urls.full),
     }));
-    console.log("!!!!props", props);
-    // // TODO: Safe more properties
-    /*
-    description: json.description
-    alt: json.alt_description
-    author: json.user
-    color: json.color
-    crossorigin
-    height
-    width
-    location: json.location
-    src
-    tags: json.tags.map(i => i.title)
-    title
-    */
     return (<>
-      <Box direction="row">
+      <Box direction={search.trim() ? "row" : "column"}>
         <TextInput
-          placeholder="Search value"
+          css={`max-width: ${search.trim() ? "auto": "180px"}; transition: max-width 1s;`}
+          placeholder="Search Unsplash"
           value={search}
           onChange={event => {
             setSearch(event.target.value);
           }}
         />
-        <Button label="Search" icon={<Search />} onClick={doSearch} />
+        <Button label={search.trim() ? "Search" : "Load your assets"} icon={<Search />} onClick={doSearch} />
       </Box>
       {buttonOptions.map(bprops => <Button
         {...bprops}
@@ -312,12 +434,22 @@ export const widgets = {
   ColorWidget: ({ onChange, ...props }) => <ColorInput {...props} onChange={event => onChange(event.target.value)} />,
 };
 
+const CustomIconForm = styled(Form)`
+  i.glyphicon { display: none; }
+  .btn-add::after { content: 'Add'; }
+  .array-item-move-up::after { content: 'Move Up'; }
+  .array-item-move-down::after { content: 'Move Down'; }
+  .array-item-remove::after { content: 'Remove'; }
+`;
+
 export const WidgetForm = ({ allComponents, schema, initialValues, title, onSubmit, onError, Preview, button, focusgroup }) => {
   const [currentProps, setCurrentProps] = React.useState(initialValues);
   const shorttitle = title.startsWith("component") ? title.substring("component".length) : title;
   const fn = schema => mergeDeepLeft({
     properties: { title: { type: "string" }, description: { type: "string" } }
   }, schema);
+
+  console.log("shorttitle", shorttitle, uiSchema[shorttitle]);
 
   return (
     <Modal focusgroup={focusgroup} box={{}} layer={{}} button={button || (open => <Button label={`${title}`} onClick={open} />)}>
@@ -330,12 +462,13 @@ export const WidgetForm = ({ allComponents, schema, initialValues, title, onSubm
             <Button icon={<Close />} alignSelf="center" a11yTitle="Close" onClick={close} />
           </Box>
           <Box>
-            <Form
+            <CustomIconForm
               formContext={{
                 allComponents
               }}
               schema={fn(schema)}
               widgets={widgets}
+              fields={fields}
               uiSchema={uiSchema[shorttitle] || {}}
               onChange={v => setCurrentProps(v.formData)}
               onSubmit={(...args) => onSubmit(...args)
@@ -358,7 +491,7 @@ export const WidgetForm = ({ allComponents, schema, initialValues, title, onSubm
               <hr />
               <Button type="submit" label="Submit" />
               <Button type="button" label="Reset" />
-            </Form>
+            </CustomIconForm>
           </Box>
         </>
       )}

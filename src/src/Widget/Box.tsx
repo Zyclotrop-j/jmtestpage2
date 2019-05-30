@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'gatsby';
-import { Box as GBox } from 'grommet';
 import { map } from 'ramda';
+import { Attribution, ImgBox } from "./Picture";
 
 interface Props {
   b64: boolean;
@@ -10,10 +10,34 @@ interface Props {
   text: string;
 }
 
+export const uiSchema = {
+  background: {
+    "ui:field": "attributedpicture"
+  }
+};
+
 export class Box extends React.PureComponent<Props> {
 
   static defaultProps = {
-    
+    background: {
+      tags: [],
+      src: "",
+      location: {
+        city: "",
+        country: ""
+      },
+      author: {
+        name: "",
+        portfolio_url: "",
+        profileurl: "",
+        username: "",
+        plattform: "",
+        plattformname: "",
+      },
+      alt: "",
+      width: 150,
+      height: 150
+    }
   }
 
   public render() {
@@ -70,8 +94,12 @@ export class Box extends React.PureComponent<Props> {
     };
 
     return (
-      <GBox
-        {...map(v => (v === null ? undefined : v), obj)}
+      <ImgBox
+        {...obj}
+        pad={background?.author?.profileurl ? {
+          ...pad,
+          bottom: `calc( 3rem + ${pad.bottom !== "none" ? pad.bottom || "0px" : "0px"} );`
+        } : pad}
         direction={
           {
             row: 'row',
@@ -97,8 +125,9 @@ export class Box extends React.PureComponent<Props> {
         basis={t(basis)}
         gridArea={gridArea}
       >
+        <Attribution author={background.author} app_name={location.origin} />
         {content}
-      </GBox>
+      </ImgBox>
     );
   }
 }

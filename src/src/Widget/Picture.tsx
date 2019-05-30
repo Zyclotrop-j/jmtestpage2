@@ -16,19 +16,81 @@ interface Props {
   fluid: object | undefined;
 }
 
+export const uiSchema = {
+  "ui:field": "attributedpicture"
+};
+
+export const ImgBox = styled(Box)`
+  position: relative;
+`;
+const Attributionoverlay = styled.div`
+  position: absolute;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: flex-end;
+  text-align: right;
+  justify-content: flex-end;
+  opacity: 0;
+  transition: opacity 0.1s;
+  padding: 1rem;
+  ${ImgBox}:hover > & {
+    opacity: 1;
+  }
+`;
+export const Attribution = ({ author, app_name }) => {
+  const profileurl = `${author?.profileurl}?utm_source=${app_name}&utm_medium=referral`;
+  const plattformurl = `${author?.plattform}/?utm_source=${app_name}&utm_medium=referral`;
+  return <>{author?.profileurl && <Attributionoverlay>
+  <span>By&nbsp;</span>
+  <Anchor color="inherit" href={profileurl}>{author?.name}</Anchor>
+  <span>&nbsp;on&nbsp;</span>
+  <Anchor color="inherit" href={plattformurl}>{author?.plattformname}</Anchor>
+  </Attributionoverlay>}</>;
+};
+
 export class Picture extends React.PureComponent<Props> {
+
+  static defaultProps = {
+    tags: [],
+    src: "https://via.placeholder.com/150",
+    location: {
+      city: "",
+      country: ""
+    },
+    author: {
+      name: "",
+      portfolio_url: "",
+      profileurl: "",
+      username: "",
+      plattform: "",
+      plattformname: "",
+    },
+    alt: "",
+    width: 150,
+    height: 150
+  }
 
   public componentDidMount() {
     if(process.env.NODE_ENV === "development" && this.props.preview) {
       function getMeta(url){
           return new Promise((res, rej) => {
             const img = new Image();
+            img.decoding = "async";
             img.addEventListener("load", function(){
                 res({
                   width: this.naturalWidth, height: this.naturalHeight
                 });
             });
-            img.addEventListener("error", rej);
+            img.addEventListener("error", () => {
+              // Something went wrong, like CORS
+              // Pretend everything went alright
+              res({
+                width: 100, height: 100
+              });
+            });
             img.src = url;
           });
       }
@@ -37,12 +99,14 @@ export class Picture extends React.PureComponent<Props> {
   }
 
   public render() {
-    const { src, alt, title, crossorigin, color, gridArea, srcFile, preview, author } = this.props;
+    // // TODO: Put pingback in schema
+    const { pingback, src, alt, title, crossorigin, color, gridArea, srcFile, preview, author } = this.props;
+    const app_name = location.origin;
     if(process.env.NODE_ENV === "development" && preview) {
       if(!this?.state?.width || !this?.state?.height) {
         return <span>Loading</span>
       }
-      return <Box fill gridArea={gridArea}>
+      return <ImgBox background={color} fill gridArea={gridArea}>
         <Img
           fluid={{
             src,
@@ -53,7 +117,8 @@ export class Picture extends React.PureComponent<Props> {
           crossOrigin={crossorigin}
           backgroundColor={color}
         />
-      </Box>
+        <Attribution author={author} app_name={app_name} />
+      </ImgBox>
     }
     const oorig = new URL(src).origin;
     if (!srcFile?.childImageSharp) {
@@ -63,19 +128,20 @@ export class Picture extends React.PureComponent<Props> {
       <Location>
         {({ location }) => {
           const f =
-            location.origin.origin !== oorig
+            pingback && location.origin.origin !== oorig
               ? () => {
                 const img = document.createElement("img");
+                img.decoding = "async";
                 img.src = src;
+                img.referrerpolicy = "origin-when-cross-origin";
                 img.hidden = true;
                 img.style.display = "none";
                 document.body.appendChild(img);
                 window.setTimeout(() => img.parentElement.removeChild(img), 10);
               }
               : noop;
-          const app_name = location.origin.origin;
           return (
-            <Box fill gridArea={gridArea}>
+            <ImgBox background={color} fill gridArea={gridArea}>
               <Img
                 fluid={srcFile.childImageSharp.fluid}
                 alt={alt}
@@ -84,11 +150,8 @@ export class Picture extends React.PureComponent<Props> {
                 backgroundColor={color}
                 onLoad={f}
               />
-              {author?.profileurl && <>
-                <a href={`${author?.profileurl}?utm_source=${app_name}&utm_medium=referral`}>{author?.name}</a> on
-                <a href={`${author?.plattform}/?utm_source=${app_name}&utm_medium=referral`}>{author?.plattformname}</a>
-              </>}
-            </Box>
+              <Attribution author={author} app_name={app_name} />
+            </ImgBox>
           );
         }}
       </Location>

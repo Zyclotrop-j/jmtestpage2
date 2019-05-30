@@ -85,6 +85,8 @@
   },
   "dependencies": {
     "@hot-loader/react-dom": "^16.8.6",
+    "@uppy/golden-retriever": "^1.0.2",
+    "@uppy/react": "^1.0.2",
     "ajv": "^6.10.0",
     "async": "^3.0.1",
     "auth0-js": "^9.10.2",

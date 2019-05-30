@@ -102,7 +102,13 @@ module.exports = {
         icon: config.favicon,
       },
     },
-    "gatsby-plugin-offline",
+    {
+      resolve: "gatsby-plugin-offline",
+      options: {
+        // importScripts: ['@uppy/golden-retriever/lib/ServiceWorker'],
+        // offlineGoogleAnalytics: true
+      }
+    },
     {
       resolve: 'gatsby-plugin-robots-txt',
       options: {

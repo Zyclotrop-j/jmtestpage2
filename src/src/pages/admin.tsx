@@ -26,6 +26,7 @@ import { ErrorBoundary } from '../components/ErrorBoundary';
 import { Notificationbar } from "../components/Notificationbar";
 import { ComponentControlls } from "../components/ComponentControlls";
 import EditRenderer from "../components/EditRenderer";
+import AssetManager from "../components/AssetManager";
 import components from '../Widget';
 import SEOPreview from "../components/SEOPreview";
 import { deployment, isDeploying, doDeploy } from "../state/deployments";
@@ -51,6 +52,9 @@ const Page = styled.div`
 const StyledSplitPane = styled(SplitPane)`
     .Pane {
       height: inherit;
+    }
+    .Pane.horizontal.Pane2 {
+      overflow: auto;
     }
     .Resizer {
         background: #000;
@@ -389,18 +393,22 @@ export default class IndexPage extends React.Component<any> {
         <Notificationbar notifications={notifications} />
         <StyledSplitPane split="vertical" minSize={250}>
             <Grid
-              rows={['auto', 'flex', 'auto', 'xsmall']}
+              rows={['auto', 'flex', 'auto', 'auto', 'xsmall']}
               columns={['auto']}
               fill={true}
               areas={[
                 { name: 'modals', start: [0, 0], end: [0, 0] },
                 { name: 'viewmode', start: [0, 2], end: [0, 2] },
+                { name: 'assetmanager', start: [0, 3], end: [0, 3] },
               ]}
             >
               <Box gridArea="modals">
                 <Modals schemas={componentschemas} onSubmit={() => null} onError={() => null} />
               </Box>
               <Viewmodechooser viewmode={viewmode} set={setViewmode} options={viewmodes} />
+              <Box gridArea="assetmanager">
+                <AssetManager current={currentwebsite} auth={auth} />
+              </Box>
             </Grid>
             <StyledSplitPane split="horizontal" minSize={150}>
                 <Grid
