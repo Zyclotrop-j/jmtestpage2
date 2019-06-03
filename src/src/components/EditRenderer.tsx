@@ -12,7 +12,7 @@ import { components as allComponents, fetchComponent } from "../state/components
 import { Modal } from "../components/Modal";
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { ComponentControlls } from "../components/ComponentControlls";
-import { anyloading, anyerror } from "../pages/admin";
+import { anyloading, anyerror } from "./pages/admin";
 import { AddWidget } from "../components/AddWidget";
 import components from '../Widget';
 
