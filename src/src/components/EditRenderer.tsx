@@ -5,6 +5,7 @@ import { renameKeysWith } from 'ramda-adjunct';
 import { Box, Button, Layer } from "grommet";
 import { observer } from 'mobx-react';
 import { is } from "ramda";
+import debounceRender from 'react-debounce-render';
 import { schemas } from "../state/schemas";
 import { current as currentpage } from "../state/pages";
 import { components as allComponents, fetchComponent } from "../state/components";
@@ -16,6 +17,7 @@ import { AddWidget } from "../components/AddWidget";
 import components from '../Widget';
 
 const availableComponents = renameKeysWith(key => `component${key.toLowerCase()}`, components);
+const DebouncedPreview = debounceRender(({ children, ...props }) => children(props));
 
 const SubtreeRenderer = observer(({ render, compo, addProps, page, components: xcomponents, loading, error, Layout }) => {
   if(!compo) return null;
@@ -48,7 +50,9 @@ const SubtreeRenderer = observer(({ render, compo, addProps, page, components: x
         __renderSubtree={render}
     >
       {({ props, addProps: xaddProps, __children }) => (<ErrorBoundary key={compo._id}>
-        <Component {...props} preview={true} __children={__children} __renderSubtree={render} {...xaddProps} />
+        <DebouncedPreview {...props} preview={true} __children={__children} __renderSubtree={render} {...xaddProps}>
+          {(props) => <Component {...props} key={props._modified} />}
+        </DebouncedPreview>
       </ErrorBoundary>)}
   </ComponentControlls>);
 });

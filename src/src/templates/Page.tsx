@@ -103,6 +103,7 @@ export const postQuery = graphql`
     $DATA_Componentrichtext: [ID!]
     $DATA_Componentbox: [ID!]
     $DATA_Componentheadline: [ID!]
+    $DATA_Componentstage: [ID!]
   ) {
     data {
       page(_id: $pageid) {
@@ -120,6 +121,9 @@ export const postQuery = graphql`
         nextPage
         prevPage
       }
+      componentstages(_ids: $DATA_Componentstage) {
+        _id
+      }
       componenttexts(_ids: $DATA_Componenttext) {
         _id
         b64
@@ -129,6 +133,7 @@ export const postQuery = graphql`
       componentpictures(_ids: $DATA_Componentpicture) {
         _id
         alt
+        pingback
         author {
           name
           username
@@ -229,6 +234,24 @@ export const postQuery = graphql`
           image
           opacity
           position
+          pingback
+          srcFile {
+            relativePath
+            childImageSharp {
+              fluid(maxWidth: 2000) {
+                tracedSVG
+                base64
+                tracedSVG
+                aspectRatio
+                src
+                srcSet
+                srcWebp
+                srcSetWebp
+                originalName
+                sizes
+              }
+            }
+          }
         }
         border {
           color

@@ -30,6 +30,36 @@ exports.createResolvers = ({
           })
         }
       }
+    },
+    DATA_ImageMod3M62O0U2Y0Tmp: {
+      srcFile: {
+        type: `File`,
+        // projection: { url: true },
+        async resolve(source, args, context, info) {
+          return createRemoteFileNode({
+            url: source.src,
+            store,
+            cache,
+            createNode,
+            createNodeId,
+          })
+        }
+      }
+    },
+    DATA_BackgroundModZchwmkapX05D: {
+      srcFile: {
+        type: `File`,
+        // projection: { url: true },
+        async resolve(source, args, context, info) {
+          return createRemoteFileNode({
+            url: source.image,
+            store,
+            cache,
+            createNode,
+            createNodeId,
+          })
+        }
+      }
     }
   });
 };
@@ -63,8 +93,10 @@ exports.onCreateWebpackConfig = ({ stage, actions, plugins, getConfig }) => {
 };
 
 
-const components = ["DATA_Componentgrid", "DATA_Componenttext", "DATA_Componentpicture", "DATA_Componentrichtext", "DATA_Componentbox", "DATA_Componentheadline"]
 const queryCache = {};
+const componentsWithChild = ["DATA_Componentgrid", "DATA_Componentbox"]
+const componentsStandalone = ["DATA_Componentstage", , "DATA_Componenttext", "DATA_Componentpicture", "DATA_Componentrichtext", "DATA_Componentheadline"]
+const components = [].concat(componentsStandalone, componentsWithChild);
 const makeRecursiveContext = () => {
   const componentgroups = new Set();
   const componentgroupQuery = memoizeWith(identity, (componentgroupid, graphql) => {
@@ -75,18 +107,10 @@ const makeRecursiveContext = () => {
             componentgroupid: _id
             components {
               __typename
-              ... on DATA_Componentpicture {
+              ${componentsStandalone.map(q => `... on ${q} {
                 _id
               }
-              ... on DATA_Componentrichtext {
-                _id
-              }
-              ... on DATA_Componentheadline {
-                _id
-              }
-              ... on DATA_Componenttext {
-                _id
-              }
+              `).join("")}
               ... on DATA_Componentgrid {
                 _id
                 gridcontent: content {
@@ -113,16 +137,19 @@ const makeRecursiveContext = () => {
   };
 
   const buildtree = (group, children) => {
-    console.log("children", children);
-    return group.components.map(i => {
+    if(!group) {
+      console.log("WARNING!!!! No group", group, children)
+      return [];
+    }
+    return (group.components || []).map(i => {
       const { _id: id, __typename: type } = i;
       if(type === "DATA_Componentbox") {
-        const { _id: childid } = i.boxcontent;
+        const { _id: childid } = i.boxcontent || {};
         const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
         return { id, type, child, componentgroupid: group.componentgroupid };
       }
       if(type === "DATA_Componentgrid") {
-        const childids = i.gridcontent.map(i => i._id);
+        const childids = (i.gridcontent || []).map(i => i._id);
         const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
         return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
       }
@@ -132,16 +159,20 @@ const makeRecursiveContext = () => {
 
   const resultset = [];
   const subquerrySet = {};
-  const discover = (id, graphql) => {
+  const discover = (id, graphql, page) => {
     if(!id) return Promise.resolve([]);
     return  new Promise(resolve => {
       const [query, discovered] = queryComponentgroup(id, graphql);
-      console.log(`Dicovered ${id}, discovered before: ${discovered}`);
+      console.log(`Dicovered ${id}, discovered before: ${discovered}, on ${page.path}`);
 
-      const children = !discovered ?
+      const children = !subquerrySet[id] ?
         query.then(result => {
-          // console.log("1A!!!!!!!!!!!", result.data.data.componentgroup);
-          const data = result.data.data.componentgroup.components;
+          if(!result || !result.data || !result.data.data) {
+            console.log("ERROR",result)
+          }
+          const tmp = result.data.data.componentgroup;
+          console.log(`Query done; ${page.path}:`, tmp && tmp.componentgroupid, tmp && tmp.components);
+          const data = result.data.data.componentgroup && result.data.data.componentgroup.components || [];
           resultset.push(...data);
           const subquerries = data
             .filter(({ __typename }) => [
@@ -151,7 +182,7 @@ const makeRecursiveContext = () => {
             .map(i => i.gridcontent || i.boxcontent || [])
             .map(i => (i._id && [i._id]) || i.map(i => i._id))
             .filter(i => i.length)
-            .reduce((p, i) => p.concat(i.map(id => discover(id, graphql))), []);
+            .reduce((p, i) => p.concat(i.map(id => discover(id, graphql, page))), []);
           return Promise.all(subquerries);
         }) : subquerrySet[id];
       subquerrySet[id] = children;
@@ -234,14 +265,15 @@ exports.createPages = ({ actions, graphql }) => {
     return Promise.all([
       Promise.resolve(result.data.data.website),
       Promise.all(pages.map(page => {
+        console.log("Discovering page "+page.path+"....");
         return Promise.all([
-          discover(page.main._id, graphql),
-          discover(page.header.left && page.header.left._id, graphql),
-          discover(page.header.center && page.header.center._id, graphql),
-          discover(page.header.right && page.header.right._id, graphql),
-          discover(page.footer.left && page.footer.left._id, graphql),
-          discover(page.footer.center && page.footer.center._id, graphql),
-          discover(page.footer.right && page.footer.right._id, graphql)
+          discover(page.main._id, graphql, page),
+          discover(page.header.left && page.header.left._id, graphql, page),
+          discover(page.header.center && page.header.center._id, graphql, page),
+          discover(page.header.right && page.header.right._id, graphql, page),
+          discover(page.footer.left && page.footer.left._id, graphql, page),
+          discover(page.footer.center && page.footer.center._id, graphql, page),
+          discover(page.footer.right && page.footer.right._id, graphql, page)
         ]).then(([
           main,
           hleft,
@@ -269,9 +301,7 @@ exports.createPages = ({ actions, graphql }) => {
   }).then(([website, discovery, getresult]) => {
     const { pages, ...other } = website;
     const groupdata = groupBy(i => i.__typename, getresult());
-    console.log("!!!!!!discovery", discovery, "!!!", R.map(i => i.map(j => j._id), groupdata));
     return pages.map((i, idx) => {
-      console.log("PATH", i.path);
       createPage({
          path: `${i.path}`,
          component: path.resolve('./src/templates/Page.tsx'),

@@ -19,6 +19,24 @@ interface Props {
 
 const newline = `\n`;
 
+export const components = {
+  a: {
+    component: props => {
+      const MDLink = styled(Link)``;
+      return <Anchor {...props} as={MDLink} href={props.href} to={props.href} />;
+    },
+  },
+  img: {
+    component: props => {
+      return (
+        <LazyLoad height={200} once offset={100}>
+          <Image {...props} width={250} height={100} />
+        </LazyLoad>
+      );
+    },
+  },
+};
+
 export class RichText extends React.PureComponent<Props> {
 
   static defaultProps = {
@@ -36,24 +54,6 @@ export class RichText extends React.PureComponent<Props> {
       .map(([__, f]) => f)
       .reduce((p, f) => x => f(p(x)), x => x);
 
-    const components = {
-      a: {
-        component: props => {
-          console.log(props);
-          const MDLink = styled(Link)``;
-          return <Anchor {...props} as={MDLink} href={props.href} to={props.href} />;
-        },
-      },
-      img: {
-        component: props => {
-          return (
-            <LazyLoad height={200} once offset={100}>
-              <Image {...props} width={250} height={100} />
-            </LazyLoad>
-          );
-        },
-      },
-    };
     return (
       <Box gridArea={gridArea}>
         <Markdown components={components}>{pipeline(markdown || '')}</Markdown>

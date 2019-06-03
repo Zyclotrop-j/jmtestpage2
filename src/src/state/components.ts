@@ -1,5 +1,5 @@
 import { toJS, observable, flow, action, computed, autorun } from "mobx";
-import { groupBy, mergeDeepRight, assocPath, path, is } from "ramda";
+import { groupBy, mergeDeepRight, assocPath, path, is, omit } from "ramda";
 import mapValuesSeries from 'async/mapValuesSeries';
 import mapSeries from 'async/mapSeries';
 import asyncify from 'async/asyncify';
@@ -170,13 +170,14 @@ export const editComponent = flow(function*(id, iidata, resolve, reject, options
         components.set(id, predicatedNewValue);
       }
     }
+    const removeAttrs = omit(Object.keys(prevValue).filter(i => i.startsWith("_") || i.startsWith("x-")));
     const { data } = yield request(`https://zcmsapi.herokuapp.com/api/v1/${comp["x-type"]}/${id}`, {
-      method: options?.verb || "POST",
+      method: options?.verb || "PATCH",
       cache: "no-cache",
       headers: {
           "Content-Type": "application/json"
       },
-      body: JSON.stringify(idata)
+      body: JSON.stringify(options?.verb ? idata : removeAttrs(mergeDeepRight(prevValue, idata)))
     }, options).then(i => !i.ok ? Promise.reject(i) : i.json());
     components.set(id, data);
     resolve(data);

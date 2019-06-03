@@ -11,6 +11,7 @@ import { observer } from 'mobx-react';
 import Fuse from 'fuse.js';
 import Unsplash, { toJson } from 'unsplash-js';
 import Form from 'react-jsonschema-form';
+import debounceRender from 'react-debounce-render';
 import { auth } from "../utils/auth";
 import { request } from "../state/components";
 import { uiSchema } from '../Widget/index';
@@ -110,7 +111,7 @@ const TextWidget = ({ onChange, schema, registry, value, ...props }) => {
     // observer
     const optioncomponents = Array.from(registry.formContext.allComponents?.values() || []);
     const descFields = ["description", "groupdesc"];
-    const descfield = descFields.find(i => has(i, optioncomponents[0])) || descFields[0];
+    const descfield = descFields.find(i => has(i, optioncomponents[0] || {})) || descFields[0];
 
     const options = {
       keys: [{
@@ -151,25 +152,25 @@ const TextWidget = ({ onChange, schema, registry, value, ...props }) => {
   return <TextInput {...props} value={value} onChange={event => onChange(event.target.value)} />;
 };
 
-const assembleColorCode = theme => (p, color) => ({
+const assembleColorCode = (theme, fallbacks) => (p, color) => ({
   ...p,
-  [color]: theme?.global?.colors[color]
+  [color]: theme?.global?.colors[color] || fallbacks[color]
 });
-const makeColors = theme => ({
+const makeColors = (theme, fallbacks) => ({
   transparent: "rgba(255,255,255,0)",
-  brand: theme?.global?.colors?.brand,
-  ...["dark1", "accent-1", "neutral1", "light1"].reduce(assembleColorCode(theme), {}),
-  ...["dark2", "accent-2", "neutral2", "light2"].reduce(assembleColorCode(theme), {}),
-  ...["dark3", "accent-3", "neutral3", "light3"].reduce(assembleColorCode(theme), {}),
-  ...["dark4", "accent-4", "neutral4", "light4"].reduce(assembleColorCode(theme), {}),
-  ...["statuscritical","statusdisabled","statusok","statusunknown","statuswarning"].reduce(assembleColorCode(theme), {}),
+  brand: theme?.global?.colors?.brand || "#7D4CDB",
+  ...["dark1", "accent-1", "neutral1", "light1"].reduce(assembleColorCode(theme, fallbacks), {}),
+  ...["dark2", "accent-2", "neutral2", "light2"].reduce(assembleColorCode(theme, fallbacks), {}),
+  ...["dark3", "accent-3", "neutral3", "light3"].reduce(assembleColorCode(theme, fallbacks), {}),
+  ...["dark4", "accent-4", "neutral4", "light4"].reduce(assembleColorCode(theme, fallbacks), {}),
+  ...["statuscritical","statusdisabled","statusok","statusunknown","statuswarning"].reduce(assembleColorCode(theme, fallbacks), {}),
   black: theme?.global?.colors.black || "black",
   white: theme?.global?.colors.white || "white",
-  ...theme.palette.reduce((p, i) => ({ ...p, [i]: i }), {}),
+  ...(theme.palette || []).reduce((p, i) => ({ ...p, [i]: i }), {}),
 });
 
 const GrommetColor =  ({ value, onChange, ...props }) => {
-  const shapes = theme => theme.shapes.reduce((p, row, rowdx) => ({
+  const shapes = theme => (theme.shapes || []).reduce((p, row, rowdx) => ({
     ...p,
     ...row.reduce((p1, arr, arrdx) => ({
       ...p1,
@@ -183,7 +184,35 @@ const GrommetColor =  ({ value, onChange, ...props }) => {
     <Box background={value} pad="small">{value}</Box>
     <ThemeContext.Consumer>
     {theme => {
-      const madeColors = makeColors(theme);
+      const defaultColors = {
+        "accent-1": "#6FFFB0",
+        "accent-2": "#FD6FFF",
+        "accent-3": "#81FCED",
+        "accent-4": "#FFCA58",
+        "neutral1": "#00873D",
+        "neutral2": "#3D138D",
+        "neutral3": "#00739D",
+        "neutral4": "#A2423D",
+        "statuscritical": "#FF4040",
+        "statuserror": "#FF4040",
+        "statuswarning": "#FFAA15",
+        "statusok": "#00C781",
+        "statusunknown": "#CCCCCC",
+        "statusdisabled": "#CCCCCC",
+        "light1": "#F8F8F8",
+        "light2": "#F2F2F2",
+        "light3": "#EDEDED",
+        "light4": "#DADADA",
+        "light5": "#DADADA",
+        "light6": "#DADADA",
+        "dark1": "#333333",
+        "dark2": "#555555",
+        "dark3": "#777777",
+        "dark4": "#999999",
+        "dark5": "#999999",
+        "dark6": "#999999"
+      };
+      const madeColors = makeColors(theme, defaultColors);
       const cromaobjs = map(x => chroma(x), madeColors);
       return (<Colors
       size='small'
@@ -256,7 +285,7 @@ class AttributedPicture extends React.Component {
           name: imageToUse?.user?.name || "",
           username: imageToUse?.user?.username || "",
           profileurl: imageToUse?.user?.links?.html || "",
-          portfolio_url: imageToUse?.user?.portfolio_url
+          portfolio_url: imageToUse?.user?.portfolio_url || ""
         },
         tags: imageToUse?.tags?.map(i => i.title) || [],
         location: {
@@ -442,14 +471,14 @@ const CustomIconForm = styled(Form)`
   .array-item-remove::after { content: 'Remove'; }
 `;
 
+const DebouncedPreview = debounceRender(({ children, ...props }) => children(props));
+
 export const WidgetForm = ({ allComponents, schema, initialValues, title, onSubmit, onError, Preview, button, focusgroup }) => {
   const [currentProps, setCurrentProps] = React.useState(initialValues);
   const shorttitle = title.startsWith("component") ? title.substring("component".length) : title;
   const fn = schema => mergeDeepLeft({
     properties: { title: { type: "string" }, description: { type: "string" } }
   }, schema);
-
-  console.log("shorttitle", shorttitle, uiSchema[shorttitle]);
 
   return (
     <Modal focusgroup={focusgroup} box={{}} layer={{}} button={button || (open => <Button label={`${title}`} onClick={open} />)}>
@@ -485,7 +514,9 @@ export const WidgetForm = ({ allComponents, schema, initialValues, title, onSubm
               <Heading level={3}>Preview</Heading>
               <Box pad="medium" border={{ color: 'brand', size: 'small' }}>
                 <ErrorBoundary>
-                  <Preview {...currentProps} preview={true} />
+                  <DebouncedPreview {...currentProps} >
+                    {(props) => <Preview {...props}  preview={true} />}
+                  </DebouncedPreview>
                 </ErrorBoundary>
               </Box>
               <hr />

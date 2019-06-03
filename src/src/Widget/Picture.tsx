@@ -24,6 +24,7 @@ export const ImgBox = styled(Box)`
   position: relative;
 `;
 const Attributionoverlay = styled.div`
+  font-size: small;
   position: absolute;
   bottom: 0;
   top: 0;
@@ -34,22 +35,49 @@ const Attributionoverlay = styled.div`
   text-align: right;
   justify-content: flex-end;
   opacity: 0;
-  transition: opacity 0.1s;
+  transition: opacity 0.1s, background 0.1s;
   padding: 1rem;
-  ${ImgBox}:hover > & {
+  ${ImgBox}:hover > &, &:hover {
     opacity: 1;
+    color: #CCC;
   }
+`;
+const BGBox = styled.span`
+  background: rgba(0,0,0,0.4);
+  padding: 3px;
 `;
 export const Attribution = ({ author, app_name }) => {
   const profileurl = `${author?.profileurl}?utm_source=${app_name}&utm_medium=referral`;
   const plattformurl = `${author?.plattform}/?utm_source=${app_name}&utm_medium=referral`;
   return <>{author?.profileurl && <Attributionoverlay>
-  <span>By&nbsp;</span>
-  <Anchor color="inherit" href={profileurl}>{author?.name}</Anchor>
-  <span>&nbsp;on&nbsp;</span>
-  <Anchor color="inherit" href={plattformurl}>{author?.plattformname}</Anchor>
+  <BGBox>
+    <span>Photo&nbsp;by&nbsp;</span>
+    <Anchor color="inherit" href={profileurl}>{author?.name}</Anchor>
+    <span>&nbsp;on&nbsp;</span>
+    <Anchor color="inherit" href={plattformurl}>{author?.plattformname}</Anchor>
+  </BGBox>
   </Attributionoverlay>}</>;
 };
+
+export const Pingback = ({ children, pingback, origin, src }) =>
+  (<Location>
+    {({ location }) => {
+      const f =
+        pingback && location.origin !== origin
+          ? () => {
+            const img = document.createElement("img");
+            img.decoding = "async";
+            img.src = pingback === true ? src : pingback;
+            img.referrerpolicy = "origin-when-cross-origin";
+            img.hidden = true;
+            img.style.display = "none";
+            document.body.appendChild(img);
+            window.setTimeout(() => img.parentElement.removeChild(img), 10);
+          }
+          : noop;
+      return children(f);
+    }}
+  </Location>);
 
 export class Picture extends React.PureComponent<Props> {
 
@@ -125,21 +153,8 @@ export class Picture extends React.PureComponent<Props> {
       return <Text gridArea={gridArea}>Image rendering failed</Text>;
     }
     return (
-      <Location>
-        {({ location }) => {
-          const f =
-            pingback && location.origin.origin !== oorig
-              ? () => {
-                const img = document.createElement("img");
-                img.decoding = "async";
-                img.src = src;
-                img.referrerpolicy = "origin-when-cross-origin";
-                img.hidden = true;
-                img.style.display = "none";
-                document.body.appendChild(img);
-                window.setTimeout(() => img.parentElement.removeChild(img), 10);
-              }
-              : noop;
+      <Pingback origin={oorig} pingback={pingback} src={src}>
+        {(f) => {
           return (
             <ImgBox background={color} fill gridArea={gridArea}>
               <Img
@@ -154,7 +169,7 @@ export class Picture extends React.PureComponent<Props> {
             </ImgBox>
           );
         }}
-      </Location>
+      </Pingback>
     );
   }
 }

@@ -15,11 +15,15 @@ const GlobalStyle = createGlobalStyle`
     color: ${theme.colors.bg};
     background: ${theme.colors.primary};
   }
+  :root{
+   --scrollbar-width: calc(100vw - 100%);
+  }
   html {
     height: 100%;
   }
   body {
     height: inherit;
+    overflow-x: hidden;
   }
   body {
     background: ${theme.colors.bg};

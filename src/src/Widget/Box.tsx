@@ -2,7 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'gatsby';
 import { map } from 'ramda';
-import { Attribution, ImgBox } from "./Picture";
+import BackgroundImage from 'gatsby-background-image';
+import { Attribution, Pingback, ImgBox } from "./Picture";
 
 interface Props {
   b64: boolean;
@@ -19,6 +20,7 @@ export const uiSchema = {
 export class Box extends React.PureComponent<Props> {
 
   static defaultProps = {
+    content: "",
     background: {
       tags: [],
       src: "",
@@ -45,6 +47,7 @@ export class Box extends React.PureComponent<Props> {
       advanced: { align, alignContent, alignSelf, fill, justify, basis, flex, overflow, responsive, height, width } = {},
       animation,
       background,
+      background: { srcFile, pingback, src },
       border,
       direction,
       elevation,
@@ -72,7 +75,8 @@ export class Box extends React.PureComponent<Props> {
 
     const corner = round ? round.corner : round;
 
-    const obj = {
+    // Funny enough, when properties are null and not undefined, grommet is crashing :(
+    const obj = map(x => x === null ? undefined : x, {
       align,
       alignContent,
       alignSelf,
@@ -84,50 +88,64 @@ export class Box extends React.PureComponent<Props> {
       height,
       width,
       animation,
-      background,
       border,
       elevation,
       gap,
       margin,
       pad,
       wrap,
-    };
+    });
+
+    const hasImageSharp = srcFile?.childImageSharp;
+    const Wrap = ({ children }) => hasImageSharp ?
+      <Pingback pingback={pingback} origin={pingback && new URL(pingback).origin} src={src}>
+        {f => <BackgroundImage onLoad={f} {...background} fluid={srcFile.childImageSharp.fluid} backgroundColor={background.color}>
+          {children}
+        </BackgroundImage>}
+      </Pingback> :
+      <>{children}</>;
 
     return (
-      <ImgBox
-        {...obj}
-        pad={background?.author?.profileurl ? {
-          ...pad,
-          bottom: `calc( 3rem + ${pad.bottom !== "none" ? pad.bottom || "0px" : "0px"} );`
-        } : pad}
-        direction={
-          {
-            row: 'row',
-            column: 'column',
-            rowresponsive: 'row-responsive',
-            rowreverse: 'row-reverse',
-            columnreverse: 'column-reverse',
-          }[direction]
-        }
-        round={{
-          ...round,
-          corner: {
-            top: 'top',
-            left: 'left',
-            bottom: 'bottom',
-            right: 'right',
-            topleft: 'top-left',
-            topright: 'top-right',
-            bottomleft: 'bottom-left',
-            bottomright: 'bottom-right',
-          }[corner],
-        }}
-        basis={t(basis)}
-        gridArea={gridArea}
-      >
-        <Attribution author={background.author} app_name={location.origin} />
-        {content}
-      </ImgBox>
+      <Wrap>
+        <ImgBox
+          {...obj}
+          background={hasImageSharp ? null : {
+            ...background,
+            // ??? image: background.image ? `url(${background.image})` : ""
+          }}
+          pad={background?.author?.profileurl ? {
+            ...pad,
+            bottom: `calc( 3rem + ${pad.bottom !== "none" ? pad.bottom || "0px" : "0px"} );`
+          } : pad}
+          direction={
+            {
+              row: 'row',
+              column: 'column',
+              rowresponsive: 'row-responsive',
+              rowreverse: 'row-reverse',
+              columnreverse: 'column-reverse',
+            }[direction]
+          }
+          round={{
+            ...round,
+            corner: {
+              top: 'top',
+              left: 'left',
+              bottom: 'bottom',
+              right: 'right',
+              topleft: 'top-left',
+              topright: 'top-right',
+              bottomleft: 'bottom-left',
+              bottomright: 'bottom-right',
+            }[corner],
+          }}
+          basis={t(basis)}
+          gridArea={gridArea}
+        >
+          <Attribution author={background.author} app_name={location.origin} />
+          {content}
+        </ImgBox>
+      </Wrap>
     );
   }
 }
