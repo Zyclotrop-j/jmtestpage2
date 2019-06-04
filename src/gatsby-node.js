@@ -192,6 +192,9 @@ const makeRecursiveContext = () => {
   return { discover, result: () => resultset };
 }
 
+// const parseGraphQLMeta = ({ name }, allTypes) => { const f = allTypes.data.__schema.types.find(i => i.name === name).fields; if(!f) { return null; } return f.reduce((p, i) => ({ ...p, [i.name]: x(i.type, allTypes) || i.type.name }), {}) };
+// parseGraphQLMeta({ name: "DATA_Theme" }, { /* all types query result goes here */ });
+
 const execwebsitequery = memoizeWith(identity, (websiteid, graphql) => graphql(`{
   data {
     website(_id: "${websiteid}") {
@@ -199,7 +202,1471 @@ const execwebsitequery = memoizeWith(identity, (websiteid, graphql) => graphql(`
       _id
       basethemes
       themes {
+        meter {
+          _id
+          color
+          extend
+        }
+        drop {
+          _id
+          extend
+          maxHeight
+        }
+        formField {
+          _id
+          border {
+            _id
+            color
+            error {
+              _id
+              color {
+                _id
+                dark
+                light
+              }
+            }
+            position
+            side
+          }
+          content {
+            _id
+            pad {
+              _id
+              bottom
+              horizontal
+            }
+          }
+          error {
+            _id
+            color {
+              _id
+              dark
+              light
+            }
+            margin {
+              _id
+              horizontal
+              vertical
+            }
+          }
+          extend
+          help {
+            _id
+            color {
+              _id
+              dark
+              light
+            }
+            margin {
+              _id
+              left
+            }
+          }
+          label {
+            _id
+            margin {
+              _id
+              horizontal
+              vertical
+            }
+          }
+          margin {
+            _id
+            bottom
+          }
+        }
+        rangeInput {
+          _id
+          extend
+          thumb {
+            _id
+            color {
+              _id
+              dark
+              light
+            }
+            extend
+          }
+          track {
+            _id
+            color {
+              _id
+              dark
+              light
+            }
+            extend
+            height
+          }
+        }
+        worldMap {
+          _id
+          color
+          continent {
+            _id
+            active
+            base
+          }
+          extend
+          hover {
+            _id
+            color
+          }
+          place {
+            _id
+            active
+            base
+          }
+        }
+        menu {
+          _id
+          background
+          extend
+          icons {
+            _id
+            down
+          }
+        }
+        stack {
+          _id
+          extend
+        }
+        textArea {
+          _id
+          disabled {
+            _id
+            opacity
+          }
+          extend
+        }
+        select {
+          _id
+          background
+          container {
+            _id
+            extend
+          }
+          control {
+            _id
+            extend
+          }
+          icons {
+            _id
+            color {
+              _id
+              dark
+              light
+            }
+            down
+            margin {
+              _id
+              horizontal
+            }
+          }
+          options {
+            _id
+            box {
+              _id
+              align
+              pad
+            }
+            container {
+              _id
+              align
+              alignContent
+              alignSelf
+              animation
+              background
+              basis
+              border {
+                _id
+                color
+                side
+                size
+                style
+              }
+              direction
+              elevation
+              fill
+              flex
+              gap
+              height
+              justify
+              margin {
+                _id
+                bottom
+                left
+                right
+                top
+              }
+              overflow
+              pad {
+                _id
+                bottom
+                left
+                right
+                top
+              }
+              responsive
+              round {
+                _id
+                corner
+                size
+              }
+              width
+              wrap
+            }
+            text {
+              _id
+              margin
+            }
+          }
+          searchInput
+          step
+        }
+        textInput {
+          _id
+          disabled {
+            _id
+            opacity
+          }
+          extend
+          placeholder {
+            _id
+            extend
+          }
+          suggestions {
+            _id
+            extend
+          }
+        }
+        chart {
+          _id
+          extend
+        }
+        tab {
+          _id
+          active {
+            _id
+            background
+            color
+          }
+          background
+          border {
+            _id
+            active {
+              _id
+              color {
+                _id
+                dark
+                light
+              }
+            }
+            color {
+              _id
+              dark
+              light
+            }
+            hover {
+              _id
+              color {
+                _id
+                dark
+                light
+              }
+              extend
+            }
+            side
+            size
+          }
+          color
+          extend
+          hover {
+            _id
+            background
+            color {
+              _id
+              dark
+              light
+            }
+            extend
+          }
+          margin {
+            _id
+            horizontal
+            vertical
+          }
+          pad {
+            _id
+            bottom
+          }
+        }
+        accordion {
+          _id
+          border {
+            _id
+            color
+            side
+          }
+          heading {
+            _id
+            level
+          }
+          icons {
+            _id
+            collapse
+            color {
+              _id
+              dark
+              light
+            }
+            expand
+          }
+        }
+        global {
+          _id
+          active {
+            _id
+            background {
+              _id
+              color
+              opacity
+            }
+            color {
+              _id
+              dark
+              light
+            }
+          }
+          animation {
+            _id
+            duration
+            jiggle {
+              _id
+              duration
+            }
+          }
+          borderSize {
+            _id
+            large
+            medium
+            small
+            xlarge
+            xsmall
+          }
+          breakpoints {
+            _id
+            large {
+              _id
+              borderSize {
+                _id
+                large
+                medium
+                small
+                xlarge
+                xsmall
+              }
+              edgeSize {
+                _id
+                hair
+                large
+                medium
+                none
+                small
+                xlarge
+                xsmall
+                xxsmall
+              }
+              size {
+                _id
+                full
+                large
+                medium
+                small
+                xlarge
+                xsmall
+                xxsmall
+              }
+            }
+            medium {
+              _id
+              borderSize {
+                _id
+                large
+                medium
+                small
+                xlarge
+                xsmall
+              }
+              edgeSize {
+                _id
+                hair
+                large
+                medium
+                none
+                small
+                xlarge
+                xsmall
+                xxsmall
+              }
+              size {
+                _id
+                full
+                large
+                medium
+                small
+                xlarge
+                xsmall
+                xxsmall
+              }
+              value
+            }
+            small {
+              _id
+              borderSize {
+                _id
+                large
+                medium
+                small
+                xlarge
+                xsmall
+              }
+              edgeSize {
+                _id
+                hair
+                large
+                medium
+                none
+                small
+                xlarge
+                xsmall
+                xxsmall
+              }
+              size {
+                _id
+                full
+                hair
+                large
+                medium
+                none
+                small
+                xlarge
+                xsmall
+                xxsmall
+              }
+              value
+            }
+          }
+          colors {
+            brand
+            light1
+            control {
+              _id
+              dark
+              light
+            }
+            border {
+              _id
+              dark
+              light
+            }
+            accent1
+            neutral2
+            dark1
+            accent2
+            dark2
+            light5
+            focus
+            neutral3
+            black
+            dark3
+            selected
+            accent4
+            statusok
+            neutral4
+            statuserror
+            light4
+            neutral1
+            _id
+            light2
+            placeholder
+            neutral5
+            light6
+            background
+            white
+            dark6
+            accent3
+            dark5
+            active {
+              _id
+              dark
+              light
+            }
+            dark4
+            statuscritical
+            statusdisabled
+            text {
+              _id
+              dark
+              light
+            }
+            statuswarning
+            icon {
+              _id
+              dark
+              light
+            }
+            light3
+            statusunknown
+          }
+          control {
+            _id
+            border {
+              _id
+              color
+              radius
+              width
+            }
+            disabled {
+              _id
+              opacity
+            }
+          }
+          debounceDelay
+          deviceBreakpoints {
+            _id
+            computer
+            phone
+            tablet
+          }
+          drop {
+            _id
+            background
+            border {
+              _id
+              radius
+              width
+            }
+            extend
+            shadowSize
+            zIndex
+          }
+          edgeSize {
+            _id
+            hair
+            large
+            medium
+            none
+            responsiveBreakpoint
+            small
+            xlarge
+            xsmall
+            xxsmall
+          }
+          elevation {
+            _id
+            dark {
+              _id
+              large
+              medium
+              none
+              small
+              xlarge
+              xsmall
+            }
+            light {
+              _id
+              large
+              medium
+              none
+              small
+              xlarge
+              xsmall
+            }
+          }
+          focus {
+            _id
+            border {
+              _id
+              color {
+                _id
+                dark
+                light
+              }
+              width
+            }
+          }
+          font {
+            _id
+            face
+            family
+            height
+            maxWidth
+            size
+          }
+          hover {
+            _id
+            background {
+              _id
+              color
+              dark
+              light
+              opacity
+            }
+            color {
+              _id
+              dark
+              light
+            }
+            text {
+              _id
+              dark
+              light
+            }
+          }
+          input {
+            _id
+            padding
+            weight
+          }
+          opacity {
+            _id
+            medium
+            strong
+            weak
+          }
+          selected {
+            _id
+            background
+            color
+          }
+          size {
+            _id
+            full
+            large
+            medium
+            small
+            xlarge
+            xsmall
+            xxlarge
+            xxsmall
+          }
+          spacing
+        }
+        calendar {
+          _id
+          icons {
+            _id
+            next
+            previous
+            small {
+              _id
+              next
+              previous
+            }
+          }
+          large {
+            _id
+            daySize
+            fontSize
+            lineHeight
+            slideDuration
+          }
+          medium {
+            _id
+            daySize
+            fontSize
+            lineHeight
+            slideDuration
+          }
+          small {
+            _id
+            daySize
+            fontSize
+            lineHeight
+            slideDuration
+          }
+        }
+        grid {
+          _id
+          extend
+        }
+        layer {
+          _id
+          background
+          backgroundColor
+          border {
+            _id
+            radius
+          }
+          container {
+            _id
+            zIndex
+          }
+          extend
+          overlay {
+            _id
+            background
+          }
+          responsiveBreakpoint
+          zIndex
+        }
         _id
+        paragraph {
+          _id
+          large {
+            _id
+            height
+            maxWidth
+            size
+          }
+          medium {
+            _id
+            height
+            maxWidth
+            size
+          }
+          small {
+            _id
+            height
+            maxWidth
+            size
+          }
+          xlarge {
+            _id
+            height
+            maxWidth
+            size
+          }
+          xxlarge {
+            _id
+            height
+            maxWidth
+            size
+          }
+        }
+        table {
+          _id
+          body {
+            _id
+            align
+            extend
+            pad {
+              _id
+              horizontal
+              vertical
+            }
+          }
+          footer {
+            _id
+            align
+            border
+            extend
+            fill
+            pad {
+              _id
+              horizontal
+              vertical
+            }
+            verticalAlign
+          }
+          header {
+            _id
+            align
+            background
+            border
+            extend
+            fill
+            pad {
+              _id
+              horizontal
+              vertical
+            }
+            verticalAlign
+          }
+        }
+        image {
+          _id
+          extend
+        }
+        anchor {
+          _id
+          color {
+            _id
+            dark
+            light
+          }
+          extend
+          fontWeight
+          hover {
+            _id
+            extend
+            fontWeight
+            textDecoration
+          }
+          textDecoration
+        }
+        carousel {
+          _id
+          icons {
+            _id
+            color
+            current
+            next
+            previous
+          }
+        }
+        radioButton {
+          _id
+          border {
+            _id
+            color {
+              _id
+              dark
+              light
+            }
+            width
+          }
+          check {
+            _id
+            color {
+              _id
+              dark
+              light
+            }
+            extend
+            radius
+          }
+          gap
+          hover {
+            _id
+            border {
+              _id
+              color {
+                _id
+                dark
+                light
+              }
+            }
+          }
+          icon {
+            _id
+            extend
+            size
+          }
+          icons {
+            _id
+            circle
+          }
+          size
+        }
+        maskedInput {
+          _id
+          extend
+        }
+        diagram {
+          _id
+          extend
+          line {
+            _id
+            color
+          }
+        }
+        button {
+          _id
+          border {
+            _id
+            color {
+              _id
+              dark
+              light
+            }
+            radius
+            width
+          }
+          color {
+            _id
+            dark
+            light
+          }
+          colors {
+            _id
+            accent
+            secondary
+          }
+          disabled {
+            _id
+            opacity
+          }
+          extend
+          padding {
+            _id
+            horizontal
+            vertical
+          }
+          primary {
+            _id
+            color {
+              _id
+              dark
+              light
+            }
+          }
+        }
+        dataTable {
+          _id
+          groupHeader {
+            _id
+            background {
+              _id
+              dark
+              light
+            }
+            border {
+              _id
+              side
+              size
+            }
+            fill
+            pad {
+              _id
+              horizontal
+              vertical
+            }
+          }
+          header
+          icons {
+            _id
+            ascending
+            contract
+            descending
+            expand
+          }
+          primary {
+            _id
+            weight
+          }
+          resize {
+            _id
+            border {
+              _id
+              color
+              side
+            }
+          }
+        }
+        video {
+          _id
+          captions {
+            _id
+            background
+          }
+          controls {
+            _id
+            background
+          }
+          extend
+          icons {
+            _id
+            closedCaption
+            color {
+              _id
+              dark
+              light
+            }
+            configure
+            fullScreen
+            pause
+            play
+            reduceVolume
+            volume
+          }
+          scrubber {
+            _id
+            color
+            track {
+              _id
+              color
+            }
+          }
+        }
+        tabs {
+          _id
+          background
+          extend
+          gap
+          panel {
+            _id
+            extend
+          }
+          tabsheader {
+            _id
+            background
+            extend
+          }
+        }
+        checkBox {
+          _id
+          border {
+            _id
+            color {
+              _id
+              dark
+              light
+            }
+            width
+          }
+          check {
+            _id
+            extend
+            radius
+            thickness
+          }
+          color {
+            _id
+            dark
+            light
+          }
+          extend
+          gap
+          hover {
+            _id
+            border {
+              _id
+              color {
+                _id
+                dark
+                light
+              }
+            }
+          }
+          icon {
+            _id
+            extend
+            size
+          }
+          icons {
+            _id
+            checked
+            indeterminate
+          }
+          size
+          toggle {
+            _id
+            background {
+              _id
+              dark
+              light
+            }
+            color {
+              _id
+              dark
+              light
+            }
+            extend
+            knob {
+              _id
+              extend {
+                _id
+                dark
+                light
+              }
+            }
+            radius
+            size
+          }
+        }
+        grommet
+        text {
+          _id
+          large {
+            _id
+            height
+            maxWidth
+            size
+          }
+          medium {
+            _id
+            height
+            maxWidth
+            size
+          }
+          small {
+            _id
+            height
+            maxWidth
+            size
+          }
+          xlarge {
+            _id
+            height
+            maxWidth
+            size
+          }
+          xsmall {
+            _id
+            height
+            maxWidth
+            size
+          }
+          xxlarge {
+            _id
+            height
+            maxWidth
+            size
+          }
+        }
+        collapsible {
+          _id
+          baseline
+          minSpeed
+        }
+        box {
+          _id
+          extend
+          responsiveBreakpoint
+        }
+        rangeSelector {
+          _id
+          background {
+            _id
+            invert {
+              _id
+              color
+            }
+          }
+          edge {
+            _id
+            type
+          }
+        }
+        icon {
+          _id
+          colors {
+            _id
+            accent1
+            accent2
+            accent3
+            accent4
+            active {
+              _id
+              dark
+              light
+            }
+            background
+            brand
+            control {
+              _id
+              dark
+              light
+            }
+            focus
+            neutral1
+            neutral2
+            neutral3
+            neutral4
+            neutral5
+            statuscritical
+            statusdisabled
+            statuserror
+            statusok
+            statusunknown
+            statuswarning
+          }
+          size {
+            _id
+            large
+            medium
+            small
+            xlarge
+            xsmall
+          }
+        }
+        heading {
+          _id
+          extend
+          font
+          level {
+            _id
+            level1 {
+              _id
+              font {
+                _id
+                family
+                weight
+              }
+              large {
+                _id
+                height
+                maxWidth
+                size
+              }
+              medium {
+                _id
+                height
+                maxWidth
+                size
+              }
+              small {
+                _id
+                height
+                maxWidth
+                size
+              }
+              xlarge {
+                _id
+                height
+                maxWidth
+                size
+              }
+            }
+            level2 {
+              _id
+              font {
+                _id
+                family
+                weight
+              }
+              large {
+                _id
+                height
+                maxWidth
+                size
+              }
+              medium {
+                _id
+                height
+                maxWidth
+                size
+              }
+              small {
+                _id
+                height
+                maxWidth
+                size
+              }
+              xlarge {
+                _id
+                height
+                maxWidth
+                size
+              }
+            }
+            level3 {
+              _id
+              font {
+                _id
+                family
+                weight
+              }
+              large {
+                _id
+                height
+                maxWidth
+                size
+              }
+              medium {
+                _id
+                height
+                maxWidth
+                size
+              }
+              small {
+                _id
+                height
+                maxWidth
+                size
+              }
+              xlarge {
+                _id
+                height
+                maxWidth
+                size
+              }
+            }
+            level4 {
+              _id
+              font {
+                _id
+                family
+                weight
+              }
+              large {
+                _id
+                height
+                maxWidth
+                size
+              }
+              medium {
+                _id
+                height
+                maxWidth
+                size
+              }
+              small {
+                _id
+                height
+                maxWidth
+                size
+              }
+              xlarge {
+                _id
+                height
+                maxWidth
+                size
+              }
+            }
+            level5 {
+              _id
+              font {
+                _id
+                family
+                weight
+              }
+              large {
+                _id
+                height
+                maxWidth
+                size
+              }
+              medium {
+                _id
+                height
+                maxWidth
+                size
+              }
+              small {
+                _id
+                height
+                maxWidth
+                size
+              }
+              xlarge {
+                _id
+                height
+                maxWidth
+                size
+              }
+            }
+            level6 {
+              _id
+              font {
+                _id
+                family
+                weight
+              }
+              large {
+                _id
+                height
+                maxWidth
+                size
+              }
+              medium {
+                _id
+                height
+                maxWidth
+                size
+              }
+              small {
+                _id
+                height
+                maxWidth
+                size
+              }
+              xlarge {
+                _id
+                height
+                maxWidth
+                size
+              }
+            }
+          }
+          responsiveBreakpoint
+          weight
+        }
+        clock {
+          _id
+          analog {
+            _id
+            extend
+            hour {
+              _id
+              color {
+                _id
+                dark
+                light
+              }
+              shape
+              size
+              width
+            }
+            minute {
+              _id
+              color {
+                _id
+                dark
+                light
+              }
+              shape
+              size
+              width
+            }
+            second {
+              _id
+              color {
+                _id
+                dark
+                light
+              }
+              shape
+              size
+              width
+            }
+            size {
+              _id
+              huge
+              large
+              medium
+              small
+              xlarge
+            }
+          }
+          digital {
+            _id
+            text {
+              _id
+              large {
+                _id
+                height
+                size
+              }
+              medium {
+                _id
+                height
+                size
+              }
+              small {
+                _id
+                height
+                size
+              }
+              xlarge {
+                _id
+                height
+                size
+              }
+              xsmall {
+                _id
+                height
+                size
+              }
+              xxlarge {
+                _id
+                height
+                size
+              }
+            }
+          }
+        }
       }
       domain
       pages {

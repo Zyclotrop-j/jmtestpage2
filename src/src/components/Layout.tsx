@@ -3,11 +3,12 @@ import { StaticQuery, graphql } from 'gatsby';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
 import { normalize, transitions, fontFace } from 'polished';
 import { Transition, animated as Animated } from 'react-spring/renderprops';
-import { Grommet } from 'grommet';
+import { mergeDeepWithKey, concat, isNil } from "ramda";
+import { Grommet, defaultProps } from 'grommet';
+import split from 'lodash/split';
 import theme from '../../config/Theme';
 import { myTheme } from '../utils/themeCreator';
 import { media } from '../utils/media';
-import split from 'lodash/split';
 
 const NormalizedStyle = createGlobalStyle`${normalize()}`;
 const GlobalStyle = createGlobalStyle`
@@ -85,19 +86,23 @@ const Header = styled.header`
 export class Provider extends React.PureComponent<{}> {
   public render() {
     const { children } = this.props;
-
-    // Use https://www.gatsbyjs.org/packages/gatsby-plugin-layout/
     return (
       <>
         <NormalizedStyle />
         <GlobalStyle />
-        <Grommet theme={myTheme}>
-          <>{children}</>
-        </Grommet>
+        <>{children}</>
       </>
     );
   }
 }
+
+const mergeTheme = mergeDeepWithKey((k, l, r) => {
+  if(isNil(r)) return l;
+  if(isNil(l)) return r;
+  if(k === '_id') return Array.isArray(l) ? l.concat([r]) : [l, r];
+  return ['extend'].includes(k) ? concat(l, r) : r;
+});
+const mergeThemes = themes => themes.reduce((p, i) => mergeTheme(p, i), defaultProps.theme);
 
 export class Layout extends React.Component<{}> {
   public static getDerivedStateFromProps(props, state) {
@@ -110,8 +115,11 @@ export class Layout extends React.Component<{}> {
   public render() {
     const {
       children,
-      location: { pathname, state },
+      location: { pathname, state }
     } = this.props;
+
+    const themes = this.props?.pageContext?.website?.themes || [];
+
     const direction = state && state.direction; // ToDo: Enable defaults, enable ".?"-operator
     const { prevPage, currentPage } = this.state;
     const h = theme.header.height;
@@ -156,7 +164,7 @@ export class Layout extends React.Component<{}> {
       />
       */
     return (
-      <>
+      <Grommet theme={mergeThemes(themes)}>
         <Transition
           items={children}
           keys={item => item.key}
@@ -166,7 +174,7 @@ export class Layout extends React.Component<{}> {
         >
           {ichildren => props => <Animated.div style={props}>{ichildren}</Animated.div>}
         </Transition>
-      </>
+      </Grommet>
     );
   }
 }
