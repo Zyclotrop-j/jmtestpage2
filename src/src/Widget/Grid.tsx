@@ -5,7 +5,6 @@ import Img from 'gatsby-image';
 import { Grid as GGrid, ResponsiveContext, Box } from 'grommet';
 import { range } from 'ramda';
 import { renameKeysWith } from 'ramda-adjunct';
-import components from '../Widget';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 
 interface Props {
@@ -14,10 +13,8 @@ interface Props {
   text: string;
 }
 
-const availableComponents = renameKeysWith(key => `DATA_Component${key.toLowerCase()}`, components);
-
 export class Grid extends React.PureComponent<Props> {
-  
+
   static defaultProps = {
       content: [],
       columns: []
@@ -35,7 +32,6 @@ export class Grid extends React.PureComponent<Props> {
     } = this.props;
     const { align, alignContent, alignSelf, fill, justify, justifyContent } = advanced || {};
 
-    // const content = child.map(__renderSubtree);
     const content = children.map((u, idx) => (
       <Box key={u._id || idx} gridArea={`col-${idx + 1}`}>
         {u.map(__renderSubtree)}
@@ -76,18 +72,6 @@ export class Grid extends React.PureComponent<Props> {
           </GGrid>
         )}
       </ResponsiveContext.Consumer>
-    );
-  }
-
-  private renderSubtree({ __typename, ...sprops }) {
-    const Component = availableComponents[__typename];
-    if (!Component) {
-      throw new Error(`Couldn't find type ${__typename}, available are ${Object.keys(availableComponents).join(', ')}`);
-    }
-    return (
-      <ErrorBoundary key={sprops._id}>
-        <Component {...sprops} />
-      </ErrorBoundary>
     );
   }
 

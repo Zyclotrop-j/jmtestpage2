@@ -6,6 +6,7 @@ import { tryCatch, identity } from "ramda";
 import { Markdown, Paragraph, Anchor, Box } from 'grommet';
 import Image from 'react-shimmer';
 import LazyLoad from 'react-lazyload';
+import { atob, decodeURIComponent, escape } from "../utils/b64";
 
 interface Props {
   title: string;
@@ -23,7 +24,8 @@ export const components = {
   a: {
     component: props => {
       const MDLink = styled(Link)``;
-      return <Anchor {...props} as={MDLink} href={props.href} to={props.href} />;
+      const as = props.href[0] === "/" ? { as: MDLink, to: props.href } : {};
+      return <Anchor {...props} {...as} href={props.href} />;
     },
   },
   img: {
@@ -49,7 +51,7 @@ export class RichText extends React.PureComponent<Props> {
 
     // encode = window.btoa(unescape(encodeURIComponent(str)))
     // decode = decodeURIComponent(escape(window.atob(b64)));
-    const pipeline = [[b64, tryCatch(window.atob, identity)], [escaped, tryCatch(window.escape, identity)], [urlescaped, tryCatch(window.decodeURIComponent, identity)]]
+    const pipeline = [[b64, tryCatch(atob, identity)], [escaped, tryCatch(escape, identity)], [urlescaped, tryCatch(decodeURIComponent, identity)]]
       .filter(([t]) => t === true)
       .map(([__, f]) => f)
       .reduce((p, f) => x => f(p(x)), x => x);

@@ -14,7 +14,7 @@ import Form from 'react-jsonschema-form';
 import debounceRender from 'react-debounce-render';
 import { auth } from "../utils/auth";
 import { request } from "../state/components";
-import { uiSchema } from '../Widget/index';
+import { uiSchema } from '../Widget';
 import { Modal } from '../components/Modal';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 

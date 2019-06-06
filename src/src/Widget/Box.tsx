@@ -46,8 +46,7 @@ export class Box extends React.PureComponent<Props> {
     const {
       advanced: { align, alignContent, alignSelf, fill, justify, basis, flex, overflow, responsive, height, width } = {},
       animation,
-      background,
-      background: { srcFile, pingback, src },
+      background: { srcFile, pingback, src, ...background },
       border,
       direction,
       elevation,
@@ -60,6 +59,7 @@ export class Box extends React.PureComponent<Props> {
       __children: { child = [] },
       __renderSubtree,
     } = this.props;
+    const { color: bcolor, side: bside, size: bsize, style: bstyle } = border || {};
 
     const content = child.map(__renderSubtree);
 
@@ -77,7 +77,7 @@ export class Box extends React.PureComponent<Props> {
 
     // Funny enough, when properties are null and not undefined, grommet is crashing :(
     const obj = map(x => x === null ? undefined : x, {
-      align,
+      align: align && align.toLowerCase(),
       alignContent,
       alignSelf,
       fill,
@@ -88,7 +88,7 @@ export class Box extends React.PureComponent<Props> {
       height,
       width,
       animation,
-      border,
+      border: { color: bcolor?.toLowerCase(), side: bside?.toLowerCase(), size: bsize?.toLowerCase(), style: bstyle?.toLowerCase() },
       elevation,
       gap,
       margin,
@@ -105,6 +105,7 @@ export class Box extends React.PureComponent<Props> {
       </Pingback> :
       <>{children}</>;
 
+    const app_name = typeof location !== 'undefined' && location && location.origin; // not defined in SSR
     return (
       <Wrap>
         <ImgBox
@@ -142,7 +143,7 @@ export class Box extends React.PureComponent<Props> {
           basis={t(basis)}
           gridArea={gridArea}
         >
-          <Attribution author={background.author} app_name={location.origin} />
+          <Attribution author={background.author} app_name={app_name} />
           {content}
         </ImgBox>
       </Wrap>

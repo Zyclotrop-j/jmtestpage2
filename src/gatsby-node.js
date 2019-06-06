@@ -5,6 +5,7 @@ const _ = require('lodash');
 const { createRemoteFileNode } = require(`gatsby-source-filesystem`);
 const R = require("ramda");
 const { memoizeWith, identity, groupBy } = R;
+const validUrl = require('valid-url');
 const config = require('./config/SiteConfig');
 
 exports.createResolvers = ({
@@ -21,13 +22,17 @@ exports.createResolvers = ({
         type: `File`,
         // projection: { url: true },
         async resolve(source, args, context, info) {
-          return createRemoteFileNode({
-            url: source.src,
-            store,
-            cache,
-            createNode,
-            createNodeId,
-          })
+          if(validUrl.isWebUri(source.src)) {
+            return createRemoteFileNode({
+              url: source.src,
+              store,
+              cache,
+              createNode,
+              createNodeId,
+              // ext: ".md"
+            })
+          }
+          return null;
         }
       }
     },
@@ -36,13 +41,17 @@ exports.createResolvers = ({
         type: `File`,
         // projection: { url: true },
         async resolve(source, args, context, info) {
-          return createRemoteFileNode({
-            url: source.src,
-            store,
-            cache,
-            createNode,
-            createNodeId,
-          })
+          if(validUrl.isWebUri(source.src)) {
+            return createRemoteFileNode({
+              url: source.src,
+              store,
+              cache,
+              createNode,
+              createNodeId,
+              // ext: ".md"
+            })
+          }
+          return null;
         }
       }
     },
@@ -51,13 +60,17 @@ exports.createResolvers = ({
         type: `File`,
         // projection: { url: true },
         async resolve(source, args, context, info) {
-          return createRemoteFileNode({
-            url: source.image,
-            store,
-            cache,
-            createNode,
-            createNodeId,
-          })
+          if(validUrl.isWebUri(source.image)) {
+            return createRemoteFileNode({
+              url: source.image,
+              store,
+              cache,
+              createNode,
+              createNodeId,
+              // ext: ".md"
+            })
+          }
+          return null;
         }
       }
     }
@@ -75,7 +88,7 @@ exports.onCreateWebpackConfig = ({ stage, actions, plugins, getConfig }) => {
   }
   actions.setWebpackConfig({
                              resolve: {
-                               modules: [path.resolve(__dirname, 'src'), 'node_modules'],
+                               // modules: [path.resolve(__dirname, 'src'), 'node_modules'],
                                ...hotloader
                              },
                              node: {
@@ -92,131 +105,151 @@ exports.onCreateWebpackConfig = ({ stage, actions, plugins, getConfig }) => {
                            });
 };
 
-
 const queryCache = {};
-const componentsWithChild = ["DATA_Componentgrid", "DATA_Componentbox"]
-const componentsStandalone = ["DATA_Componentstage", , "DATA_Componenttext", "DATA_Componentpicture", "DATA_Componentrichtext", "DATA_Componentheadline"]
-const components = [].concat(componentsStandalone, componentsWithChild);
-const makeRecursiveContext = () => {
-  const componentgroups = new Set();
-  const componentgroupQuery = memoizeWith(identity, (componentgroupid, graphql) => {
-    return graphql(`{
-      data {
-          componentgroup(_id: "${componentgroupid}") {
-            groupdesc
-            componentgroupid: _id
-            components {
-              __typename
-              ${componentsStandalone.map(q => `... on ${q} {
-                _id
-              }
-              `).join("")}
-              ... on DATA_Componentgrid {
-                _id
-                gridcontent: content {
+exports.createPages = ({ actions, graphql }) => {
+
+  const componentsWithChild = ["DATA_Componentgrid", "DATA_Componentbox"]
+  const componentsStandalone = ["DATA_Componentstage", , "DATA_Componenttext", "DATA_Componentpicture", "DATA_Componentrichtext", "DATA_Componentheadline"]
+  const components = [].concat(componentsStandalone, componentsWithChild);
+  const makeRecursiveContext = () => {
+    const componentgroups = new Set();
+    const componentgroupQuery = memoizeWith(identity, (componentgroupid, graphql) => {
+      return graphql(`{
+        data {
+            componentgroup(_id: "${componentgroupid}") {
+              groupdesc
+              componentgroupid: _id
+              components {
+                __typename
+                ${componentsStandalone.map(q => `... on ${q} {
                   _id
                 }
-              }
-              ... on DATA_Componentbox {
-                _id
-                boxcontent: content {
+                `).join("")}
+                ... on DATA_Componentgrid {
                   _id
+                  gridcontent: content {
+                    _id
+                  }
+                }
+                ... on DATA_Componentbox {
+                  _id
+                  boxcontent: content {
+                    _id
+                  }
                 }
               }
             }
-          }
-      }
-    }`);
-  });
-  const queryComponentgroup = (componentgroupid, graphql) => {
-    const query = queryCache[componentgroupid] || componentgroupQuery(componentgroupid, graphql);
-    const alreadyQuerried = componentgroups.has(componentgroupid);
-    componentgroups.add(componentgroupid);
-    queryCache[componentgroupid] = query;
-    return [query, alreadyQuerried];
-  };
-
-  const buildtree = (group, children) => {
-    if(!group) {
-      console.log("WARNING!!!! No group", group, children)
-      return [];
-    }
-    return (group.components || []).map(i => {
-      const { _id: id, __typename: type } = i;
-      if(type === "DATA_Componentbox") {
-        const { _id: childid } = i.boxcontent || {};
-        const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
-        return { id, type, child, componentgroupid: group.componentgroupid };
-      }
-      if(type === "DATA_Componentgrid") {
-        const childids = (i.gridcontent || []).map(i => i._id);
-        const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
-        return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
-      }
-      return { id, type, componentgroupid: group.componentgroupid };
-    });
-  };
-
-  const resultset = [];
-  const subquerrySet = {};
-  const discover = (id, graphql, page) => {
-    if(!id) return Promise.resolve([]);
-    return  new Promise(resolve => {
-      const [query, discovered] = queryComponentgroup(id, graphql);
-      console.log(`Dicovered ${id}, discovered before: ${discovered}, on ${page.path}`);
-
-      const children = !subquerrySet[id] ?
-        query.then(result => {
-          if(!result || !result.data || !result.data.data) {
-            console.log("ERROR",result)
-          }
-          const tmp = result.data.data.componentgroup;
-          console.log(`Query done; ${page.path}:`, tmp && tmp.componentgroupid, tmp && tmp.components);
-          const data = result.data.data.componentgroup && result.data.data.componentgroup.components || [];
-          resultset.push(...data);
-          const subquerries = data
-            .filter(({ __typename }) => [
-              "DATA_Componentgrid",
-              "DATA_Componentbox"
-            ].includes(__typename))
-            .map(i => i.gridcontent || i.boxcontent || [])
-            .map(i => (i._id && [i._id]) || i.map(i => i._id))
-            .filter(i => i.length)
-            .reduce((p, i) => p.concat(i.map(id => discover(id, graphql, page))), []);
-          return Promise.all(subquerries);
-        }) : subquerrySet[id];
-      subquerrySet[id] = children;
-      resolve(Promise.all([query, children]).then(([ query, children ]) => (buildtree(query.data.data.componentgroup, children))));
-    });
-  };
-  return { discover, result: () => resultset };
-}
-
-// const parseGraphQLMeta = ({ name }, allTypes) => { const f = allTypes.data.__schema.types.find(i => i.name === name).fields; if(!f) { return null; } return f.reduce((p, i) => ({ ...p, [i.name]: x(i.type, allTypes) || i.type.name }), {}) };
-// parseGraphQLMeta({ name: "DATA_Theme" }, { /* all types query result goes here */ });
-
-const execwebsitequery = memoizeWith(identity, (websiteid, graphql) => graphql(`{
-  data {
-    website(_id: "${websiteid}") {
-      _client
-      _id
-      basethemes
-      themes {
-        meter {
-          _id
-          color
-          extend
         }
-        drop {
-          _id
-          extend
-          maxHeight
+      }`);
+    });
+    const queryComponentgroup = (componentgroupid, graphql) => {
+      const query = queryCache[componentgroupid] || componentgroupQuery(componentgroupid, graphql);
+      const alreadyQuerried = componentgroups.has(componentgroupid);
+      componentgroups.add(componentgroupid);
+      queryCache[componentgroupid] = query;
+      return [query, alreadyQuerried];
+    };
+
+    const buildtree = (group, children) => {
+      if(!group) {
+        console.log("WARNING!!!! No group", group, children)
+        return [];
+      }
+      return (group.components || []).map(i => {
+        const { _id: id, __typename: type } = i;
+        if(type === "DATA_Componentbox") {
+          const { _id: childid } = i.boxcontent || {};
+          const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
+          return { id, type, child, componentgroupid: group.componentgroupid };
         }
-        formField {
-          _id
-          border {
+        if(type === "DATA_Componentgrid") {
+          const childids = (i.gridcontent || []).map(i => i._id);
+          const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
+          return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
+        }
+        return { id, type, componentgroupid: group.componentgroupid };
+      });
+    };
+
+    const resultset = [];
+    const subquerrySet = {};
+    const discover = (id, graphql, page) => {
+      if(!id) return Promise.resolve([]);
+      return  new Promise(resolve => {
+        const [query, discovered] = queryComponentgroup(id, graphql);
+        console.log(`Dicovered ${id}, discovered before: ${discovered}, on ${page.path}`);
+
+        const children = !subquerrySet[id] ?
+          query.then(result => {
+            if(!result || !result.data || !result.data.data) {
+              console.log("ERROR",result)
+            }
+            const tmp = result.data.data.componentgroup;
+            console.log(`Query done; ${page.path}:`, tmp && tmp.componentgroupid, tmp && tmp.components);
+            const data = result.data.data.componentgroup && result.data.data.componentgroup.components || [];
+            resultset.push(...data);
+            const subquerries = data
+              .filter(({ __typename }) => [
+                "DATA_Componentgrid",
+                "DATA_Componentbox"
+              ].includes(__typename))
+              .map(i => i.gridcontent || i.boxcontent || [])
+              .map(i => (i._id && [i._id]) || i.map(i => i._id))
+              .filter(i => i.length)
+              .reduce((p, i) => p.concat(i.map(id => discover(id, graphql, page))), []);
+            return Promise.all(subquerries);
+          }) : subquerrySet[id];
+        subquerrySet[id] = children;
+        resolve(Promise.all([query, children]).then(([ query, children ]) => (buildtree(query.data.data.componentgroup, children))));
+      });
+    };
+    return { discover, result: () => resultset };
+  }
+
+  // const parseGraphQLMeta = ({ name }, allTypes) => { const f = allTypes.data.__schema.types.find(i => i.name === name).fields; if(!f) { return null; } return f.reduce((p, i) => ({ ...p, [i.name]: x(i.type, allTypes) || i.type.name }), {}) };
+  // parseGraphQLMeta({ name: "DATA_Theme" }, { /* all types query result goes here */ });
+
+  const execwebsitequery = memoizeWith(identity, (websiteid, graphql) => graphql(`{
+    data {
+      website(_id: "${websiteid}") {
+        _client
+        _id
+        basethemes
+        themes {
+          meter {
             _id
             color
+            extend
+          }
+          drop {
+            _id
+            extend
+            maxHeight
+          }
+          formField {
+            _id
+            border {
+              _id
+              color
+              error {
+                _id
+                color {
+                  _id
+                  dark
+                  light
+                }
+              }
+              position
+              side
+            }
+            content {
+              _id
+              pad {
+                _id
+                bottom
+                horizontal
+              }
+            }
             error {
               _id
               color {
@@ -224,249 +257,42 @@ const execwebsitequery = memoizeWith(identity, (websiteid, graphql) => graphql(`
                 dark
                 light
               }
-            }
-            position
-            side
-          }
-          content {
-            _id
-            pad {
-              _id
-              bottom
-              horizontal
-            }
-          }
-          error {
-            _id
-            color {
-              _id
-              dark
-              light
-            }
-            margin {
-              _id
-              horizontal
-              vertical
-            }
-          }
-          extend
-          help {
-            _id
-            color {
-              _id
-              dark
-              light
-            }
-            margin {
-              _id
-              left
-            }
-          }
-          label {
-            _id
-            margin {
-              _id
-              horizontal
-              vertical
-            }
-          }
-          margin {
-            _id
-            bottom
-          }
-        }
-        rangeInput {
-          _id
-          extend
-          thumb {
-            _id
-            color {
-              _id
-              dark
-              light
-            }
-            extend
-          }
-          track {
-            _id
-            color {
-              _id
-              dark
-              light
-            }
-            extend
-            height
-          }
-        }
-        worldMap {
-          _id
-          color
-          continent {
-            _id
-            active
-            base
-          }
-          extend
-          hover {
-            _id
-            color
-          }
-          place {
-            _id
-            active
-            base
-          }
-        }
-        menu {
-          _id
-          background
-          extend
-          icons {
-            _id
-            down
-          }
-        }
-        stack {
-          _id
-          extend
-        }
-        textArea {
-          _id
-          disabled {
-            _id
-            opacity
-          }
-          extend
-        }
-        select {
-          _id
-          background
-          container {
-            _id
-            extend
-          }
-          control {
-            _id
-            extend
-          }
-          icons {
-            _id
-            color {
-              _id
-              dark
-              light
-            }
-            down
-            margin {
-              _id
-              horizontal
-            }
-          }
-          options {
-            _id
-            box {
-              _id
-              align
-              pad
-            }
-            container {
-              _id
-              align
-              alignContent
-              alignSelf
-              animation
-              background
-              basis
-              border {
-                _id
-                color
-                side
-                size
-                style
-              }
-              direction
-              elevation
-              fill
-              flex
-              gap
-              height
-              justify
               margin {
                 _id
-                bottom
-                left
-                right
-                top
+                horizontal
+                vertical
               }
-              overflow
-              pad {
-                _id
-                bottom
-                left
-                right
-                top
-              }
-              responsive
-              round {
-                _id
-                corner
-                size
-              }
-              width
-              wrap
             }
-            text {
-              _id
-              margin
-            }
-          }
-          searchInput
-          step
-        }
-        textInput {
-          _id
-          disabled {
-            _id
-            opacity
-          }
-          extend
-          placeholder {
-            _id
             extend
-          }
-          suggestions {
-            _id
-            extend
-          }
-        }
-        chart {
-          _id
-          extend
-        }
-        tab {
-          _id
-          active {
-            _id
-            background
-            color
-          }
-          background
-          border {
-            _id
-            active {
+            help {
               _id
               color {
                 _id
                 dark
                 light
               }
+              margin {
+                _id
+                left
+              }
             }
-            color {
+            label {
               _id
-              dark
-              light
+              margin {
+                _id
+                horizontal
+                vertical
+              }
             }
-            hover {
+            margin {
+              _id
+              bottom
+            }
+          }
+          rangeInput {
+            _id
+            extend
+            thumb {
               _id
               color {
                 _id
@@ -475,315 +301,924 @@ const execwebsitequery = memoizeWith(identity, (websiteid, graphql) => graphql(`
               }
               extend
             }
-            side
-            size
+            track {
+              _id
+              color {
+                _id
+                dark
+                light
+              }
+              extend
+              height
+            }
           }
-          color
-          extend
-          hover {
+          worldMap {
+            _id
+            color
+            continent {
+              _id
+              active
+              base
+            }
+            extend
+            hover {
+              _id
+              color
+            }
+            place {
+              _id
+              active
+              base
+            }
+          }
+          menu {
             _id
             background
+            extend
+            icons {
+              _id
+              down
+            }
+          }
+          stack {
+            _id
+            extend
+          }
+          textArea {
+            _id
+            disabled {
+              _id
+              opacity
+            }
+            extend
+          }
+          select {
+            _id
+            background
+            container {
+              _id
+              extend
+            }
+            control {
+              _id
+              extend
+            }
+            icons {
+              _id
+              color {
+                _id
+                dark
+                light
+              }
+              down
+              margin {
+                _id
+                horizontal
+              }
+            }
+            options {
+              _id
+              box {
+                _id
+                align
+                pad
+              }
+              container {
+                _id
+                align
+                alignContent
+                alignSelf
+                animation
+                background
+                basis
+                border {
+                  _id
+                  color
+                  side
+                  size
+                  style
+                }
+                direction
+                elevation
+                fill
+                flex
+                gap
+                height
+                justify
+                margin {
+                  _id
+                  bottom
+                  left
+                  right
+                  top
+                }
+                overflow
+                pad {
+                  _id
+                  bottom
+                  left
+                  right
+                  top
+                }
+                responsive
+                round {
+                  _id
+                  corner
+                  size
+                }
+                width
+                wrap
+              }
+              text {
+                _id
+                margin
+              }
+            }
+            searchInput
+            step
+          }
+          textInput {
+            _id
+            disabled {
+              _id
+              opacity
+            }
+            extend
+            placeholder {
+              _id
+              extend
+            }
+            suggestions {
+              _id
+              extend
+            }
+          }
+          chart {
+            _id
+            extend
+          }
+          tab {
+            _id
+            active {
+              _id
+              background
+              color
+            }
+            background
+            border {
+              _id
+              active {
+                _id
+                color {
+                  _id
+                  dark
+                  light
+                }
+              }
+              color {
+                _id
+                dark
+                light
+              }
+              hover {
+                _id
+                color {
+                  _id
+                  dark
+                  light
+                }
+                extend
+              }
+              side
+              size
+            }
+            color
+            extend
+            hover {
+              _id
+              background
+              color {
+                _id
+                dark
+                light
+              }
+              extend
+            }
+            margin {
+              _id
+              horizontal
+              vertical
+            }
+            pad {
+              _id
+              bottom
+            }
+          }
+          accordion {
+            _id
+            border {
+              _id
+              color
+              side
+            }
+            heading {
+              _id
+              level
+            }
+            icons {
+              _id
+              collapse
+              color {
+                _id
+                dark
+                light
+              }
+              expand
+            }
+          }
+          global {
+            _id
+            active {
+              _id
+              background {
+                _id
+                color
+                opacity
+              }
+              color {
+                _id
+                dark
+                light
+              }
+            }
+            animation {
+              _id
+              duration
+              jiggle {
+                _id
+                duration
+              }
+            }
+            borderSize {
+              _id
+              large
+              medium
+              small
+              xlarge
+              xsmall
+            }
+            breakpoints {
+              _id
+              large {
+                _id
+                borderSize {
+                  _id
+                  large
+                  medium
+                  small
+                  xlarge
+                  xsmall
+                }
+                edgeSize {
+                  _id
+                  hair
+                  large
+                  medium
+                  none
+                  small
+                  xlarge
+                  xsmall
+                  xxsmall
+                }
+                size {
+                  _id
+                  full
+                  large
+                  medium
+                  small
+                  xlarge
+                  xsmall
+                  xxsmall
+                }
+              }
+              medium {
+                _id
+                borderSize {
+                  _id
+                  large
+                  medium
+                  small
+                  xlarge
+                  xsmall
+                }
+                edgeSize {
+                  _id
+                  hair
+                  large
+                  medium
+                  none
+                  small
+                  xlarge
+                  xsmall
+                  xxsmall
+                }
+                size {
+                  _id
+                  full
+                  large
+                  medium
+                  small
+                  xlarge
+                  xsmall
+                  xxsmall
+                }
+                value
+              }
+              small {
+                _id
+                borderSize {
+                  _id
+                  large
+                  medium
+                  small
+                  xlarge
+                  xsmall
+                }
+                edgeSize {
+                  _id
+                  hair
+                  large
+                  medium
+                  none
+                  small
+                  xlarge
+                  xsmall
+                  xxsmall
+                }
+                size {
+                  _id
+                  full
+                  hair
+                  large
+                  medium
+                  none
+                  small
+                  xlarge
+                  xsmall
+                  xxsmall
+                }
+                value
+              }
+            }
+            colors {
+              brand
+              light1
+              control {
+                _id
+                dark
+                light
+              }
+              border {
+                _id
+                dark
+                light
+              }
+              accent1
+              neutral2
+              dark1
+              accent2
+              dark2
+              light5
+              focus
+              neutral3
+              black
+              dark3
+              selected
+              accent4
+              statusok
+              neutral4
+              statuserror
+              light4
+              neutral1
+              _id
+              light2
+              placeholder
+              neutral5
+              light6
+              background
+              white
+              dark6
+              accent3
+              dark5
+              active {
+                _id
+                dark
+                light
+              }
+              dark4
+              statuscritical
+              statusdisabled
+              text {
+                _id
+                dark
+                light
+              }
+              statuswarning
+              icon {
+                _id
+                dark
+                light
+              }
+              light3
+              statusunknown
+            }
+            control {
+              _id
+              border {
+                _id
+                color
+                radius
+                width
+              }
+              disabled {
+                _id
+                opacity
+              }
+            }
+            debounceDelay
+            deviceBreakpoints {
+              _id
+              computer
+              phone
+              tablet
+            }
+            drop {
+              _id
+              background
+              border {
+                _id
+                radius
+                width
+              }
+              extend
+              shadowSize
+              zIndex
+            }
+            edgeSize {
+              _id
+              hair
+              large
+              medium
+              none
+              responsiveBreakpoint
+              small
+              xlarge
+              xsmall
+              xxsmall
+            }
+            elevation {
+              _id
+              dark {
+                _id
+                large
+                medium
+                none
+                small
+                xlarge
+                xsmall
+              }
+              light {
+                _id
+                large
+                medium
+                none
+                small
+                xlarge
+                xsmall
+              }
+            }
+            focus {
+              _id
+              border {
+                _id
+                color {
+                  _id
+                  dark
+                  light
+                }
+                width
+              }
+            }
+            font {
+              _id
+              face
+              family
+              height
+              maxWidth
+              size
+            }
+            hover {
+              _id
+              background {
+                _id
+                color
+                dark
+                light
+                opacity
+              }
+              color {
+                _id
+                dark
+                light
+              }
+              text {
+                _id
+                dark
+                light
+              }
+            }
+            input {
+              _id
+              padding
+              weight
+            }
+            opacity {
+              _id
+              medium
+              strong
+              weak
+            }
+            selected {
+              _id
+              background
+              color
+            }
+            size {
+              _id
+              full
+              large
+              medium
+              small
+              xlarge
+              xsmall
+              xxlarge
+              xxsmall
+            }
+            spacing
+          }
+          calendar {
+            _id
+            icons {
+              _id
+              next
+              previous
+              small {
+                _id
+                next
+                previous
+              }
+            }
+            large {
+              _id
+              daySize
+              fontSize
+              lineHeight
+              slideDuration
+            }
+            medium {
+              _id
+              daySize
+              fontSize
+              lineHeight
+              slideDuration
+            }
+            small {
+              _id
+              daySize
+              fontSize
+              lineHeight
+              slideDuration
+            }
+          }
+          grid {
+            _id
+            extend
+          }
+          layer {
+            _id
+            background
+            backgroundColor
+            border {
+              _id
+              radius
+            }
+            container {
+              _id
+              zIndex
+            }
+            extend
+            overlay {
+              _id
+              background
+            }
+            responsiveBreakpoint
+            zIndex
+          }
+          _id
+          paragraph {
+            _id
+            large {
+              _id
+              height
+              maxWidth
+              size
+            }
+            medium {
+              _id
+              height
+              maxWidth
+              size
+            }
+            small {
+              _id
+              height
+              maxWidth
+              size
+            }
+            xlarge {
+              _id
+              height
+              maxWidth
+              size
+            }
+            xxlarge {
+              _id
+              height
+              maxWidth
+              size
+            }
+          }
+          table {
+            _id
+            body {
+              _id
+              align
+              extend
+              pad {
+                _id
+                horizontal
+                vertical
+              }
+            }
+            footer {
+              _id
+              align
+              border
+              extend
+              fill
+              pad {
+                _id
+                horizontal
+                vertical
+              }
+              verticalAlign
+            }
+            header {
+              _id
+              align
+              background
+              border
+              extend
+              fill
+              pad {
+                _id
+                horizontal
+                vertical
+              }
+              verticalAlign
+            }
+          }
+          image {
+            _id
+            extend
+          }
+          anchor {
+            _id
             color {
               _id
               dark
               light
             }
             extend
-          }
-          margin {
-            _id
-            horizontal
-            vertical
-          }
-          pad {
-            _id
-            bottom
-          }
-        }
-        accordion {
-          _id
-          border {
-            _id
-            color
-            side
-          }
-          heading {
-            _id
-            level
-          }
-          icons {
-            _id
-            collapse
-            color {
+            fontWeight
+            hover {
               _id
-              dark
-              light
+              extend
+              fontWeight
+              textDecoration
             }
-            expand
+            textDecoration
           }
-        }
-        global {
-          _id
-          active {
+          carousel {
             _id
-            background {
+            icons {
               _id
               color
-              opacity
-            }
-            color {
-              _id
-              dark
-              light
+              current
+              next
+              previous
             }
           }
-          animation {
+          radioButton {
             _id
-            duration
-            jiggle {
-              _id
-              duration
-            }
-          }
-          borderSize {
-            _id
-            large
-            medium
-            small
-            xlarge
-            xsmall
-          }
-          breakpoints {
-            _id
-            large {
-              _id
-              borderSize {
-                _id
-                large
-                medium
-                small
-                xlarge
-                xsmall
-              }
-              edgeSize {
-                _id
-                hair
-                large
-                medium
-                none
-                small
-                xlarge
-                xsmall
-                xxsmall
-              }
-              size {
-                _id
-                full
-                large
-                medium
-                small
-                xlarge
-                xsmall
-                xxsmall
-              }
-            }
-            medium {
-              _id
-              borderSize {
-                _id
-                large
-                medium
-                small
-                xlarge
-                xsmall
-              }
-              edgeSize {
-                _id
-                hair
-                large
-                medium
-                none
-                small
-                xlarge
-                xsmall
-                xxsmall
-              }
-              size {
-                _id
-                full
-                large
-                medium
-                small
-                xlarge
-                xsmall
-                xxsmall
-              }
-              value
-            }
-            small {
-              _id
-              borderSize {
-                _id
-                large
-                medium
-                small
-                xlarge
-                xsmall
-              }
-              edgeSize {
-                _id
-                hair
-                large
-                medium
-                none
-                small
-                xlarge
-                xsmall
-                xxsmall
-              }
-              size {
-                _id
-                full
-                hair
-                large
-                medium
-                none
-                small
-                xlarge
-                xsmall
-                xxsmall
-              }
-              value
-            }
-          }
-          colors {
-            brand
-            light1
-            control {
-              _id
-              dark
-              light
-            }
             border {
               _id
-              dark
-              light
+              color {
+                _id
+                dark
+                light
+              }
+              width
             }
-            accent1
-            neutral2
-            dark1
-            accent2
-            dark2
-            light5
-            focus
-            neutral3
-            black
-            dark3
-            selected
-            accent4
-            statusok
-            neutral4
-            statuserror
-            light4
-            neutral1
-            _id
-            light2
-            placeholder
-            neutral5
-            light6
-            background
-            white
-            dark6
-            accent3
-            dark5
-            active {
+            check {
               _id
-              dark
-              light
+              color {
+                _id
+                dark
+                light
+              }
+              extend
+              radius
             }
-            dark4
-            statuscritical
-            statusdisabled
-            text {
+            gap
+            hover {
               _id
-              dark
-              light
+              border {
+                _id
+                color {
+                  _id
+                  dark
+                  light
+                }
+              }
             }
-            statuswarning
             icon {
               _id
-              dark
-              light
+              extend
+              size
             }
-            light3
-            statusunknown
+            icons {
+              _id
+              circle
+            }
+            size
           }
-          control {
+          maskedInput {
+            _id
+            extend
+          }
+          diagram {
+            _id
+            extend
+            line {
+              _id
+              color
+            }
+          }
+          button {
             _id
             border {
               _id
-              color
+              color {
+                _id
+                dark
+                light
+              }
               radius
               width
+            }
+            color {
+              _id
+              dark
+              light
+            }
+            colors {
+              _id
+              accent
+              secondary
             }
             disabled {
               _id
               opacity
             }
-          }
-          debounceDelay
-          deviceBreakpoints {
-            _id
-            computer
-            phone
-            tablet
-          }
-          drop {
-            _id
-            background
-            border {
+            extend
+            padding {
               _id
-              radius
-              width
+              horizontal
+              vertical
+            }
+            primary {
+              _id
+              color {
+                _id
+                dark
+                light
+              }
+            }
+          }
+          dataTable {
+            _id
+            groupHeader {
+              _id
+              background {
+                _id
+                dark
+                light
+              }
+              border {
+                _id
+                side
+                size
+              }
+              fill
+              pad {
+                _id
+                horizontal
+                vertical
+              }
+            }
+            header
+            icons {
+              _id
+              ascending
+              contract
+              descending
+              expand
+            }
+            primary {
+              _id
+              weight
+            }
+            resize {
+              _id
+              border {
+                _id
+                color
+                side
+              }
+            }
+          }
+          video {
+            _id
+            captions {
+              _id
+              background
+            }
+            controls {
+              _id
+              background
             }
             extend
-            shadowSize
-            zIndex
-          }
-          edgeSize {
-            _id
-            hair
-            large
-            medium
-            none
-            responsiveBreakpoint
-            small
-            xlarge
-            xsmall
-            xxsmall
-          }
-          elevation {
-            _id
-            dark {
+            icons {
               _id
-              large
-              medium
-              none
-              small
-              xlarge
-              xsmall
+              closedCaption
+              color {
+                _id
+                dark
+                light
+              }
+              configure
+              fullScreen
+              pause
+              play
+              reduceVolume
+              volume
             }
-            light {
+            scrubber {
               _id
-              large
-              medium
-              none
-              small
-              xlarge
-              xsmall
+              color
+              track {
+                _id
+                color
+              }
             }
           }
-          focus {
+          tabs {
+            _id
+            background
+            extend
+            gap
+            panel {
+              _id
+              extend
+            }
+            tabsheader {
+              _id
+              background
+              extend
+            }
+          }
+          checkBox {
             _id
             border {
               _id
@@ -794,921 +1229,499 @@ const execwebsitequery = memoizeWith(identity, (websiteid, graphql) => graphql(`
               }
               width
             }
-          }
-          font {
-            _id
-            face
-            family
-            height
-            maxWidth
-            size
-          }
-          hover {
-            _id
-            background {
+            check {
               _id
-              color
-              dark
-              light
-              opacity
+              extend
+              radius
+              thickness
             }
             color {
               _id
               dark
               light
             }
-            text {
+            extend
+            gap
+            hover {
               _id
-              dark
-              light
+              border {
+                _id
+                color {
+                  _id
+                  dark
+                  light
+                }
+              }
+            }
+            icon {
+              _id
+              extend
+              size
+            }
+            icons {
+              _id
+              checked
+              indeterminate
+            }
+            size
+            toggle {
+              _id
+              background {
+                _id
+                dark
+                light
+              }
+              color {
+                _id
+                dark
+                light
+              }
+              extend
+              knob {
+                _id
+                extend {
+                  _id
+                  dark
+                  light
+                }
+              }
+              radius
+              size
             }
           }
-          input {
+          grommet
+          text {
             _id
-            padding
-            weight
-          }
-          opacity {
-            _id
-            medium
-            strong
-            weak
-          }
-          selected {
-            _id
-            background
-            color
-          }
-          size {
-            _id
-            full
-            large
-            medium
-            small
-            xlarge
-            xsmall
-            xxlarge
-            xxsmall
-          }
-          spacing
-        }
-        calendar {
-          _id
-          icons {
-            _id
-            next
-            previous
+            large {
+              _id
+              height
+              maxWidth
+              size
+            }
+            medium {
+              _id
+              height
+              maxWidth
+              size
+            }
             small {
               _id
-              next
-              previous
+              height
+              maxWidth
+              size
             }
-          }
-          large {
-            _id
-            daySize
-            fontSize
-            lineHeight
-            slideDuration
-          }
-          medium {
-            _id
-            daySize
-            fontSize
-            lineHeight
-            slideDuration
-          }
-          small {
-            _id
-            daySize
-            fontSize
-            lineHeight
-            slideDuration
-          }
-        }
-        grid {
-          _id
-          extend
-        }
-        layer {
-          _id
-          background
-          backgroundColor
-          border {
-            _id
-            radius
-          }
-          container {
-            _id
-            zIndex
-          }
-          extend
-          overlay {
-            _id
-            background
-          }
-          responsiveBreakpoint
-          zIndex
-        }
-        _id
-        paragraph {
-          _id
-          large {
-            _id
-            height
-            maxWidth
-            size
-          }
-          medium {
-            _id
-            height
-            maxWidth
-            size
-          }
-          small {
-            _id
-            height
-            maxWidth
-            size
-          }
-          xlarge {
-            _id
-            height
-            maxWidth
-            size
-          }
-          xxlarge {
-            _id
-            height
-            maxWidth
-            size
-          }
-        }
-        table {
-          _id
-          body {
-            _id
-            align
-            extend
-            pad {
+            xlarge {
               _id
-              horizontal
-              vertical
+              height
+              maxWidth
+              size
             }
-          }
-          footer {
-            _id
-            align
-            border
-            extend
-            fill
-            pad {
+            xsmall {
               _id
-              horizontal
-              vertical
+              height
+              maxWidth
+              size
             }
-            verticalAlign
-          }
-          header {
-            _id
-            align
-            background
-            border
-            extend
-            fill
-            pad {
+            xxlarge {
               _id
-              horizontal
-              vertical
+              height
+              maxWidth
+              size
             }
-            verticalAlign
           }
-        }
-        image {
-          _id
-          extend
-        }
-        anchor {
-          _id
-          color {
+          collapsible {
             _id
-            dark
-            light
+            baseline
+            minSpeed
           }
-          extend
-          fontWeight
-          hover {
+          box {
             _id
             extend
-            fontWeight
-            textDecoration
+            responsiveBreakpoint
           }
-          textDecoration
-        }
-        carousel {
-          _id
-          icons {
+          rangeSelector {
             _id
-            color
-            current
-            next
-            previous
-          }
-        }
-        radioButton {
-          _id
-          border {
-            _id
-            color {
+            background {
               _id
-              dark
-              light
-            }
-            width
-          }
-          check {
-            _id
-            color {
-              _id
-              dark
-              light
-            }
-            extend
-            radius
-          }
-          gap
-          hover {
-            _id
-            border {
-              _id
-              color {
+              invert {
                 _id
-                dark
-                light
+                color
               }
+            }
+            edge {
+              _id
+              type
             }
           }
           icon {
             _id
-            extend
-            size
-          }
-          icons {
-            _id
-            circle
-          }
-          size
-        }
-        maskedInput {
-          _id
-          extend
-        }
-        diagram {
-          _id
-          extend
-          line {
-            _id
-            color
-          }
-        }
-        button {
-          _id
-          border {
-            _id
-            color {
+            colors {
               _id
-              dark
-              light
-            }
-            radius
-            width
-          }
-          color {
-            _id
-            dark
-            light
-          }
-          colors {
-            _id
-            accent
-            secondary
-          }
-          disabled {
-            _id
-            opacity
-          }
-          extend
-          padding {
-            _id
-            horizontal
-            vertical
-          }
-          primary {
-            _id
-            color {
-              _id
-              dark
-              light
-            }
-          }
-        }
-        dataTable {
-          _id
-          groupHeader {
-            _id
-            background {
-              _id
-              dark
-              light
-            }
-            border {
-              _id
-              side
-              size
-            }
-            fill
-            pad {
-              _id
-              horizontal
-              vertical
-            }
-          }
-          header
-          icons {
-            _id
-            ascending
-            contract
-            descending
-            expand
-          }
-          primary {
-            _id
-            weight
-          }
-          resize {
-            _id
-            border {
-              _id
-              color
-              side
-            }
-          }
-        }
-        video {
-          _id
-          captions {
-            _id
-            background
-          }
-          controls {
-            _id
-            background
-          }
-          extend
-          icons {
-            _id
-            closedCaption
-            color {
-              _id
-              dark
-              light
-            }
-            configure
-            fullScreen
-            pause
-            play
-            reduceVolume
-            volume
-          }
-          scrubber {
-            _id
-            color
-            track {
-              _id
-              color
-            }
-          }
-        }
-        tabs {
-          _id
-          background
-          extend
-          gap
-          panel {
-            _id
-            extend
-          }
-          tabsheader {
-            _id
-            background
-            extend
-          }
-        }
-        checkBox {
-          _id
-          border {
-            _id
-            color {
-              _id
-              dark
-              light
-            }
-            width
-          }
-          check {
-            _id
-            extend
-            radius
-            thickness
-          }
-          color {
-            _id
-            dark
-            light
-          }
-          extend
-          gap
-          hover {
-            _id
-            border {
-              _id
-              color {
+              accent1
+              accent2
+              accent3
+              accent4
+              active {
                 _id
                 dark
                 light
               }
-            }
-          }
-          icon {
-            _id
-            extend
-            size
-          }
-          icons {
-            _id
-            checked
-            indeterminate
-          }
-          size
-          toggle {
-            _id
-            background {
-              _id
-              dark
-              light
-            }
-            color {
-              _id
-              dark
-              light
-            }
-            extend
-            knob {
-              _id
-              extend {
+              background
+              brand
+              control {
                 _id
                 dark
                 light
               }
-            }
-            radius
-            size
-          }
-        }
-        grommet
-        text {
-          _id
-          large {
-            _id
-            height
-            maxWidth
-            size
-          }
-          medium {
-            _id
-            height
-            maxWidth
-            size
-          }
-          small {
-            _id
-            height
-            maxWidth
-            size
-          }
-          xlarge {
-            _id
-            height
-            maxWidth
-            size
-          }
-          xsmall {
-            _id
-            height
-            maxWidth
-            size
-          }
-          xxlarge {
-            _id
-            height
-            maxWidth
-            size
-          }
-        }
-        collapsible {
-          _id
-          baseline
-          minSpeed
-        }
-        box {
-          _id
-          extend
-          responsiveBreakpoint
-        }
-        rangeSelector {
-          _id
-          background {
-            _id
-            invert {
-              _id
-              color
-            }
-          }
-          edge {
-            _id
-            type
-          }
-        }
-        icon {
-          _id
-          colors {
-            _id
-            accent1
-            accent2
-            accent3
-            accent4
-            active {
-              _id
-              dark
-              light
-            }
-            background
-            brand
-            control {
-              _id
-              dark
-              light
-            }
-            focus
-            neutral1
-            neutral2
-            neutral3
-            neutral4
-            neutral5
-            statuscritical
-            statusdisabled
-            statuserror
-            statusok
-            statusunknown
-            statuswarning
-          }
-          size {
-            _id
-            large
-            medium
-            small
-            xlarge
-            xsmall
-          }
-        }
-        heading {
-          _id
-          extend
-          font
-          level {
-            _id
-            level1 {
-              _id
-              font {
-                _id
-                family
-                weight
-              }
-              large {
-                _id
-                height
-                maxWidth
-                size
-              }
-              medium {
-                _id
-                height
-                maxWidth
-                size
-              }
-              small {
-                _id
-                height
-                maxWidth
-                size
-              }
-              xlarge {
-                _id
-                height
-                maxWidth
-                size
-              }
-            }
-            level2 {
-              _id
-              font {
-                _id
-                family
-                weight
-              }
-              large {
-                _id
-                height
-                maxWidth
-                size
-              }
-              medium {
-                _id
-                height
-                maxWidth
-                size
-              }
-              small {
-                _id
-                height
-                maxWidth
-                size
-              }
-              xlarge {
-                _id
-                height
-                maxWidth
-                size
-              }
-            }
-            level3 {
-              _id
-              font {
-                _id
-                family
-                weight
-              }
-              large {
-                _id
-                height
-                maxWidth
-                size
-              }
-              medium {
-                _id
-                height
-                maxWidth
-                size
-              }
-              small {
-                _id
-                height
-                maxWidth
-                size
-              }
-              xlarge {
-                _id
-                height
-                maxWidth
-                size
-              }
-            }
-            level4 {
-              _id
-              font {
-                _id
-                family
-                weight
-              }
-              large {
-                _id
-                height
-                maxWidth
-                size
-              }
-              medium {
-                _id
-                height
-                maxWidth
-                size
-              }
-              small {
-                _id
-                height
-                maxWidth
-                size
-              }
-              xlarge {
-                _id
-                height
-                maxWidth
-                size
-              }
-            }
-            level5 {
-              _id
-              font {
-                _id
-                family
-                weight
-              }
-              large {
-                _id
-                height
-                maxWidth
-                size
-              }
-              medium {
-                _id
-                height
-                maxWidth
-                size
-              }
-              small {
-                _id
-                height
-                maxWidth
-                size
-              }
-              xlarge {
-                _id
-                height
-                maxWidth
-                size
-              }
-            }
-            level6 {
-              _id
-              font {
-                _id
-                family
-                weight
-              }
-              large {
-                _id
-                height
-                maxWidth
-                size
-              }
-              medium {
-                _id
-                height
-                maxWidth
-                size
-              }
-              small {
-                _id
-                height
-                maxWidth
-                size
-              }
-              xlarge {
-                _id
-                height
-                maxWidth
-                size
-              }
-            }
-          }
-          responsiveBreakpoint
-          weight
-        }
-        clock {
-          _id
-          analog {
-            _id
-            extend
-            hour {
-              _id
-              color {
-                _id
-                dark
-                light
-              }
-              shape
-              size
-              width
-            }
-            minute {
-              _id
-              color {
-                _id
-                dark
-                light
-              }
-              shape
-              size
-              width
-            }
-            second {
-              _id
-              color {
-                _id
-                dark
-                light
-              }
-              shape
-              size
-              width
+              focus
+              neutral1
+              neutral2
+              neutral3
+              neutral4
+              neutral5
+              statuscritical
+              statusdisabled
+              statuserror
+              statusok
+              statusunknown
+              statuswarning
             }
             size {
               _id
-              huge
               large
               medium
               small
               xlarge
+              xsmall
             }
           }
-          digital {
+          heading {
             _id
-            text {
+            extend
+            font
+            level {
               _id
-              large {
+              level1 {
                 _id
-                height
-                size
+                font {
+                  _id
+                  family
+                  weight
+                }
+                large {
+                  _id
+                  height
+                  maxWidth
+                  size
+                }
+                medium {
+                  _id
+                  height
+                  maxWidth
+                  size
+                }
+                small {
+                  _id
+                  height
+                  maxWidth
+                  size
+                }
+                xlarge {
+                  _id
+                  height
+                  maxWidth
+                  size
+                }
               }
-              medium {
+              level2 {
                 _id
-                height
-                size
+                font {
+                  _id
+                  family
+                  weight
+                }
+                large {
+                  _id
+                  height
+                  maxWidth
+                  size
+                }
+                medium {
+                  _id
+                  height
+                  maxWidth
+                  size
+                }
+                small {
+                  _id
+                  height
+                  maxWidth
+                  size
+                }
+                xlarge {
+                  _id
+                  height
+                  maxWidth
+                  size
+                }
               }
-              small {
+              level3 {
                 _id
-                height
-                size
+                font {
+                  _id
+                  family
+                  weight
+                }
+                large {
+                  _id
+                  height
+                  maxWidth
+                  size
+                }
+                medium {
+                  _id
+                  height
+                  maxWidth
+                  size
+                }
+                small {
+                  _id
+                  height
+                  maxWidth
+                  size
+                }
+                xlarge {
+                  _id
+                  height
+                  maxWidth
+                  size
+                }
               }
-              xlarge {
+              level4 {
                 _id
-                height
-                size
+                font {
+                  _id
+                  family
+                  weight
+                }
+                large {
+                  _id
+                  height
+                  maxWidth
+                  size
+                }
+                medium {
+                  _id
+                  height
+                  maxWidth
+                  size
+                }
+                small {
+                  _id
+                  height
+                  maxWidth
+                  size
+                }
+                xlarge {
+                  _id
+                  height
+                  maxWidth
+                  size
+                }
               }
-              xsmall {
+              level5 {
                 _id
-                height
-                size
+                font {
+                  _id
+                  family
+                  weight
+                }
+                large {
+                  _id
+                  height
+                  maxWidth
+                  size
+                }
+                medium {
+                  _id
+                  height
+                  maxWidth
+                  size
+                }
+                small {
+                  _id
+                  height
+                  maxWidth
+                  size
+                }
+                xlarge {
+                  _id
+                  height
+                  maxWidth
+                  size
+                }
               }
-              xxlarge {
+              level6 {
                 _id
-                height
+                font {
+                  _id
+                  family
+                  weight
+                }
+                large {
+                  _id
+                  height
+                  maxWidth
+                  size
+                }
+                medium {
+                  _id
+                  height
+                  maxWidth
+                  size
+                }
+                small {
+                  _id
+                  height
+                  maxWidth
+                  size
+                }
+                xlarge {
+                  _id
+                  height
+                  maxWidth
+                  size
+                }
+              }
+            }
+            responsiveBreakpoint
+            weight
+          }
+          clock {
+            _id
+            analog {
+              _id
+              extend
+              hour {
+                _id
+                color {
+                  _id
+                  dark
+                  light
+                }
+                shape
                 size
+                width
+              }
+              minute {
+                _id
+                color {
+                  _id
+                  dark
+                  light
+                }
+                shape
+                size
+                width
+              }
+              second {
+                _id
+                color {
+                  _id
+                  dark
+                  light
+                }
+                shape
+                size
+                width
+              }
+              size {
+                _id
+                huge
+                large
+                medium
+                small
+                xlarge
+              }
+            }
+            digital {
+              _id
+              text {
+                _id
+                large {
+                  _id
+                  height
+                  size
+                }
+                medium {
+                  _id
+                  height
+                  size
+                }
+                small {
+                  _id
+                  height
+                  size
+                }
+                xlarge {
+                  _id
+                  height
+                  size
+                }
+                xsmall {
+                  _id
+                  height
+                  size
+                }
+                xxlarge {
+                  _id
+                  height
+                  size
+                }
               }
             }
           }
         }
-      }
-      domain
-      pages {
-        main {
+        domain
+        pages {
+          main {
+            _id
+          }
+          header {
+            left {
+              _id
+            }
+            right {
+              _id
+            }
+            center {
+              _id
+            }
+          }
+          footer {
+            left {
+              _id
+            }
+            right {
+              _id
+            }
+            center {
+              _id
+            }
+          }
+          _client
           _id
+          path
+          tabname
+          title
+          dir
+          lang
+          keywords
         }
-        header {
-          left {
-            _id
-          }
-          right {
-            _id
-          }
-          center {
-            _id
-          }
-        }
-        footer {
-          left {
-            _id
-          }
-          right {
-            _id
-          }
-          center {
-            _id
-          }
-        }
-        _client
-        _id
-        path
-        tabname
-        title
-        dir
-        lang
-        keywords
       }
     }
-  }
-}`));
+  }`));
 
-exports.createPages = ({ actions, graphql }) => {
   const { createPage } = actions;
 
   return execwebsitequery(websiteid, graphql)
@@ -1766,21 +1779,27 @@ exports.createPages = ({ actions, graphql }) => {
       Promise.resolve(getresult)
     ]);
   }).then(([website, discovery, getresult]) => {
-    const { pages, ...other } = website;
-    const groupdata = groupBy(i => i.__typename, getresult());
-    return pages.map((i, idx) => {
-      createPage({
-         path: `${i.path}`,
-         component: path.resolve('./src/templates/Page.tsx'),
-         context: {
-           website: other,
-           pageid: i._id,
-           page: i,
-           tree: discovery[idx],
-           ...components.reduce((p, i) => ({ ...p, [i]: [] }), {}),
-           ...R.map(i => i.map(j => j._id), groupdata)
-         }
-       });
-    });
+    return new Promise(res => {
+      const { pages, ...other } = website;
+      const groupdata = groupBy(i => i.__typename, getresult());
+      const targetobj = {
+        ...components.reduce((p, i) => ({ ...p, [i]: [] }), {}),
+        ...R.map(i => i.map(j => j._id), groupdata)
+      };
+      pages.map((i, idx) => {
+        createPage({
+           path: `${i.path}`,
+           component: path.resolve('./src/templates/Page.tsx'),
+           context: {
+             website: other,
+             pageid: i._id,
+             page: i,
+             tree: discovery[idx],
+             ...targetobj
+           }
+         });
+      });
+      res();
+    })
   });
 };

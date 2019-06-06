@@ -17,7 +17,6 @@ import { mergeDeepLeft, splitEvery } from "ramda";
 import Worker from 'worker-loader!../../utils/createScale.ts';
 import { fetchAllSchemas, themeschema } from "../../state/schemas";
 import { auth } from "../../utils/auth";
-import { Authentication } from "./admin";
 import Form from 'react-jsonschema-form';
 import { widgets } from '../../components/WidgetForm';
 import { ErrorBoundary } from '../../components/ErrorBoundary';
@@ -26,6 +25,17 @@ const worker1 = new Worker();
 const worker2 = new Worker();
 const worker3 = new Worker();
 const worker4 = new Worker();
+
+const Authentication = observer(({ auth: authx }) => {
+  if(!authx.initialized) {
+    return <Text gridArea="auth">Loading....</Text>;
+  }
+  const email = authx.authResult?.idTokenPayload?.email;
+  return (<>
+    {email && <Text gridArea="user">Logged in as {email}</Text>}
+    <Button fill="horizontal" gridArea="auth" label={authx.isAuthenticated() ? "Log out" : "Log in"} onClick={authx.isAuthenticated() ? authx.logout : authx.login} />
+  </>);
+});
 
 const req = new Promise((res, rej) => {
   when(() => auth.idToken).then(function(change) {

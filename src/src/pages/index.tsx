@@ -9,8 +9,9 @@ export default class IndexPage extends React.Component<any> {
   public render() {
     return (
       <Wrapper>
-      <h1>INDEX</h1>
-      <p>Basic debug index</p>
+        <h1>INDEX</h1>
+        <p>Basic debug index</p>
+        <Link to="/csite">Link sample</Link>
       </Wrapper>
     );
   }

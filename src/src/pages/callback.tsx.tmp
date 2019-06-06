@@ -12,6 +12,7 @@ export default class Callback extends Component {
   }
 
   render() {
-    return <div>{/access_token|id_token|error/.test(location.hash) ? 'Logging in....' : 'What are you doing here?'}</div>;
+    const hash = typeof location !== 'undefined' && location && location.hash;
+    return <div>{/access_token|id_token|error/.test(hash) ? 'Logging in....' : 'What are you doing here?'}</div>;
   }
 }

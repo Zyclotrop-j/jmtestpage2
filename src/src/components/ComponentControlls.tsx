@@ -67,13 +67,17 @@ const RawComponentControlls = observer(({ connectDragSource, schemas, __renderSu
     console.error(props, children, __children);
     throw new Error('Type not defined - widgets need a type to be rendered!');
   }
+  console.log("__children", __children, __renderSubtree, props,
+    __renderSubtree(__children, { ...addProps, ___component: props, ___context: ['children', ['content']] })
+  );
+
   const enhancedChildren = Array.isArray(__children)
     ? {
         children: [...__children].map((i, idx) => [
-          ...__renderSubtree(i, { ...addProps, ___component: props, ___context: ['children', ['content', idx]] }),
+          __renderSubtree(i, { ...addProps, ___component: props, ___context: ['children', ['content', idx]] }),
         ]),
-      }
-    : { child: [...__renderSubtree(__children, { ...addProps, ___component: props, ___context: ['children', ['content']] })] };
+      } :
+      { child: [__renderSubtree(__children, { ...addProps, ___component: props, ___context: ['children', ['content']] })] };
   console.log('__children', __children, enhancedChildren);
   const addPropsN = {
     ...addProps,

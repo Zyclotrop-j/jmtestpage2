@@ -12,11 +12,14 @@ var request = require('sync-request');
 var res = request('GET', 'http://example.com');
 console.log("!!!", res.getBody());
 
+const optPlugins = true || process.env.CI ? [] : ["gatsby-plugin-webpack-bundle-analyser-v2"];
+
 module.exports = {
   siteMetadata: {
     siteUrl: config.siteUrl,
   },
   plugins: [
+    ...optPlugins,
     {
       resolve: "gatsby-source-graphql-universal",
       options: {
@@ -30,8 +33,7 @@ module.exports = {
     },
     'gatsby-plugin-react-helmet',
     'gatsby-plugin-typescript',
-    'gatsby-plugin-sass',
-    'gatsby-plugin-manifest',
+    'gatsby-plugin-sass', // re-enable
     'gatsby-plugin-sitemap',
     'gatsby-plugin-lodash',
     'gatsby-transformer-sharp',
@@ -58,7 +60,7 @@ module.exports = {
         path: `${__dirname}/img`,
       },
     },
-    /* {
+    /*{
       resolve: `gatsby-plugin-google-tagmanager`,
       options: {
         id: config.Google_Tag_Manager_ID,
@@ -66,8 +68,8 @@ module.exports = {
         // Defaults to false meaning GTM will only be loaded in production.
         includeInDevelopment: false,
       },
-    }, */
-    /* {
+    },*/
+    {
       resolve: 'gatsby-transformer-remark',
       options: {
         plugins: [
@@ -88,7 +90,29 @@ module.exports = {
           },
         ],
       },
-    }, */
+    },
+    {
+      resolve: 'gatsby-plugin-robots-txt',
+      options: {
+        host: config.siteUrl,
+        sitemap: config.siteUrl + '/sitemap.xml',
+        env: {
+          development: {
+            policy: [{ userAgent: '*', disallow: ['/'] }]
+          },
+          production: {
+            policy: [{ userAgent: '*', allow: '/' }]
+          }
+        }
+      }
+    },
+    {
+      resolve: `gatsby-plugin-canonical-urls`,
+      options: {
+        siteUrl: config.siteUrl,
+      },
+    },
+    'gatsby-plugin-styled-components', // re-enable
     {
       resolve: 'gatsby-plugin-manifest',
       options: {
@@ -109,28 +133,6 @@ module.exports = {
         // offlineGoogleAnalytics: true
       }
     },
-    {
-      resolve: 'gatsby-plugin-robots-txt',
-      options: {
-        host: config.siteUrl,
-        sitemap: config.siteUrl + '/sitemap.xml',
-        env: {
-          development: {
-            policy: [{ userAgent: '*', disallow: ['/'] }]
-          },
-          production: {
-            policy: [{ userAgent: '*', allow: '/' }]
-          }
-        }
-      }
-    },
-    /* {
-      resolve: `gatsby-plugin-canonical-urls`,
-      options: {
-        siteUrl: config.siteUrl,
-      },
-    }, */
-    'gatsby-plugin-styled-components',
-    "gatsby-plugin-remove-trailing-slashes"
+    "gatsby-plugin-remove-trailing-slashes" // re-enable
   ]
 };

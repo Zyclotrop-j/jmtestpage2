@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import FocusLock from 'react-focus-lock';
 import { renameKeysWith } from 'ramda-adjunct';
-import { Box, Button, Layer } from "grommet";
+import { Box, Button } from "grommet";
 import { observer } from 'mobx-react';
 import { is } from "ramda";
 import debounceRender from 'react-debounce-render';
@@ -100,6 +100,7 @@ export default observer(class EditRenderer extends React.Component<any> {
       </>
     );
   }
+
   private renderSubtree(compo, addProps = {}) {
     const render = this.renderSubtree;
     if(compo?.___context) {

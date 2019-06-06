@@ -4,6 +4,7 @@ import { Link } from 'gatsby';
 import { tryCatch, nthArg } from "ramda";
 import Img from 'gatsby-image';
 import { Text as GText, TextInput } from 'grommet';
+import { atob, decodeURIComponent, escape } from "../utils/b64";
 
 interface Props {
   b64: boolean;
@@ -43,7 +44,7 @@ export class Text extends React.PureComponent<Props> {
     // encode = window.btoa(encodeURIComponent(str))
     // decode = decodeURIComponent(window.atob(b64));
 
-    const pipeline = [[b64, tryCatch(window.atob, nthArg(1))], [urlescaped, tryCatch(window.decodeURIComponent, nthArg(1))]]
+    const pipeline = [[b64, tryCatch(atob, nthArg(1))], [urlescaped, tryCatch(decodeURIComponent, nthArg(1))]]
       .filter(([t]) => t === true)
       .map(([__, f]) => f)
       .reduce((p, f) => x => f(p(x)), x => x);

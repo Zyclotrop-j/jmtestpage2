@@ -2,20 +2,13 @@ import React from 'react';
 import { StaticQuery, graphql } from 'gatsby';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
 import { normalize, transitions, fontFace } from 'polished';
-import { Transition, animated as Animated } from 'react-spring/renderprops';
+import posed, { PoseGroup } from 'react-pose';
 import { mergeDeepWithKey, concat, isNil } from "ramda";
 import { Grommet, defaultProps } from 'grommet';
 import split from 'lodash/split';
-import theme from '../../config/Theme';
-import { myTheme } from '../utils/themeCreator';
-import { media } from '../utils/media';
 
 const NormalizedStyle = createGlobalStyle`${normalize()}`;
 const GlobalStyle = createGlobalStyle`
-  ::selection {
-    color: ${theme.colors.bg};
-    background: ${theme.colors.primary};
-  }
   :root{
    --scrollbar-width: calc(100vw - 100%);
   }
@@ -25,13 +18,7 @@ const GlobalStyle = createGlobalStyle`
   body {
     height: inherit;
     overflow-x: hidden;
-  }
-  body {
-    background: ${theme.colors.bg};
-    color: ${theme.colors.grey.default};
-    @media ${media.phone} {
-      font-size: 14px;
-    }
+    margin: 0;
   }
   blockquote {
     font-style: italic;
@@ -41,7 +28,6 @@ const GlobalStyle = createGlobalStyle`
   blockquote:before {
     content: "";
     position: absolute;
-    background: ${theme.colors.primary};
     height: 100%;
     width: 6px;
     margin-left: -1.6rem;
@@ -86,6 +72,11 @@ const Header = styled.header`
 export class Provider extends React.PureComponent<{}> {
   public render() {
     const { children } = this.props;
+    /*
+    <NormalizedStyle />
+    <GlobalStyle />
+    <>{children}</>
+    */
     return (
       <>
         <NormalizedStyle />
@@ -104,7 +95,26 @@ const mergeTheme = mergeDeepWithKey((k, l, r) => {
 });
 const mergeThemes = themes => themes.reduce((p, i) => mergeTheme(p, i), defaultProps.theme);
 
+const RouteContainer = posed.div({
+  default: { opacity: 1, x: 0, y:0 },
+
+  leftexit: { opacity: 1, x: "-100%", y: 0 },
+  rightexit: { opacity: 1, x: "100%", y: 0 },
+  topexit: { opacity: 1, x: 0, y: "-100%" },
+  bottomexit: { opacity: 1, x: 0, y: "100%" },
+  fadedexit: { opacity: 0, x: 0, y:0 },
+
+  leftenter: { opacity: 1, x: "-100%", y: 0, delay: 300, beforeChildren: true },
+  rightenter: { opacity: 1, x: "100%", y: 0, delay: 300, beforeChildren: true },
+  topenter: { opacity: 1, x: 0, y: "-100%", delay: 300, beforeChildren: true },
+  bottomenter: { opacity: 1, x: 0, y: "100%", delay: 300, beforeChildren: true },
+  fadedenter: { opacity: 0, x: 0, y:0, delay: 300, beforeChildren: true }
+});
+
 export class Layout extends React.Component<{}> {
+
+  public state = {}
+
   public static getDerivedStateFromProps(props, state) {
     return { currentPage: props.location.pathname, prevPage: state && state.currentPage };
   }
@@ -120,26 +130,18 @@ export class Layout extends React.Component<{}> {
 
     const themes = this.props?.pageContext?.website?.themes || [];
 
-    const direction = state && state.direction; // ToDo: Enable defaults, enable ".?"-operator
+    const direction = state?.direction;
     const { prevPage, currentPage } = this.state;
-    const h = theme.header.height;
-    const animations = {
-      left: { transform: 'translate3d(-100vw, 0, 0)' },
-      right: { transform: 'translate3d(100vw, 0, 0)' },
-      neutral: { transform: 'translate3d(0vw, 0, 0)', opacity: 1 },
-      faded: { opacity: 0 },
-    };
-    const presets = {
-      right: {
-        from: animations.right,
-        leave: animations.left,
-      },
-      left: {
-        from: animations.left,
-        leave: animations.right,
-      },
-    };
-    const setAnimation = (direction && presets[direction]) || !prevPage ? { from: animations.neutral } : {};
+
+    const opposide = dir => ({
+      left: "right",
+      top: "bottom",
+      right: "left",
+      bottom: "top",
+      faded: "faded"
+    }[dir]);
+    const enterpose = state?.in || direction || "faded";
+    const exitpose = state?.out || opposide(direction) || "faded";
     /*
       <Header>
         "{prevPage}" - "{currentPage}"
@@ -165,15 +167,15 @@ export class Layout extends React.Component<{}> {
       */
     return (
       <Grommet theme={mergeThemes(themes)}>
-        <Transition
-          items={children}
-          keys={item => item.key}
-          from={{ ...(setAnimation.from || animations.faded), position: 'relative', left: 0 }}
-          enter={{ ...(setAnimation.enter || animations.neutral), left: 0, position: 'relative' }}
-          leave={{ ...(setAnimation.leave || animations.faded), position: 'absolute', left: 0 }}
+        <PoseGroup
+          preEnterPose={`${enterpose}enter`}
+          enterPose="default"
+          exitPose={`${exitpose}exit`}
         >
-          {ichildren => props => <Animated.div style={props}>{ichildren}</Animated.div>}
-        </Transition>
+          <RouteContainer key={pathname}>
+            {children}
+          </RouteContainer>
+        </PoseGroup>
       </Grommet>
     );
   }

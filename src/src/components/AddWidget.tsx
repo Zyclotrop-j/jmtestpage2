@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import FocusLock from 'react-focus-lock';
-import { Box, Button, Heading, Layer, Grid } from 'grommet';
+import { Box, Button, Heading, Grid } from 'grommet';
 import { ChapterAdd, Clone, Close, Document, AddCircle } from 'grommet-icons';
 import { observer } from 'mobx-react';
 import { path, memoizeWith } from 'ramda';
@@ -22,12 +22,6 @@ const availableComponents = renameKeysWith(key => `component${key.toLowerCase()}
 const ItemTypes = {
   COMPONENT: 'component',
 };
-
-const StyledLayer = styled(Layer)`
-  width: 80vw;
-  height: 90vh;
-  overflow: auto;
-`;
 
 const addComp = props => {
   const [show, setShow] = React.useState();

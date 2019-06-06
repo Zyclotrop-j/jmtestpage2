@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Link } from 'gatsby';
 import Img from 'gatsby-image';
 import { Anchor, Box, Text } from 'grommet';
 import { noop } from 'ramda-adjunct';
@@ -37,9 +36,10 @@ const Attributionoverlay = styled.div`
   opacity: 0;
   transition: opacity 0.1s, background 0.1s;
   padding: 1rem;
+  pointer-events: none;
+  color: #CCC;
   ${ImgBox}:hover > &, &:hover {
     opacity: 1;
-    color: #CCC;
   }
 `;
 const BGBox = styled.span`
@@ -49,8 +49,8 @@ const BGBox = styled.span`
 export const Attribution = ({ author, app_name }) => {
   const profileurl = `${author?.profileurl}?utm_source=${app_name}&utm_medium=referral`;
   const plattformurl = `${author?.plattform}/?utm_source=${app_name}&utm_medium=referral`;
-  return <>{author?.profileurl && <Attributionoverlay>
-  <BGBox>
+  return <>{author?.profileurl && <Attributionoverlay aria-label={`Photo by ${author?.name} on ${author?.plattformname}`}>
+  <BGBox aria-hidden>
     <span>Photo&nbsp;by&nbsp;</span>
     <Anchor color="inherit" href={profileurl}>{author?.name}</Anchor>
     <span>&nbsp;on&nbsp;</span>
@@ -64,7 +64,8 @@ export const Pingback = ({ children, pingback, origin, src }) =>
     {({ location }) => {
       const f =
         pingback && location.origin !== origin
-          ? () => {
+          ? () => window.requestIdleCallback(() => window.setTimeout(() => {
+
             const img = document.createElement("img");
             img.decoding = "async";
             img.src = pingback === true ? src : pingback;
@@ -73,7 +74,7 @@ export const Pingback = ({ children, pingback, origin, src }) =>
             img.style.display = "none";
             document.body.appendChild(img);
             window.setTimeout(() => img.parentElement.removeChild(img), 10);
-          }
+          }, 2000))
           : noop;
       return children(f);
     }}
@@ -83,7 +84,7 @@ export class Picture extends React.PureComponent<Props> {
 
   static defaultProps = {
     tags: [],
-    src: "https://via.placeholder.com/150",
+    src: "",
     location: {
       city: "",
       country: ""
@@ -129,7 +130,7 @@ export class Picture extends React.PureComponent<Props> {
   public render() {
     // // TODO: Put pingback in schema
     const { pingback, src, alt, title, crossorigin, color, gridArea, srcFile, preview, author } = this.props;
-    const app_name = location.origin;
+    const app_name = typeof location !== 'undefined' && location && location.origin; // not defined in SSR
     if(process.env.NODE_ENV === "development" && preview) {
       if(!this?.state?.width || !this?.state?.height) {
         return <span>Loading</span>
