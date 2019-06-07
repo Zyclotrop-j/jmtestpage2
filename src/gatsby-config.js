@@ -242,12 +242,12 @@ module.exports = {
             urlPattern: /^https:\/\/zcmsapi.herokuapp.com\/api\/v1\//,
             handler: `networkFirst`,
             options: {
-              cacheName: 'api-cache',
+              cacheName: 'rest-api-cache',
               expiration: {
                 maxAgeSeconds: 60*60*24*31 // on month
               },
               backgroundSync: {
-                name: 'api-queue',
+                name: 'rest-api-queue',
                 options: {
                   maxRetentionTime: 60*60*24*31,
                 },
@@ -258,12 +258,12 @@ module.exports = {
             urlPattern: /^https:\/\/zcmsapi.herokuapp.com\/apig\/graphql/,
             handler: `networkFirst`,
             options: {
-              cacheName: 'api-cache',
+              cacheName: 'graphql-api-cache',
               expiration: {
                 maxAgeSeconds: 60*60*24*31 // on month
               },
               backgroundSync: {
-                name: 'api-queue',
+                name: 'graphql-api-queue',
                 options: {
                   maxRetentionTime: 60*60*24*31,
                 },
