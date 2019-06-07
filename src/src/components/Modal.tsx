@@ -3,14 +3,11 @@ import styled, { css } from 'styled-components';
 import FocusLock from 'react-focus-lock';
 import { Box, Button, Layer } from 'grommet';
 
-const StyledLayer = props => {
-  const SLayer = styled(Layer)`
-    width: 80vw;
-    height: 90vh;
-    overflow: auto;
-  `;
-  return <SLayer {...props} />;
-}
+const StyledLayer = styled(Layer)`
+  width: 80vw;
+  height: 90vh;
+  overflow: auto;
+`;
 
 export const Modal = ({ children, box = {}, layer = {}, button, focusgroup }) => {
   const [show, setShow] = React.useState(false);

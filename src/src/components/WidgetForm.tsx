@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Image, Carousel, Text, Box, Heading, Button, CheckBox, RadioButtonGroup, RangeInput, Select, TextInput, TextArea, ThemeContext } from 'grommet';
 import { EmailInput, DateInput, ColorInput, PasswordInput, NumberInput, Colors } from 'grommet-controls';
@@ -12,6 +12,7 @@ import Fuse from 'fuse.js';
 import Unsplash, { toJson } from 'unsplash-js';
 import Form from 'react-jsonschema-form';
 import debounceRender from 'react-debounce-render';
+import MarkdownPreview from './MarkdownInput';
 import { auth } from "../utils/auth";
 import { request } from "../state/components";
 import { uiSchema } from '../Widget';
@@ -109,7 +110,18 @@ const TextWidget = ({ onChange, schema, registry, value, ...props }) => {
   if(schema["x-$ref"] && registry.formContext?.allComponents) {
     // "componentgroup"
     // observer
-    const optioncomponents = Array.from(registry.formContext.allComponents?.values() || []);
+
+    const [ddata, setData] = useState(null);
+    useEffect(() => {
+      if(!schema["x-$ref"].startsWith("component") && !ddata) {
+        request(`https://zcmsapi.herokuapp.com/api/v1/${schema["x-$ref"]}`)
+          .then(i => i.json())
+          .then(i => i.data)
+          .then(data => setData(data));
+      }
+    });
+
+    const optioncomponents = Array.from(ddata || registry.formContext.allComponents?.values() || []);
     const descFields = ["description", "groupdesc"];
     const descfield = descFields.find(i => has(i, optioncomponents[0] || {})) || descFields[0];
 
@@ -247,8 +259,6 @@ class AttributedPicture extends React.Component {
       ...rest
     } = this.props;
 
-    console.log("AttributedPicture", schema, formData);
-
     const { fields: { ObjectField } } = registry;
     const newschema = {
       ...schema,
@@ -274,7 +284,6 @@ class AttributedPicture extends React.Component {
     const onChangeN = data => {
       const copy = mergeDeepLeft({}, formData);
       const imageToUse = this.state.picContext[data];
-      console.log("onChangeN", data, imageToUse, this.state);
       const obj = {
         pingback: data,
         src: data,
@@ -346,6 +355,16 @@ const fetchOwnPictures = memoizeWith(
   }))
 );
 
+const ImageWidthDimensions = props => {
+  const [[x, y], setXY] = useState([0,0]);
+  return <>
+    <img onLoad={({ target: img }) => setXY([
+      img.naturalWidth, img.naturalHeight
+    ])} {...props} />
+    {`${x} x ${y}`}
+  </>
+};
+
 const ImageInput = ({ value, onChange: modonChange, onContext: modonContext, schema, ...props }) => {
   const modifiers = ({
     css: str => `${str.startsWith("url(") ? "" : "url("}${str}${str.endsWith(")") ? "" : ")"}`
@@ -384,7 +403,7 @@ const ImageInput = ({ value, onChange: modonChange, onContext: modonContext, sch
     const app_name = "JannesWebsiteEditor";
     const buttonOptions = options.map(json => ({
       label: (<Box>
-          <img style={{ maxWidth: 120 }} src={json.fileUrl || json.urls.thumb} alt={json.alt_description || json.description} />
+          <ImageWidthDimensions style={{ maxWidth: 120 }} src={json.fileUrl || json.urls.thumb} alt={json.alt_description || json.description} />
           {json.user && <>
             By <a target="_blank" rel="noreferrer" href={`${json.user?.profileurl}?utm_source=${app_name}&utm_medium=referral`}>{json.user?.name}</a> on <a target="_blank" rel="noreferrer" href={`https://unsplash.com/?utm_source=${app_name}&utm_medium=referral`}>Unsplash</a>
           </>}
@@ -416,7 +435,10 @@ const ImageInput = ({ value, onChange: modonChange, onContext: modonContext, sch
     </>);
 };
 
+const MarkdownInput = MarkdownPreview;
+
 export const widgets = {
+  markdown: MarkdownInput,
   image: ImageInput,
   "grommet-color": GrommetColor,
   constantInput: ConstantInput,
@@ -479,6 +501,7 @@ export const WidgetForm = ({ allComponents, schema, initialValues, title, onSubm
   const fn = schema => mergeDeepLeft({
     properties: { title: { type: "string" }, description: { type: "string" } }
   }, schema);
+  console.log(allComponents, schema, initialValues, title, onSubmit, onError, Preview, button, focusgroup);
 
   return (
     <Modal focusgroup={focusgroup} box={{}} layer={{}} button={button || (open => <Button label={`${title}`} onClick={open} />)}>

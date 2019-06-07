@@ -40,7 +40,7 @@ const Overlaybox = styled.div`
     top: 0;
     left: 0;
     right: 0;
-    z-index: 9999;
+    z-index: 9;
     background: rgba(0, 0, 0, 0.3);
     height: auto;
   }

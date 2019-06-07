@@ -48,8 +48,8 @@ export class Grid extends React.PureComponent<Props> {
         threequarter: '3/4',
       }[x] || x);
     const gcolumns = columns
-      .map(i => i.split('-'))
-      .map(([min, max]) => (min === max || !min || !max ? t(min) || t(min || max) : [t(min), t(max)]));
+      ?.map(i => i?.split('-') || ['full'])
+      ?.map(([min, max]) => (min === max || !min || !max ? t(min) || t(min || max) : [t(min), t(max)])) || ['full'];
 
     return (
       <ResponsiveContext.Consumer>

@@ -36,7 +36,7 @@ exports.createResolvers = ({
         }
       }
     },
-    DATA_ImageMod3M62O0U2Y0Tmp: {
+    DATA_ImageMod38GbikmroV3Lt: {
       srcFile: {
         type: `File`,
         // projection: { url: true },
@@ -55,7 +55,7 @@ exports.createResolvers = ({
         }
       }
     },
-    DATA_BackgroundModZchwmkapX05D: {
+    DATA_BackgroundModBjatF6JcoZ5T: {
       srcFile: {
         type: `File`,
         // projection: { url: true },
@@ -1398,7 +1398,9 @@ exports.createPages = ({ actions, graphql }) => {
           heading {
             _id
             extend
-            font
+            font {
+              family
+            }
             level {
               _id
               level1 {

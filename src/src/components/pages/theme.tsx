@@ -186,6 +186,7 @@ const NewTheme = observer(({ schema, onSubmit, onError, context }) => {
     return <Text gridArea="sitenew">No schema</Text>;
   }
   const colors = [
+    "brand",
     "accent-1",
     "accent-2",
     "accent-3",
@@ -406,7 +407,7 @@ export default class Theme extends React.Component<any> {
     worker2.addEventListener("message",this.onMessage);
     worker3.addEventListener("message",this.onMessage);
     worker4.addEventListener("message",this.onMessage);
-
+    /*
     worker1.postMessage({
       op: "generate",
     });
@@ -419,6 +420,7 @@ export default class Theme extends React.Component<any> {
     worker4.postMessage({
       op: "generate",
     });
+    */
   }
 
   public componentWillUnmount() {
@@ -433,9 +435,9 @@ export default class Theme extends React.Component<any> {
     const { pos, op } = event.data.Q;
     const data = event.data.A;
     if(op === "generate") {
-      this.setState({
-        precomputed: this.state.precomputed.concat([data])
-      });
+      // this.setState({
+      //  precomputed: this.state.precomputed.concat([data])
+      // });
       return;
     }
     const shapes = [...this.state.shapes];
@@ -511,8 +513,8 @@ export default class Theme extends React.Component<any> {
       this.setState({
         global: {
           ...this.state.global,
-          color: {
-            ...this.state.global.color,
+          colors: {
+            ...this.state.global.colors,
             [this.state.picking]: color,
           }
         }
@@ -779,6 +781,7 @@ export default class Theme extends React.Component<any> {
         this.setState({
           precomputed: other
         });
+        /*
         if(other.length < 4) {
           worker1.postMessage({
             op: "generate",
@@ -793,6 +796,7 @@ export default class Theme extends React.Component<any> {
             op: "generate",
           });
         }
+        */
       } else {
         console.log("Generate from scratch");
         const tmp = distinctColors({
@@ -833,9 +837,9 @@ export default class Theme extends React.Component<any> {
 
       const brand = palette.shift();
       this.setState(mergeDeepLeft({
-        brand,
-        global: { colors: { brand } },
-        palette: palette,
+        brand: brand.hex(),
+        global: { colors: { brand: brand.hex() } },
+        palette: palette.map(i => i.hex()),
         shapes: [shapes1, empty, empty, empty, empty]
       }, this.state));
     }

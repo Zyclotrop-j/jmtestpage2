@@ -79,7 +79,6 @@ const PreviewStyle = styled.div`
 `;
 
 export default ({ title = "", domain = "", path = "", description = "" }) => {
-  console.log("title, domain, path, description", title, domain, path, description)
   return (
   <PreviewStyle>
     <a href={`https://${domain}${path}`} id="A_4"></a>

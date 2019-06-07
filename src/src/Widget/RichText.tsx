@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Link } from 'gatsby';
 import Img from 'gatsby-image';
 import { tryCatch, identity } from "ramda";
-import { Markdown, Paragraph, Anchor, Box } from 'grommet';
+import { Markdown, Paragraph, Anchor, Box, ResponsiveContext } from 'grommet';
 import Image from 'react-shimmer';
 import LazyLoad from 'react-lazyload';
 import { atob, decodeURIComponent, escape } from "../utils/b64";
@@ -20,7 +20,23 @@ interface Props {
 
 const newline = `\n`;
 
+const mqs= [
+  ["Mobile", "small"],
+  ["Tablet", "medium"],
+  ["Desktop", "large"],
+];
+const mq = sizes => ({ children }) => {
+  return (<ResponsiveContext.Consumer>
+    {(size) => sizes.includes(size) ? <>{children}</> : null}
+  </ResponsiveContext.Consumer>)
+};
+
 export const components = {
+  ...mqs.reduce((p, [name, size]) => ({
+    ...p,
+    [`Not${name}`]: mq(size),
+    [`${name}`]: mq(size)
+  }), {}),
   a: {
     component: props => {
       const MDLink = styled(Link)``;
