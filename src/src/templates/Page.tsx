@@ -63,6 +63,7 @@ export default class Page extends React.PureComponent {
           <title>{tabname}</title>
           <meta name="title" content={tabname} />
           {keywords && <meta name="keywords" content={keywords.join(',')} />}
+          {description && <meta name="description" content={description} />}
           <meta name="canonical" content={path} />
           <meta property="og:title" content={title} />
           <meta property="og:description" content={description} />
