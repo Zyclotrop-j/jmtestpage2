@@ -22,15 +22,15 @@ const availableComponents = renameKeysWith(key => `component${key.toLowerCase()}
 
 const HeaderGrid = styled(Grid)``;
 const Pad = styled.div`
-  margin: 10px;
-  border: 3px solid transparent;
+  margin: ${props => props.preview ? 0 : "2px"};
+  border: ${props => props.preview ? 0 : "3px"} solid transparent;
   transition: border 0.5s;
   position: relative;
   *:hover > & {
-    border: 3px solid rgba(192, 192, 192, 0.1);
+    border: ${props => props.preview ? 0 : "3px"} solid rgba(192, 192, 192, 0.1);
   }
   *:hover > &:hover {
-    border: 3px solid silver;
+    border: ${props => props.preview ? 0 : "3px"} solid silver;
   }
 `;
 const Overlaybox = styled.div`
@@ -67,9 +67,9 @@ const RawComponentControlls = observer(({ connectDragSource, schemas, __renderSu
     console.error(props, children, __children);
     throw new Error('Type not defined - widgets need a type to be rendered!');
   }
-  console.log("__children", __children, __renderSubtree, props,
-    __renderSubtree(__children, { ...addProps, ___component: props, ___context: ['children', ['content']] })
-  );
+
+  const minimize = viewmode.get() === "minimize" && !['componentbox', 'componentgrid'].includes(type);
+  const preview = viewmode.get() === "preview";
 
   const enhancedChildren = Array.isArray(__children)
     ? {
@@ -78,10 +78,10 @@ const RawComponentControlls = observer(({ connectDragSource, schemas, __renderSu
         ]),
       } :
       { child: [__renderSubtree(__children, { ...addProps, ___component: props, ___context: ['children', ['content']] })] };
-  console.log('__children', __children, enhancedChildren);
+
   const addPropsN = {
     ...addProps,
-    __renderSubtree: i => (i ? <Pad>{i}</Pad> : null),
+    __renderSubtree: i => (i ? <Pad preview={preview}>{i}</Pad> : null),
   };
   const nprops = {
     ...props,
@@ -155,10 +155,6 @@ const RawComponentControlls = observer(({ connectDragSource, schemas, __renderSu
       });
     return componentedited;
   };
-
-  // // TODO: minimize-view
-  const minimize = viewmode.get() === "minimize" && !['componentbox', 'componentgrid'].includes(type);
-  const preview = viewmode.get() === "preview";
 
   const inner = children({
     props,
