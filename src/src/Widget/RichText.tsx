@@ -6,6 +6,7 @@ import { tryCatch, identity } from "ramda";
 import { Markdown, Paragraph, Anchor, Box, ResponsiveContext } from 'grommet';
 import Image from 'react-shimmer';
 import LazyLoad from 'react-lazyload';
+import { Icon } from "./Icon";
 import { atob, decodeURIComponent, escape } from "../utils/b64";
 
 interface Props {
@@ -32,6 +33,9 @@ const mq = sizes => ({ children }) => {
 };
 
 export const components = {
+  Icon: {
+    component: props => <Icon {...props} />
+  },
   ...mqs.reduce((p, [name, size]) => ({
     ...p,
     [`Not${name}`]: mq(size),
@@ -63,7 +67,7 @@ export class RichText extends React.PureComponent<Props> {
   }
 
   public render() {
-    const { markdown, urlescaped, escaped, b64, gridArea } = this.props;
+    const { _id, className, markdown, urlescaped, escaped, b64, gridArea } = this.props;
 
     // encode = window.btoa(unescape(encodeURIComponent(str)))
     // decode = decodeURIComponent(escape(window.atob(b64)));
@@ -73,7 +77,7 @@ export class RichText extends React.PureComponent<Props> {
       .reduce((p, f) => x => f(p(x)), x => x);
 
     return (
-      <Box gridArea={gridArea}>
+      <Box id={_id} className={className} gridArea={gridArea}>
         <Markdown components={components}>{pipeline(markdown || '')}</Markdown>
       </Box>
     );

@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'gatsby';
 import { Heading } from 'grommet';
+import { HeadlineContext } from "../utils/headlineContext";
 
 interface Props {
   a11yTitle: string;
@@ -22,8 +23,9 @@ interface Props {
 }
 
 export class Headline extends React.PureComponent<Props> {
+
   public render() {
-    const { a11yTitle, alignSelf, color, href, gridArea, level, margin = {}, size, textAlign, truncate, text } = this.props;
+    const { _id, className, a11yTitle, alignSelf, color, href, gridArea, level, margin = {}, size, textAlign, truncate, text } = this.props;
 
     const linkProps = href
       ? {
@@ -33,26 +35,29 @@ export class Headline extends React.PureComponent<Props> {
         }
       : {};
 
-    return (
-      <Heading
-        a11yTitle={a11yTitle}
-        alignSelf={alignSelf || 'stretch'}
-        color={color}
-        gridArea={gridArea}
-        level={level}
-        margin={{
-          top: margin?.top,
-          bottom: margin?.bottom,
-          left: margin?.left,
-          right: margin?.right,
-        }}
-        size={size}
-        textAlign={textAlign}
-        truncate={truncate}
-        {...linkProps}
-      >
-        {text}
-      </Heading>
-    );
+    return (<HeadlineContext.Consumer>
+        {def => (<Heading
+          id={_id}
+          a11yTitle={a11yTitle}
+          alignSelf={alignSelf || 'stretch'}
+          color={color}
+          gridArea={gridArea}
+          data-depth={def}
+          level={level || def}
+          margin={{
+            top: margin?.top,
+            bottom: margin?.bottom,
+            left: margin?.left,
+            right: margin?.right,
+          }}
+          size={size}
+          textAlign={textAlign}
+          truncate={truncate}
+          {...linkProps}
+          className={className}
+        >
+          {text}
+        </Heading>)}
+    </HeadlineContext.Consumer>);
   }
 }

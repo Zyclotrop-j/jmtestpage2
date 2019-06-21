@@ -35,19 +35,19 @@ export const ModernLayout = (props) => {
       ]}
     >
       <SkipLinkTarget id="header" />
-      <Box gridArea="left" background="brand">
+      <Box gridArea="left" background="brand" id="pagebodyheaderleft">
         {props.__renderSubtree(props?.header?.left)}
       </Box>
-      <Box gridArea="center" background="brand">
+      <Box gridArea="center" background="brand" id="pagebodyheadercenter">
         {props.__renderSubtree(props?.header?.center)}
       </Box>
-      <Box gridArea="right" background="brand">
+      <Box gridArea="right" background="brand" id="pagebodyheaderright">
         {props.__renderSubtree(props?.header?.right)}
       </Box>
     </Grid>
     <Main>
       <SkipLinkTarget id="main" />
-      <Box direction="column">
+      <Box direction="column" id="pagebodybodycenter">
         {props.__renderSubtree(props?.main)}
       </Box>
     </Main>
@@ -62,13 +62,13 @@ export const ModernLayout = (props) => {
       ]}
     >
       <SkipLinkTarget id="footer" />
-      <Box gridArea="left" background="brand">
+      <Box gridArea="left" background="brand" id="pagebodyfooterleft">
         {props.__renderSubtree(props?.footer?.left)}
       </Box>
-      <Box gridArea="center" background="brand">
+      <Box gridArea="center" background="brand" id="pagebodyfootercenter">
         {props.__renderSubtree(props?.footer?.center)}
       </Box>
-      <Box gridArea="right" background="brand">
+      <Box gridArea="right" background="brand" id="pagebodyfooterright">
         {props.__renderSubtree(props?.footer?.right)}
       </Box>
     </Grid>

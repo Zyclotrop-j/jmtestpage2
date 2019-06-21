@@ -599,10 +599,10 @@ export class Stage extends React.Component<Props> {
   };
 
   public render() {
-    const { slides, defaultTiming, fallbackDefault, preview } = this.props;
+    const { _id, className, slides, defaultTiming, fallbackDefault, preview } = this.props;
     const slots = Array.isArray(slides) ? slides : Object.values(slides);
     if(slots.length === 0) return null;
-    if(slots.length === 1) return (<ImgBox key="RBox">
+    if(slots.length === 1) return (<ImgBox id={_id} className={className} key="RBox">
       {slot({ preview, data: slots[0], key: 0 })}
       <CBox key="placeholder" preview={preview} width={slots[0].width || "100vw"} height={slots[0].height || 80}/>
     </ImgBox>);
@@ -610,7 +610,7 @@ export class Stage extends React.Component<Props> {
     const currentSlotIdx = Stage.getTimeSlots(slots, this.state.timePassed, defaultTiming || fallbackDefault);
     const current = slots[currentSlotIdx];
     return (
-      <ImgBox key="RBox">
+      <ImgBox id={_id} className={className} key="RBox">
           <PoseGroup
             animateOnMount
             preEnterPose="from"

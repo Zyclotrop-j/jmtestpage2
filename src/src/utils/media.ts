@@ -1,3 +1,5 @@
+import styled, { css } from 'styled-components';
+import { memoizeWith, identity } from "ramda";
 import MqInit from 'styled-components-media-query';
 import { myTheme } from './themeCreator';
 

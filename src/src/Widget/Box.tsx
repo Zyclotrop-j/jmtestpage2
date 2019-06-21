@@ -4,6 +4,7 @@ import { Link } from 'gatsby';
 import { map } from 'ramda';
 import BackgroundImage from 'gatsby-background-image';
 import { Attribution, Pingback, ImgBox } from "./Picture";
+import { HeadlineContext } from "../utils/headlineContext";
 
 interface Props {
   b64: boolean;
@@ -18,6 +19,8 @@ export const uiSchema = {
 };
 
 export class Box extends React.PureComponent<Props> {
+
+  static contextType = HeadlineContext;
 
   static defaultProps = {
     content: "",
@@ -44,6 +47,7 @@ export class Box extends React.PureComponent<Props> {
 
   public render() {
     const {
+      _id,
       advanced: { align, alignContent, alignSelf, fill, justify, basis, flex, overflow, responsive, height, width } = {},
       animation,
       background: { srcFile, pingback, src, ...background },
@@ -58,6 +62,7 @@ export class Box extends React.PureComponent<Props> {
       gridArea,
       __children: { child = [] },
       __renderSubtree,
+      className,
     } = this.props;
     const { color: bcolor, side: bside, size: bsize, style: bstyle } = border || {};
 
@@ -99,17 +104,18 @@ export class Box extends React.PureComponent<Props> {
     const hasImageSharp = srcFile?.childImageSharp;
     const Wrap = ({ children }) => hasImageSharp ?
       <Pingback pingback={pingback} origin={pingback && new URL(pingback).origin} src={src}>
-        {f => <BackgroundImage onLoad={f} {...background} fluid={srcFile.childImageSharp.fluid} backgroundColor={background.color}>
+        {f => <BackgroundImage id={_id} className={className} onLoad={f} {...background} fluid={srcFile.childImageSharp.fluid} backgroundColor={background.color}>
           {children}
         </BackgroundImage>}
       </Pingback> :
       <>{children}</>;
 
     const app_name = typeof location !== 'undefined' && location && location.origin; // not defined in SSR
-    return (
+    return (<HeadlineContext.Provider value={this.context + 1}>
       <Wrap>
         <ImgBox
           {...obj}
+          className={!hasImageSharp && className}
           background={hasImageSharp ? null : {
             ...background,
             // ??? image: background.image ? `url(${background.image})` : ""
@@ -147,6 +153,6 @@ export class Box extends React.PureComponent<Props> {
           {content}
         </ImgBox>
       </Wrap>
-    );
+    </HeadlineContext.Provider>);
   }
 }

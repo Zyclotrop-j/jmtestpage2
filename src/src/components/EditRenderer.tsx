@@ -3,8 +3,9 @@ import styled from 'styled-components';
 import FocusLock from 'react-focus-lock';
 import { renameKeysWith } from 'ramda-adjunct';
 import { Box, Button } from "grommet";
+import { Edit } from "grommet-icons";
 import { observer } from 'mobx-react';
-import { is } from "ramda";
+import { is, map } from "ramda";
 import debounceRender from 'react-debounce-render';
 import { schemas } from "../state/schemas";
 import { current as currentpage } from "../state/pages";
@@ -14,6 +15,7 @@ import { ErrorBoundary } from '../components/ErrorBoundary';
 import { ComponentControlls } from "../components/ComponentControlls";
 import { anyloading, anyerror } from "./pages/admin";
 import { AddWidget } from "../components/AddWidget";
+import { WidgetForm } from '../components/WidgetForm';
 import components from '../Widget';
 
 const availableComponents = renameKeysWith(key => `component${key.toLowerCase()}`, components);
@@ -38,6 +40,9 @@ const SubtreeRenderer = observer(({ render, compo, addProps, page, components: x
   const Component = availableComponents[type];
   const content = compo.content;
 
+  const WatchedComponentControlls = observer(ComponentControlls);
+  const WatchedComponent = observer(Component);
+
   return (<ComponentControlls
         dtype="EXISTING"
         dcomponenttype={type}
@@ -49,11 +54,32 @@ const SubtreeRenderer = observer(({ render, compo, addProps, page, components: x
         __children={content}
         __renderSubtree={render}
     >
-      {({ props, addProps: xaddProps, __children }) => (<ErrorBoundary key={compo._id}>
-        <DebouncedPreview {...props} preview={true} __children={__children} __renderSubtree={render} {...xaddProps}>
-          {(props) => <Component {...props} key={props._modified} />}
-        </DebouncedPreview>
-      </ErrorBoundary>)}
+      {({ props, addProps: xaddProps, __children }) => {
+        return (<ErrorBoundary key={compo._id}>
+          <DebouncedPreview {...props}  preview={true} __children={__children} __renderSubtree={render} {...xaddProps}>
+            {(props) => <WatchedComponent {...props} key={props._modified} ___resolveid={id => {
+              const resolved = xcomponents.get(id);
+              if(!resolved) return;
+              return resolved;
+            }} ___editor={(q) => <WatchedComponentControlls
+                  plain
+                  dtype="EXISTING"
+                  dcomponenttype={q.type || q["x-type"]}
+                  did={q._id || q["x-id"]}
+                  dparentid={compo._id}
+                  schemas={schemas}
+                  props={q}
+                  customtitle={q.customtitle}
+                  gridArea={q.gridArea}
+                  addProps={{ ...xaddProps, ___parentid: compo._id, ___parentids: xaddProps.parentids ? xaddProps.parentids.concat([ compo._id ]) : [ compo._id ], ___groupid: null }}
+                  __children={null}
+                  __renderSubtree={render}
+              >
+                {() => q.children}
+            </WatchedComponentControlls>} />}
+          </DebouncedPreview>
+        </ErrorBoundary>);
+      }}
   </ComponentControlls>);
 });
 

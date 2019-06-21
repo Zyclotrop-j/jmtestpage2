@@ -7,13 +7,20 @@ import { Grid } from './Grid';
 import { Group } from './Group';
 import { uiSchema as pageuiSchema } from "./Page";
 import { Stage, uiSchema as stageuiSchema } from './Stage';
+import { Icon, uiSchema as iconuiSchema } from "./Icon";
+import { CallToAction, uiSchema as ctauiSchema } from "./CallToAction";
+import { Cards, uiSchema as cardsuiSchema } from "./Cards";
 
 export const uiSchema = {
   text: textuiSchema,
   page: pageuiSchema,
   picture: pictureuiSchema,
   box: boxuiSchema,
-  stage: stageuiSchema
+  stage: stageuiSchema,
+  icon: iconuiSchema,
+  calltoaction: ctauiSchema,
+  cards: cardsuiSchema
 };
-export { RichText, Headline, Picture, Text, Box, Grid, Group, Stage };
-export default { RichText, Headline, Picture, Text, Box, Grid, Group, Stage };
+export const Calltoaction = CallToAction;
+export { RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Icon, Cards };
+export default { RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Calltoaction: CallToAction, Icon, Cards };

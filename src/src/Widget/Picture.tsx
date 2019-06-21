@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { tryCatch } from "ramda";
 import Img from 'gatsby-image';
 import { Anchor, Box, Text } from 'grommet';
 import { noop } from 'ramda-adjunct';
@@ -43,8 +44,9 @@ const Attributionoverlay = styled.div`
   }
 `;
 const BGBox = styled.span`
+  font-size: 0.8em;
   background: rgba(0,0,0,0.4);
-  padding: 3px;
+  padding: 0.05em;
 `;
 export const Attribution = ({ author, app_name }) => {
   const profileurl = `${author?.profileurl}?utm_source=${app_name}&utm_medium=referral`;
@@ -68,7 +70,7 @@ export const Pingback = ({ children, pingback, origin, src }) =>
 
             const img = document.createElement("img");
             img.decoding = "async";
-            img.src = pingback === true ? src : pingback;
+            img.src = pingback === true ? `${src}&auto=format&w=1&h=1` : `${pingback}&auto=format&w=1&h=1`;
             img.referrerpolicy = "origin-when-cross-origin";
             img.hidden = true;
             img.style.display = "none";
@@ -129,14 +131,15 @@ export class Picture extends React.PureComponent<Props> {
 
   public render() {
     // // TODO: Put pingback in schema
-    const { pingback, src, alt, title, crossorigin, color, gridArea, srcFile, preview, author } = this.props;
+    const { _id, className, pingback, src, alt, title, crossorigin, color, gridArea, srcFile, preview, author } = this.props;
     const app_name = typeof location !== 'undefined' && location && location.origin; // not defined in SSR
     if(process.env.NODE_ENV === "development" && preview) {
       if(!this?.state?.width || !this?.state?.height) {
-        return <span>Loading</span>
+        return <span className={className}>Loading</span>
       }
-      return <ImgBox background={color} fill gridArea={gridArea}>
+      return <ImgBox className={className} background={color} fill gridArea={gridArea}>
         <Img
+          id={_id}
           fluid={{
             src,
             aspectRatio: this.state.width / this.state.height
@@ -149,16 +152,18 @@ export class Picture extends React.PureComponent<Props> {
         <Attribution author={author} app_name={app_name} />
       </ImgBox>
     }
-    const oorig = new URL(src).origin;
+    const newUrl = tryCatch(url => new URL(src), u => ({ origin: u }));
+    const oorig = newUrl(src).origin;
     if (!srcFile?.childImageSharp) {
-      return <Text gridArea={gridArea}>Image rendering failed</Text>;
+      return <Text id={_id} className={className} gridArea={gridArea}>Image rendering failed</Text>;
     }
     return (
       <Pingback origin={oorig} pingback={pingback} src={src}>
         {(f) => {
           return (
-            <ImgBox background={color} fill gridArea={gridArea}>
+            <ImgBox className={className} background={color} fill gridArea={gridArea}>
               <Img
+                id={_id}
                 fluid={srcFile.childImageSharp.fluid}
                 alt={alt}
                 title={title}

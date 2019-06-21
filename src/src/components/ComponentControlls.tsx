@@ -58,7 +58,7 @@ const Mini = styled(Box)`
   overflow: hidden;
 `;
 
-const RawComponentControlls = observer(({ connectDragSource, schemas, __renderSubtree, props, addProps, __children, children }) => {
+const RawComponentControlls = observer(({ connectDragSource, schemas, __renderSubtree, props, addProps, __children, children, plain = false, customtitle }) => {
   const type = props['x-type'];
   if (!type) {
     if (React.isValidElement(props)) {
@@ -166,7 +166,7 @@ const RawComponentControlls = observer(({ connectDragSource, schemas, __renderSu
 
   const schema = schemas.find(x => x.title === type);
   return (
-    <>
+    <React.Fragment key={nprops._modified}>
       <Overlaybox>
         <HeaderGrid
           rows={['full']}
@@ -182,15 +182,15 @@ const RawComponentControlls = observer(({ connectDragSource, schemas, __renderSu
           justifyContent="between"
         >
           <Box gridArea="title" overflow="hidden">
-            <Text color="white">{type}</Text>
+            <Text color="white">{customtitle || type}</Text>
           </Box>
-          <Box gridArea="icon1" overflow="hidden">
-            {connectDragSource(
+          {!plain && <Box gridArea="icon1" overflow="hidden">
+            {connectDragSource && connectDragSource(
               <div style={{ cursor: 'move', paddingLeft: 10, paddingRight: 10 }}>
                 <Pan size="medium" />
               </div>,
             )}
-          </Box>
+          </Box>}
           <WidgetForm
             Preview={availableComponents[schema.title]}
             schema={schema}
@@ -201,11 +201,11 @@ const RawComponentControlls = observer(({ connectDragSource, schemas, __renderSu
             onError={i => Promise.resolve(console.log('error', i))}
             allComponents={allComponents}
           />
-          <RButton gridArea="icon3" a11yTitle="Delete" icon={<Trash color="white" />} plain onClick={del} />
+          {!plain && <RButton gridArea="icon3" a11yTitle="Delete" icon={<Trash color="white" />} plain onClick={del} />}
         </HeaderGrid>
       </Overlaybox>
       {minimize ? <Mini>{inner}</Mini> : inner}
-    </>
+    </React.Fragment>
   );
 });
 
@@ -213,7 +213,7 @@ const style = {
   border: '1px dashed gray',
 };
 const ConnectedComponentControlls = React.forwardRef(
-  ({ isDragging, connectDragSource, connectDragPreview, isOverCurrent, ...rest }, ref) => {
+  ({ isDragging, connectDragSource, connectDragPreview, isOverCurrent, gridArea, ...rest }, ref) => {
     const elementRef = useRef(null);
     connectDragPreview(elementRef);
     const opacity = isDragging ? 0.3 : 1;
@@ -225,9 +225,9 @@ const ConnectedComponentControlls = React.forwardRef(
       ...rest,
     }));
     return (
-      <div ref={elementRef} style={Object.assign({}, style, { opacity, height, overflow })}>
+      <Box gridArea={gridArea} ref={elementRef} style={Object.assign({}, style, { opacity, height, overflow })}>
         {content}
-      </div>
+      </Box>
     );
   },
 );

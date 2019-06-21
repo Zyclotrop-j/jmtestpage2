@@ -6,6 +6,7 @@ import { Grid as GGrid, ResponsiveContext, Box } from 'grommet';
 import { range } from 'ramda';
 import { renameKeysWith } from 'ramda-adjunct';
 import { ErrorBoundary } from '../components/ErrorBoundary';
+import { HeadlineContext } from "../utils/headlineContext";
 
 interface Props {
   b64: boolean;
@@ -15,6 +16,8 @@ interface Props {
 
 export class Grid extends React.PureComponent<Props> {
 
+  static contextType = HeadlineContext;
+
   static defaultProps = {
       content: [],
       columns: []
@@ -22,6 +25,8 @@ export class Grid extends React.PureComponent<Props> {
 
   public render() {
     const {
+      _id,
+      className,
       columns,
       gap,
       margin,
@@ -51,10 +56,12 @@ export class Grid extends React.PureComponent<Props> {
       ?.map(i => i?.split('-') || ['full'])
       ?.map(([min, max]) => (min === max || !min || !max ? t(min) || t(min || max) : [t(min), t(max)])) || ['full'];
 
-    return (
+    return (<HeadlineContext.Provider value={this.context + 1}>
       <ResponsiveContext.Consumer>
         {size => (
           <GGrid
+            id={_id}
+            className={className}
             rows={size === 'small' ? gcolumns : ['full']}
             columns={size === 'small' ? ['full'] : gcolumns}
             areas={this.getAreas(columns, size === 'small')}
@@ -72,7 +79,7 @@ export class Grid extends React.PureComponent<Props> {
           </GGrid>
         )}
       </ResponsiveContext.Consumer>
-    );
+    </HeadlineContext.Provider>);
   }
 
   private getAreas(colums, isMobile) {
@@ -82,7 +89,6 @@ export class Grid extends React.PureComponent<Props> {
       start: isMobile ? [0, start] : [start, 0],
       end: isMobile ? [0, end] : [end, 0],
     }));
-    console.log(ret);
     return ret;
   }
 }

@@ -18,6 +18,7 @@ import { request } from "../state/components";
 import { uiSchema } from '../Widget';
 import { Modal } from '../components/Modal';
 import { ErrorBoundary } from '../components/ErrorBoundary';
+import { IconChoose } from './IconChooser';
 
 const unsplash = new Promise((res, rej) => {
   when(() => auth.idToken).then(function(change) {
@@ -438,6 +439,7 @@ const ImageInput = ({ value, onChange: modonChange, onContext: modonContext, sch
 const MarkdownInput = MarkdownPreview;
 
 export const widgets = {
+  icon: IconChoose,
   markdown: MarkdownInput,
   image: ImageInput,
   "grommet-color": GrommetColor,

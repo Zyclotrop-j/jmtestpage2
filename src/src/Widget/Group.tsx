@@ -14,12 +14,13 @@ export class Group extends React.PureComponent<Props> {
 
   public render() {
     const {
+      _id,
       __children: { children = [] },
       __renderSubtree,
     } = this.props;
     const content = children.reduce(
       (p, u, idx) => p.concat(u.map(__renderSubtree)), []
     );
-    return (<>{content}</>);
+    return (<><span id={_id} />{content}</>);
   }
 }

@@ -39,7 +39,7 @@ export class Text extends React.PureComponent<Props> {
   }
 
   public render() {
-    const { b64, urlescaped, text = "", alignSelf, color, gridArea, margin, size, textAlign, truncate, weight } = this.props;
+    const { _id, className, b64, urlescaped, text = "", alignSelf, color, gridArea, margin, size, textAlign, truncate, weight } = this.props;
 
     // encode = window.btoa(encodeURIComponent(str))
     // decode = decodeURIComponent(window.atob(b64));
@@ -51,6 +51,8 @@ export class Text extends React.PureComponent<Props> {
 
     return (
       <GText
+        id={_id}
+        className={className}
         gridArea={gridArea}
         alignSelf={alignSelf}
         color={color}
