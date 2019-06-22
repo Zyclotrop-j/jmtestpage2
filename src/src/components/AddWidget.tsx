@@ -25,7 +25,7 @@ const ItemTypes = {
 
 const addComp = props => {
   const [show, setShow] = React.useState();
-  const typename = props.parentcomponent['x-type'].split('component').pop();
+  const typename = props.parentcomponent?.['x-type']?.split('component').pop();
   const where = props.area[1].join('->');
   const connectDropTarget = props.connectDropTarget;
   const background = props.isOverCurrent ? 'rgba(0,0,0,.8)' : undefined;

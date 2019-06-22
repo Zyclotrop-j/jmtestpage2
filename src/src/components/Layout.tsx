@@ -2,8 +2,8 @@ import React from 'react';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
 import { complement, darken, normalize } from 'polished';
 import posed, { PoseGroup } from 'react-pose';
-import { path, map, mergeDeepWithKey, concat, isNil, memoizeWith, filter, pipe, T } from "ramda";
-import { Grommet, defaultProps } from 'grommet';
+import { path, map, mergeDeepWithKey, concat, isNil, memoizeWith, filter, pipe, T, identity } from "ramda";
+import { Grommet, Box, SkipLinks, SkipLink, SkipLinkTarget, defaultProps } from 'grommet';
 import MqInit from 'styled-components-media-query';
 import Headroom from "react-headroom";
 import SlideMenu from 'react-burger-menu/lib/menus/slide';
@@ -16,6 +16,15 @@ import FallDownMenu from 'react-burger-menu/lib/menus/fallDown';
 import RevealMenu from 'react-burger-menu/lib/menus/reveal';
 import { colorStyle, normalizeColor } from 'grommet-styles';
 import { Menu } from "../Widget/Menu";
+import Link from 'gatsby-link';
+import { ErrorBoundary } from '../components/ErrorBoundary';
+import { ModernLayout } from '../layouts/modern';
+import components from '../Widget';
+
+const availableComponents = Object.entries(components).reduce((p, [k, v]) => ({
+  ...p,
+  [`DATA_Component${k.toLowerCase()}`]: v,
+}), {});
 
 const HeadOverlay = styled.div``;
 const MenuStyled = createGlobalStyle`
@@ -53,12 +62,20 @@ const MenuStyled = createGlobalStyle`
   */
   .bm-menu-wrap {
     position: fixed;
-    height: 100%;
     max-width: 100vw;
     min-width: 20vw;
+    overflow: auto;
+    height: auto;
+    max-height: 100%;
+    min-height: 100%;
+    -webkit-overflow-scrolling: touch;
   }
   /* General sidebar styles */
   .bm-menu {
+    height: auto !important;
+    box-sizing: border-box;
+    /* overflow: auto; */
+    min-height: 100%;
     ${props => props?.theme?.menu?.background && colorStyle('background-color', props?.theme?.menu?.background, props.theme) || "background: #373a47;"}
   }
   /* Wrapper for item list */
@@ -188,6 +205,19 @@ const mergeTheme = mergeDeepWithKey((k, l, r) => {
 });
 const mergeThemes = themes => themes.reduce((p, i) => mergeTheme(p, i), defaultProps.theme);
 
+const FixedBottomMenu = styled.footer`
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+`;
+const FlexBottomMenu = styled.footer`
+  display: block;
+`;
+const FlexTopMenu = styled.header`
+  display: block;
+`;
+
 const RouteContainer = posed.div({
   default: { opacity: 1, x: 0, y:0 },
 
@@ -206,6 +236,12 @@ const RouteContainer = posed.div({
 
 export class Layout extends React.Component<{}> {
 
+  constructor(props) {
+    super(props);
+    const render = this.renderSubtree.bind(this);
+    this.renderSubtree = memoizeWith(identity, render);
+  }
+
   public state = {}
 
   public static getDerivedStateFromProps(props, state) {
@@ -218,8 +254,12 @@ export class Layout extends React.Component<{}> {
   public render() {
     const {
       children,
-      location: { pathname, state }
+      location: { pathname, state },
+      pageContext
     } = this.props;
+    const topmenu = pageContext?.tree?.topmenu;
+    const bottommenu = pageContext?.tree?.bottommenu;
+    const sidemenu = pageContext?.tree?.sidemenu;
 
     const themes = this.props?.pageContext?.website?.themes || [];
 
@@ -240,9 +280,42 @@ export class Layout extends React.Component<{}> {
       SlideMenu, StackMenu, PushMenu, PushRotateMenu, ScaleDownMenu, ScaleRotateMenu, FallDownMenu, RevealMenu
     };
 
-    const Sidebar = sidebars["PushMenu"];
 
-    console.log("this.props this.props", this.props);
+    const sidemenutype = this.props.pageContext?.menudata?.data?.data?.website?.sidemenu?.type;
+    const hasSideMenu = sidemenutype && sidemenutype.trim() && sidemenutype.trim() !== "none";
+    const Sidebar = hasSideMenu ? sidebars[sidemenutype] : null;
+    if(Sidebar === undefined) {
+      console.error(`Sidebar has unknown type ${sidemenutype}`);
+    }
+    // flex static none
+    const bottomtype = this.props.pageContext?.menudata?.data?.data?.website?.bottommenu?.type;
+    const hasBottommenu = bottomtype && bottomtype.trim() && bottomtype.trim() !== "none";
+    const topmenutype = this.props.pageContext?.menudata?.data?.data?.website?.topmenu?.type;
+    const hasTopmenu = topmenutype && topmenutype.trim() && topmenutype.trim() !== "none";
+
+    const topMenus = {
+      flex: FlexTopMenu,
+      static: Headroom, // // TODO: replace with real static and correct docs
+      smart: Headroom
+    };
+    const TopMenu = hasTopmenu ? topMenus[topmenutype] : null;
+    if(TopMenu === undefined) {
+      console.error(`topMenus has unknown type ${topmenutype}`);
+    }
+
+    const bottomMenus = {
+      flex: FlexBottomMenu,
+      static: FixedBottomMenu
+    };
+    const BottomMenu = hasBottommenu ? bottomMenus[bottomtype] : null;
+    if(BottomMenu === undefined) {
+      console.error(`Bottommenu has unknown type ${bottomtype}`);
+    }
+
+    // var hasHorizontalScrollbar = div.scrollWidth > div.clientWidth;
+    // var hasVerticalScrollbar = div.scrollHeight > div.clientHeight;
+    const componentsx = this.props?.data?.data;
+    const __renderSubtree = this.renderSubtree(componentsx);
 
     return (
       <Grommet
@@ -252,17 +325,26 @@ export class Layout extends React.Component<{}> {
         }}
         id={`${pathname}-outer-container`}
       >
-        <MenuStyled />
         {/* // // TODO: Render dynamically with content */}
-        <Sidebar pageWrapId={`${pathname}-page-wrap`} outerContainerId={`${pathname}-outer-container`}>
+        {hasSideMenu && <MenuStyled />}
+        {hasSideMenu && <Sidebar pageWrapId={`${pathname}-page-wrap`} outerContainerId={`${pathname}-outer-container`}>
+          <SkipLinkTarget id="navigation_side" />
+          <Box direction="column" id={sidemenu || "navigation_side_marker"}>
+            {console.log("sidemenu sidemenu", pageContext, sidemenu, __renderSubtree(sidemenu))}
+            {__renderSubtree(sidemenu)}
+          </Box>
           <Menu mode="vertical" theme={allthemes} pathname={pathname} pages={this.props?.data?.data?.pages} />
-        </Sidebar>
-        <Headroom>
-          {/* // // TODO: Render dynamically with content */}
+        </Sidebar>}
+        {/* // // TODO: Render dynamically with content */}
+        {hasTopmenu && <TopMenu>
           <HeadOverlay>
+            <SkipLinkTarget id="navigation_top" />
+            <Box direction="row" id={topmenu || "navigation_top_marker"}>
+              {__renderSubtree(topmenu)}
+            </Box>
             <Menu mode="horizontal" theme={allthemes} pathname={pathname} pages={this.props?.data?.data?.pages} />
           </HeadOverlay>
-        </Headroom>
+        </TopMenu>}
         <PoseGroup
           preEnterPose={`${enterpose}enter`}
           enterPose="default"
@@ -272,7 +354,41 @@ export class Layout extends React.Component<{}> {
             {children}
           </RouteContainer>
         </PoseGroup>
+        {/* // // TODO: Render dynamically with content */}
+        {hasBottommenu && <BottomMenu>
+          <SkipLinkTarget id="navigation_bottom" />
+          <Box direction="row" id={bottommenu || "navigation_bottom_marker"}>
+            {__renderSubtree(bottommenu)}
+          </Box>
+        </BottomMenu>}
       </Grommet>
     );
   }
+
+  private renderSubtree(components) {
+    const render = (compo, addProps = {}) => {
+      if (!compo) return null;
+      if (Array.isArray(compo)) {
+        return compo.map(i => render(i, addProps));
+      }
+      const { type, id, ...content } = compo;
+      const Component = availableComponents[type];
+      if (!Component) {
+        throw new Error(`Couldn't find type ${type}, available are ${Object.keys(availableComponents).join(', ')}`);
+      }
+      const typename = `${type.substring(5).toLowerCase()}s`;
+      const comp = components[typename];
+      if (!comp) {
+        throw new Error(`Couldn't find comp ${typename}, available are ${Object.keys(components).join(', ')}`);
+      }
+      const props = comp.find(i => i._id === id);
+      return (
+        <ErrorBoundary key={props._id} id={props._id} title={props.title}>
+          <Component {...props} {...addProps} __children={content} __renderSubtree={render} />
+        </ErrorBoundary>
+      );
+    }
+    return render;
+  }
+
 }

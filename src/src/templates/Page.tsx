@@ -8,34 +8,7 @@ import Img from 'gatsby-image'; // Imports the fragments as well!
 import config from '../../config/SiteConfig';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { ModernLayout } from '../layouts/modern';
-// import components from '../Widget';
-
-import { Headline } from '../Widget/Headline';
-import { RichText } from '../Widget/RichText';
-import { Text as JText } from '../Widget/Text';
-import { Group as JGroup } from '../Widget/Group';
-import { Grid as JGrid } from '../Widget/Grid';
-import { Box as JBox } from '../Widget/Box';
-import { Picture } from '../Widget/Picture';
-import { Stage } from '../Widget/Stage';
-import { Icon } from '../Widget/Icon';
-import { CallToAction } from '../Widget/CallToAction';
-import { Cards } from '../Widget/Cards';
-
-
-const components = {
-  RichText,
-  Headline,
-  Text: JText,
-  Group: JGroup,
-  Grid: JGrid,
-  Box: JBox,
-  Picture,
-  Stage,
-  Icon,
-  CallToAction,
-  Cards
-};
+import components from '../Widget';
 
 const availableComponents = Object.entries(components).reduce((p, [k, v]) => ({
   ...p,
@@ -66,7 +39,7 @@ export default class Page extends React.PureComponent {
     return (
       <>
         <Helmet>
-          {(lang || dir) && <html lang={lang} dir={dir} />}
+          <html lang={lang || "en"} dir={dir || "ltr"} />
           <title>{tabname}</title>
           <meta name="title" content={tabname} />
           {keywords && <meta name="keywords" content={keywords.join(',')} />}

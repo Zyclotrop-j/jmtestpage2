@@ -21,10 +21,10 @@ import components from '../Widget';
 const availableComponents = renameKeysWith(key => `component${key.toLowerCase()}`, components);
 const DebouncedPreview = debounceRender(({ children, ...props }) => children(props));
 
-const SubtreeRenderer = observer(({ render, compo, addProps, page, components: xcomponents, loading, error, Layout }) => {
+const SubtreeRenderer = observer(({ render, compo, addProps, page, website, components: xcomponents, loading, error, Layout }) => {
   if(!compo) return null;
   if(Array.isArray(compo)) {
-    const a = (pos) => <AddWidget parentcomponent={addProps.___component || page.get()} parentgroup={addProps.___parentid} addProps={addProps} pos={pos} area={addProps.___context} page={page.get()} __renderSubtree={render} />
+    const a = (pos) => <AddWidget parentcomponent={addProps.___component || page.get() || website.get()} parentgroup={addProps.___parentid} addProps={addProps} pos={pos} area={addProps.___context} page={page.get()} __renderSubtree={render} />
     return compo.reduce((p, i, idx) => p.concat([render(i, { ...addProps, __pp: i }), a(idx + 1)]), [a(0)]);
   }
   if(is(String, compo)) {
@@ -91,7 +91,7 @@ export default observer(class EditRenderer extends React.Component<any> {
   }
 
   public render() {
-    const { page, loading, error, Layout } = this.props;
+    const { page, loading, error, Layout, website } = this.props;
 
     const render = this.renderSubtree;
     const addwf = (arg, ___context) => Array.isArray(arg) ? { arg, ___context } : arg ? { arg, ___context } : { ___context, arg: [] };
@@ -107,6 +107,10 @@ export default observer(class EditRenderer extends React.Component<any> {
       footer: { left: addwf(footer?.left, ["page", ["footer", "left"]]), center: addwf(footer?.center, ["page", ["footer", "center"]]), right: addwf(footer?.right, ["page", ["footer", "right"]]) }
     };
 
+    const topmenu = website.get()?.topmenu?.content;
+    const sidemenu = website.get()?.sidemenu?.content;
+    const bottommenu = website.get()?.bottommenu?.content;
+
     return (
       <>
         {loading.get()}
@@ -119,7 +123,20 @@ export default observer(class EditRenderer extends React.Component<any> {
           }
           return value; })}</pre> : ""}
         {loading.get() || !page.get() ?
-          <span>Please select a page to edit</span> :
+          <span>
+            Please select a page to edit a page
+            <hr />
+            {website.get() && <>
+              <div><h2>Edit Menus</h2></div>
+              <hr /><h3>Top Menu</h3><div>
+                <Box direction="row">{topmenu && render(addwf(topmenu, ["website", ["topmenu"]]))}</Box>
+              </div><hr /><h3>Side Menu</h3><div>
+                <Box direction="column">{sidemenu && render(addwf(sidemenu, ["website", ["sidemenu"]]))}</Box>
+              </div><hr /><h3>Bottom Menu</h3><div>
+                <Box direction="row">{bottommenu && render(addwf(bottommenu, ["website", ["bottommenu"]]))}</Box>
+              </div>
+            </>}
+          </span> :
           (<div>
             <Layout {...page.get()} {...rootchildren} __renderSubtree={render} />
           </div>)}
@@ -139,6 +156,7 @@ export default observer(class EditRenderer extends React.Component<any> {
         error={anyerror}
         Layout={this.props.Layout}
         render={render}
+        website={this.props.website}
       />;
     }
     return <SubtreeRenderer
@@ -150,6 +168,7 @@ export default observer(class EditRenderer extends React.Component<any> {
       error={anyerror}
       Layout={this.props.Layout}
       render={render}
+      website={this.props.website}
     />;
   }
 });

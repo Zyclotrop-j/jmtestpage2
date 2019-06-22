@@ -1750,25 +1750,28 @@ exports.createPages = ({ actions, graphql }) => {
       return Promise.reject(result.errors);
     }
 
-    const menuquery = graphql(`data {
-      website(_id: "${websiteid}") {
-        topmenu {
-          content {
-            _id
+    const menuquery = graphql(`{
+      data {
+        website(_id: "${websiteid}") {
+          favicon
+          topmenu {
+            content {
+              _id
+            }
+            type
           }
-          type
-        }
-        bottommenu {
-          content {
-            _id
+          bottommenu {
+            content {
+              _id
+            }
+            type
           }
-          type
-        }
-        sidemenu {
-          content {
-            _id
+          sidemenu {
+            content {
+              _id
+            }
+            type
           }
-          type
         }
       }
     }`);
@@ -1776,7 +1779,8 @@ exports.createPages = ({ actions, graphql }) => {
     console.log("Page query finished!");
     const { pages } = result.data.data.website;
     const { discover, result: getresult } = makeRecursiveContext();
-    return menuquery.then(menudata => {
+    return menuquery.then(xmenudata => {
+      const menudata = xmenudata.data.data.website;
       return Promise.all([
         menuquery,
         Promise.resolve(result.data.data.website),
@@ -1790,9 +1794,9 @@ exports.createPages = ({ actions, graphql }) => {
             discover(page.footer.left && page.footer.left._id, graphql, page),
             discover(page.footer.center && page.footer.center._id, graphql, page),
             discover(page.footer.right && page.footer.right._id, graphql, page),
-            discover(menudata.topmenu && menudata.topmenu.content && menudata.topmenu.content._id, graphql, page),
-            discover(menudata.bottommenu && menudata.bottommenu.content && menudata.bottommenu.content._id, graphql, page),
-            discover(menudata.sidemenu && menudata.sidemenu.content && menudata.sidemenu.content._id, graphql, page)
+            discover(menudata.topmenu && menudata.topmenu.content && menudata.topmenu.content._id, graphql, { path: "topmenu" }),
+            discover(menudata.bottommenu && menudata.bottommenu.content && menudata.bottommenu.content._id, graphql, { path: "bottommenu" }),
+            discover(menudata.sidemenu && menudata.sidemenu.content && menudata.sidemenu.content._id, graphql, { path: "sidemenu" })
           ]).then(([
             main,
             hleft,
@@ -1800,7 +1804,10 @@ exports.createPages = ({ actions, graphql }) => {
             hright,
             bleft,
             bcenter,
-            bright
+            bright,
+            topmenu,
+            bottommenu,
+            sidemenu
           ]) => ({
             main,
             header: {
@@ -1812,7 +1819,10 @@ exports.createPages = ({ actions, graphql }) => {
               left: bleft,
               center: bcenter,
               right: bright
-            }
+            },
+            topmenu,
+            bottommenu,
+            sidemenu
           }));
         })),
         Promise.resolve(getresult)

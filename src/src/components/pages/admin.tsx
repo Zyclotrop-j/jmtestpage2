@@ -142,18 +142,20 @@ const Websitechooser = observer(({ loading, error, current, options, set }) => {
 });
 
 const Pagechooser = observer(({ website, loading, error, current, options, set }) => {
+  console.log("current.get()", current.get());
+  const NONE = Symbol("NONE");
   return (
       loading.get() ? <Text gridArea="page">Loading pages</Text> : <>
       {error.get() && <Text gridArea="page">{error.get()}</Text>}
       <Select
         disabled={!website.get()}
         gridArea="page"
-        options={options}
+        options={[{ path: "Edit Menus", title: "Unset page", _id: NONE }].concat(options)}
         placeholder={website.get() ? "Please choose a page" : "Please choose a website to edit"}
         labelKey={i => i && `${i.path} (${i.title})`}
         valueKey={i => i && i._id}
         value={current.get()}
-        onChange={({ option }) => set(option)}
+        onChange={({ option }) => set(option._id === NONE ? null : option)}
       /></>
     );
 });
@@ -438,7 +440,7 @@ export default class IndexPage extends React.Component<any> {
                 </Grid>
                 <OGrommet themes={themes}>
                   <Box fill overflow="auto" >
-                    <EditRenderer page={currentpage} components={allComponents} loading={anyloading} error={anyerror} Layout={ModernLayout} />
+                    <EditRenderer website={currentwebsite} page={currentpage} components={allComponents} loading={anyloading} error={anyerror} Layout={ModernLayout} />
                   </Box>
                 </OGrommet>
             </StyledSplitPane>
