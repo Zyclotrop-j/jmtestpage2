@@ -187,7 +187,7 @@ const tap = x => {
   console.log("!!!!", x);
   return x;
 }
-const bpPipeline = pipe(map(i => i.value), filter(i => !!i), bp => Object.entries(bp).reduce((p, [k,v], idx, arr) => ({
+const bpPipeline = pipe(map(i => i?.value), filter(i => !!i), bp => Object.entries(bp).reduce((p, [k,v], idx, arr) => ({
   ...p,
   [`${k}small`]: arr[idx - 1] ? (v - arr[idx - 1][1]) / 3 * 2 + arr[idx - 1][1] : v / 2,
   [`${k}medium`]: v,
@@ -326,8 +326,6 @@ export class Layout extends React.Component<{}> {
     // var hasVerticalScrollbar = div.scrollHeight > div.clientHeight;
     const componentsx = this.props?.data?.data;
     const __renderSubtree = this.renderSubtree(componentsx);
-
-    console.log("allthemes", allthemes);
 
     return (
         <Grommet
