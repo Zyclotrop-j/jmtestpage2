@@ -344,7 +344,10 @@ export class Menu extends React.PureComponent<Props> {
     const pathname = pathnamea || pathnameb;
     const pages = pagesa || pagesb;
     const theme = themea || themeb;
-    const mode = modea || modeb;
+    const mode = {
+      verticalleft: "vertical-left", // well.... graphQL and names....
+      verticalright: "vertical-right" // well.... graphQL and names....
+    }[modea || modeb] || modea || modeb;
 
     const addEntries = isNaN(parseInt(autoAddDepth)) ? 1 : autoAddDepth;
     const menuentries = imenuentries.map(i => ({

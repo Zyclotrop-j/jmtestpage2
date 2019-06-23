@@ -327,6 +327,8 @@ export class Layout extends React.Component<{}> {
     const componentsx = this.props?.data?.data;
     const __renderSubtree = this.renderSubtree(componentsx);
 
+    console.log("allthemes", allthemes);
+
     return (
         <Grommet
           theme={{
