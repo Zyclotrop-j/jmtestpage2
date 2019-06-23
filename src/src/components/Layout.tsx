@@ -181,7 +181,11 @@ const addBP = {
   '8k': 7680,
   'UltraHD2': 7680,
   '10k': 10240,
-  '16k': 15360
+  '16k': 15360,
+
+  small: 768,
+  medium: 1536,
+  large: 1537
 };
 const tap = x => {
   console.log("!!!!", x);
