@@ -6,7 +6,7 @@ import { defaultProps, Anchor } from 'grommet';
 import RCMenu, { SubMenu, MenuItem } from 'rc-menu';
 import { normalizeColor } from 'grommet-styles';
 import { complement, darken } from 'polished';
-
+import { PageContext } from "../utils/PageContext";
 
 const rcMenuOpenSlideUpIn = keyframes`
   0% {
@@ -282,65 +282,72 @@ const A = props => {
   return <Anchor {...props} {...as} href={props.href} />;
 };
 
+export const uiSchema = {};
+
+const schema = {
+  "title": "componentmenu",
+  "type": "object",
+  "properties": {
+    "autoAddDepth": {
+      "type": "number",
+      "description": "Auto add entries from the pages of this site of up to this depth. Default 1. Put 0 to disable",
+      "min": 0,
+      "multipleOf": 1.0
+    },
+    "manualEntries": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "type": "string",
+            "x-$ref": "page"
+          },
+          {
+            "type": "string",
+            "x-$ref": "componentcalltoaction"
+          }
+        ]
+      }
+    }
+  }
+};
+
 export class Menu extends React.PureComponent<Props> {
 
   static defaultProps = {
-    kind: "circle",
-    color: "currentColor",
-    size: "medium"
+    autoAddDepth: 1,
+    menuentries: []
   }
+
+  static contextType = PageContext;
 
   static VALUE = Symbol("___value");
 
   public render() {
     const {
+      autoAddDepth,
+      menuentries: imenuentries,
       _id,
-      pages,
-      theme,
-      mode,
-      pathname
+      pages: pagesa,
+      theme: themea,
+      mode: modea,
+      pathname: pathnamea
     } = this.props;
 
+    const {
+      pages: pagesb,
+      pathname: pathnameb,
+      theme: themeb,
+      mode: modeb
+    } = this.context;
 
-    const addEntries = 1;
-    const menuentries = [
-      /*
-      {
-        "href": "/csite",
-        "title": "OVERWRITE"
-      },
-      {
-        // __typename
+    const pathname = pathnamea || pathnameb;
+    const pages = pagesa || pagesb;
+    const theme = themea || themeb;
+    const mode = modea || modeb;
 
-        // Page
-        "title": "Some entry",
-        "description": "",
-        "lang": "",
-        "otherLangs": [],
-        "firstPage": "",
-        "nextPage": "",
-        "lastPage": "",
-        "path": "/foo/bar",
-
-        // Pagegroup?
-
-        // CallToAction
-        "a11yTitle": "home",
-        "href": "/",
-        "label": "home",
-        "pageAction": "",
-        "color": "white",
-        "icon": "none",
-        "richtext": "",
-        "margin": {
-          "top": "",
-          "bottom": "",
-          "left": "",
-          "right": ""
-        }
-      }
-      */
-    ].map(i => ({
+    const addEntries = isNaN(parseInt(autoAddDepth)) ? 1 : autoAddDepth;
+    const menuentries = imenuentries.map(i => ({
       ...i,
       path: i.path || i.href
     }));
@@ -350,6 +357,10 @@ export class Menu extends React.PureComponent<Props> {
       p),
       pages?.reduce((p, i, idx) => {
         const arrpath = i.path.split("/").filter(j => j.trim());
+        if(!arrpath.length) return p; // Exclude '/'-path
+         // don't include sides that start with _ - anywhere in the path
+         // eg /_x or /_/foo
+        if(arrpath.some(i => i.startsWith("_"))) return p;
         if(addEntries < arrpath.length) return p; // Auto-add items up to addEntries-depth
         return assocPath([...arrpath, Menu.VALUE], i, p);
       }, {})
@@ -395,7 +406,7 @@ export class Menu extends React.PureComponent<Props> {
     };
 
     return (<><RCStyle /><StyledMenu
-      mode={mode}
+      mode={mode || "vertical"}
       selectable={false}
       activeKey={pathname}
       expandIcon={theme.menu.icons.down}
