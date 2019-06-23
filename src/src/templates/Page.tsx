@@ -456,47 +456,61 @@ export const postQuery = graphql`
       otherLangs
     }
   }
+  fragment fmenus on DATA_Componentmenu {
+    _id
+    autoAddDepth
+    mode
+    manualEntries {
+      __typename
+      ... on DATA_Componentcalltoaction {
+        ...fcalltoaction
+      }
+      ... on DATA_Page {
+        ...fpage
+      }
+    }
+  }
   fragment fcards on DATA_Componentcards {
     _id
-      leftColumn
-      mode
-      align
-      cardlayout
-      gridlayout
-      imgtype
-      justify
-    	items {
-        cta {
-          ...fcalltoaction
-        }
-    	  ctaAlign
-    	  ctaJustify
-        disclaim {
-          ...frichtext
-        }
-    	  disclaimAlign
-    	  disclaimJustify
-        heading {
-          ...fheadline
-        }
-    	  headingAlign
-    	  headingJustify
-        icon {
-         ...ficon
-        }
-    	  iconAlign
-    	  iconJustify
-    	  imgtype
-    	  layout
-        paragraph {
-          ...frichtext
-        }
-        picture {
-          ...fpicture
-        }
-    	  textAlign
-    	  textJustify
-    	}
+    leftColumn
+    mode
+    align
+    cardlayout
+    gridlayout
+    imgtype
+    justify
+  	items {
+      cta {
+        ...fcalltoaction
+      }
+  	  ctaAlign
+  	  ctaJustify
+      disclaim {
+        ...frichtext
+      }
+  	  disclaimAlign
+  	  disclaimJustify
+      heading {
+        ...fheadline
+      }
+  	  headingAlign
+  	  headingJustify
+      icon {
+       ...ficon
+      }
+  	  iconAlign
+  	  iconJustify
+  	  imgtype
+  	  layout
+      paragraph {
+        ...frichtext
+      }
+      picture {
+        ...fpicture
+      }
+  	  textAlign
+  	  textJustify
+  	}
   }
 
   query(
@@ -512,8 +526,12 @@ export const postQuery = graphql`
     $DATA_Componenticon: [ID!]
     $DATA_Componentcalltoaction: [ID!]
     $DATA_Componentcards: [ID!]
+    $DATA_Componentmenu: [ID!]
   ) {
     data {
+      componentmenus(_ids: $DATA_Componentmenu) {
+        ...fmenus
+      }
       componentcardss(_ids: $DATA_Componentcards) {
         ...fcards
       }

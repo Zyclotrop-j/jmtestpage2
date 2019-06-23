@@ -124,7 +124,7 @@ const queryCache = {};
 exports.createPages = ({ actions, graphql }) => {
 
   const componentsWithChild = ["DATA_Componentgrid", "DATA_Componentbox"]
-  const componentsStandalone = ["DATA_Componentcards", "DATA_Componentcalltoaction", "DATA_Componenticon", "DATA_Componentstage", , "DATA_Componenttext", "DATA_Componentpicture", "DATA_Componentrichtext", "DATA_Componentheadline"]
+  const componentsStandalone = ["DATA_Componentmenu", "DATA_Componentcards", "DATA_Componentcalltoaction", "DATA_Componenticon", "DATA_Componentstage", , "DATA_Componenttext", "DATA_Componentpicture", "DATA_Componentrichtext", "DATA_Componentheadline"]
   const components = [].concat(componentsStandalone, componentsWithChild);
   const makeRecursiveContext = () => {
     const componentgroups = new Set();

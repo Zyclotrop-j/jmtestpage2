@@ -294,6 +294,9 @@ const schema = {
       "min": 0,
       "multipleOf": 1.0
     },
+    "mode": {
+      "type": "enum"
+    },
     "manualEntries": {
       "type": "array",
       "items": {
@@ -316,7 +319,7 @@ export class Menu extends React.PureComponent<Props> {
 
   static defaultProps = {
     autoAddDepth: 1,
-    menuentries: []
+    manualEntries: []
   }
 
   static contextType = PageContext;
@@ -326,7 +329,7 @@ export class Menu extends React.PureComponent<Props> {
   public render() {
     const {
       autoAddDepth,
-      menuentries: imenuentries,
+      manualEntries: imenuentries,
       _id,
       pages: pagesa,
       theme: themea,
