@@ -254,7 +254,7 @@ module.exports = {
                 },
               },
             },
-          }, */
+          },
           {
             urlPattern: /^https:\/\/zcmsapi.herokuapp.com\/apig\/graphql/,
             handler: `networkFirst`,
@@ -274,7 +274,7 @@ module.exports = {
 
         ],
       }
-    },
+    }, */
     "gatsby-plugin-remove-trailing-slashes" // re-enable
   ]
 };
