@@ -17,10 +17,10 @@ export class ErrorBoundary extends React.Component {
 
   render() {
     const child = React.Children.only(this.props.children);
-    const { title, id } = this.props;
+    const { title, id, name = "" } = this.props;
     if (this.state.hasError) {
       // You can render any custom fallback UI
-      return <h1 id={id} title={title}>Something went wrong. Check {child.displayName}!</h1>;
+      return <h1 id={id} title={title}>Something went wrong{name ? ` in ${name}` : ""}. Check {child.displayName}!</h1>;
     }
 
     return child;

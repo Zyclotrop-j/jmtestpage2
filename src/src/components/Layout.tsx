@@ -339,68 +339,75 @@ export class Layout extends React.Component<{}> {
           }}
           id={`${pathname}-outer-container`}
         >
-          {/* // // TODO: Render dynamically with content */}
-          {hasSideMenu && <MenuStyled />}
-          {hasSideMenu && <PageContext.Provider value={getContextValue({
-            pages: this.props?.data?.data?.pages,
-            pathname: pathname,
-            theme: allthemes,
-            mode: "vertical"
-          })}>
-            <Sidebar pageWrapId={`${pathname}-page-wrap`} outerContainerId={`${pathname}-outer-container`}>
-              <SkipLinkTarget id="navigation_side" />
-              <Box direction="column" id={sidemenu || "navigation_side_marker"}>
-                {console.log("sidemenu sidemenu", pageContext, sidemenu, __renderSubtree(sidemenu))}
-                {__renderSubtree(sidemenu)}
-              </Box>
-            </Sidebar>
-          </PageContext.Provider>}
-          {/* // // TODO: Render dynamically with content */}
-          {hasTopmenu && <PageContext.Provider value={{
-            pages: this.props?.data?.data?.pages,
-            pathname: pathname,
-            theme: allthemes,
-            mode: "horizontal"
-          }}>
-            <TopMenu>
-              <HeadOverlay>
-                <SkipLinkTarget id="navigation_top" />
-                <Box direction="row" id={topmenu || "navigation_top_marker"}>
-                  {__renderSubtree(topmenu)}
+          <ErrorBoundary name="sidebar">
+            {hasSideMenu ? <PageContext.Provider value={getContextValue({
+              pages: this.props?.data?.data?.pages,
+              pathname: pathname,
+              theme: allthemes,
+              mode: "vertical"
+            })}>
+              <>
+                <MenuStyled />
+                <Sidebar pageWrapId={`${pathname}-page-wrap`} outerContainerId={`${pathname}-outer-container`}>
+                  <SkipLinkTarget id="navigation_side" />
+                  <Box direction="column" id={sidemenu || "navigation_side_marker"}>
+                    {console.log("sidemenu sidemenu", pageContext, sidemenu, __renderSubtree(sidemenu))}
+                    {__renderSubtree(sidemenu)}
+                  </Box>
+                </Sidebar>
+              </>
+            </PageContext.Provider> : <span />}
+          </ErrorBoundary>
+          <ErrorBoundary name="topmenu">
+            {hasTopmenu ? <PageContext.Provider value={{
+              pages: this.props?.data?.data?.pages,
+              pathname: pathname,
+              theme: allthemes,
+              mode: "horizontal"
+            }}>
+              <TopMenu>
+                <HeadOverlay>
+                  <SkipLinkTarget id="navigation_top" />
+                  <Box direction="row" id={topmenu || "navigation_top_marker"}>
+                    {__renderSubtree(topmenu)}
+                  </Box>
+                </HeadOverlay>
+              </TopMenu>
+            </PageContext.Provider> : <span />}
+          </ErrorBoundary>
+          <ErrorBoundary name="body">
+            <PageContext.Provider value={{
+              pages: this.props?.data?.data?.pages,
+              pathname: pathname,
+              theme: allthemes,
+              mode: "inline"
+            }}>
+              <PoseGroup
+                preEnterPose={`${enterpose}enter`}
+                enterPose="default"
+                exitPose={`${exitpose}exit`}
+              >
+                <RouteContainer id={`${pathname}-page-wrap`} key={pathname}>
+                  {children}
+                </RouteContainer>
+              </PoseGroup>
+            </PageContext.Provider>
+          </ErrorBoundary>
+          <ErrorBoundary name="bottommenu">
+            {hasBottommenu ? <PageContext.Provider value={{
+              pages: this.props?.data?.data?.pages,
+              pathname: pathname,
+              theme: allthemes,
+              mode: "horizontal"
+            }}>
+              <BottomMenu>
+                <SkipLinkTarget id="navigation_bottom" />
+                <Box direction="row" id={bottommenu || "navigation_bottom_marker"}>
+                  {__renderSubtree(bottommenu)}
                 </Box>
-              </HeadOverlay>
-            </TopMenu>
-          </PageContext.Provider>}
-          <PageContext.Provider value={{
-            pages: this.props?.data?.data?.pages,
-            pathname: pathname,
-            theme: allthemes,
-            mode: "inline"
-          }}>
-            <PoseGroup
-              preEnterPose={`${enterpose}enter`}
-              enterPose="default"
-              exitPose={`${exitpose}exit`}
-            >
-              <RouteContainer id={`${pathname}-page-wrap`} key={pathname}>
-                {children}
-              </RouteContainer>
-            </PoseGroup>
-          </PageContext.Provider>
-          {/* // // TODO: Render dynamically with content */}
-          {hasBottommenu && <PageContext.Provider value={{
-            pages: this.props?.data?.data?.pages,
-            pathname: pathname,
-            theme: allthemes,
-            mode: "horizontal"
-          }}>
-            <BottomMenu>
-              <SkipLinkTarget id="navigation_bottom" />
-              <Box direction="row" id={bottommenu || "navigation_bottom_marker"}>
-                {__renderSubtree(bottommenu)}
-              </Box>
-            </BottomMenu>
-          </PageContext.Provider>}
+              </BottomMenu>
+            </PageContext.Provider> : <span />}
+          </ErrorBoundary>
         </Grommet>
     );
   }
