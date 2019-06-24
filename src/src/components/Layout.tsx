@@ -340,7 +340,7 @@ export class Layout extends React.Component<{}> {
           id={`${pathname}-outer-container`}
         >
           <ErrorBoundary name="sidebar">
-            {hasSideMenu ? <PageContext.Provider value={getContextValue({
+            {hasSideMenu ? <PageContext.Provider value={Layout.getContextValue({
               pages: this.props?.data?.data?.pages,
               pathname: pathname,
               theme: allthemes,
@@ -359,12 +359,12 @@ export class Layout extends React.Component<{}> {
             </PageContext.Provider> : <span />}
           </ErrorBoundary>
           <ErrorBoundary name="topmenu">
-            {hasTopmenu ? <PageContext.Provider value={{
+            {hasTopmenu ? <PageContext.Provider value={Layout.getContextValue({
               pages: this.props?.data?.data?.pages,
               pathname: pathname,
               theme: allthemes,
               mode: "horizontal"
-            }}>
+            })}>
               <TopMenu>
                 <HeadOverlay>
                   <SkipLinkTarget id="navigation_top" />
@@ -376,12 +376,12 @@ export class Layout extends React.Component<{}> {
             </PageContext.Provider> : <span />}
           </ErrorBoundary>
           <ErrorBoundary name="body">
-            <PageContext.Provider value={{
+            <PageContext.Provider value={Layout.getContextValue({
               pages: this.props?.data?.data?.pages,
               pathname: pathname,
               theme: allthemes,
               mode: "inline"
-            }}>
+            })}>
               <PoseGroup
                 preEnterPose={`${enterpose}enter`}
                 enterPose="default"
@@ -394,12 +394,12 @@ export class Layout extends React.Component<{}> {
             </PageContext.Provider>
           </ErrorBoundary>
           <ErrorBoundary name="bottommenu">
-            {hasBottommenu ? <PageContext.Provider value={{
+            {hasBottommenu ? <PageContext.Provider value={Layout.getContextValue({
               pages: this.props?.data?.data?.pages,
               pathname: pathname,
               theme: allthemes,
               mode: "horizontal"
-            }}>
+            })}>
               <BottomMenu>
                 <SkipLinkTarget id="navigation_bottom" />
                 <Box direction="row" id={bottommenu || "navigation_bottom_marker"}>
