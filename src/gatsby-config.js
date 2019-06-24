@@ -83,7 +83,7 @@ const favicon = tmpobj.name;
 
 const optPlugins = process.env.CI ? [] : ["gatsby-plugin-webpack-bundle-analyser-v2"];
 
-console.log("Created config for "+websitedata.data.domain);
+// console.log("Created config for "+websitedata.data.domain);
 
 module.exports = {
   siteMetadata: {
@@ -101,7 +101,7 @@ module.exports = {
         }
       }
     },
-    {
+    /*{
       resolve: `gatsby-plugin-nprogress`,
       options: {
         // Setting a color is optional.
@@ -109,7 +109,7 @@ module.exports = {
         // Disable the loading spinner.
         showSpinner: false,
       },
-    },
+    },*/
     {
       resolve: "gatsby-source-graphql-universal",
       options: {
@@ -216,7 +216,8 @@ module.exports = {
         icon: favicon,
       },
     },
-    {
+    'gatsby-plugin-offline',
+    /*{
       resolve: "gatsby-plugin-offline",
       options: {
         // importScripts: ['@uppy/golden-retriever/lib/ServiceWorker'],
@@ -253,7 +254,7 @@ module.exports = {
                 },
               },
             },
-          },
+          }, */
           {
             urlPattern: /^https:\/\/zcmsapi.herokuapp.com\/apig\/graphql/,
             handler: `networkFirst`,
