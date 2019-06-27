@@ -319,9 +319,16 @@ export class Layout extends React.Component<{}> {
     // var hasVerticalScrollbar = div.scrollHeight > div.clientHeight;
     const componentsx = this.props?.data?.data;
     const __renderSubtree = this.renderSubtree(componentsx);
+    const initialMobileBreakpoint =
+      (typeof window !== 'undefined' && window.navigator) ?
+      window.navigator.userAgent :
+      "Android"; // Mobile first
 
     return (
         <Grommet
+          cssVars
+          full
+          userAgent={initialMobileBreakpoint}
           theme={{
             ...allthemes,
             mq: bpPipeline(allthemes.global.breakpoints),
