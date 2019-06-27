@@ -169,6 +169,20 @@ const RouteContainer = posed.div({
 
 const persitentConext = {};
 export class Layout extends React.Component<{}> {
+;
+
+  public static getDerivedStateFromProps(props, state) {
+    return { currentPage: props.location.pathname, prevPage: state && state.currentPage };
+  }
+
+  private static getContextValue(obj) {
+    // Prevent re-renders
+    return Object.entries(obj || {}).reduce((p, [k, v]) => {
+      p[k] = v;
+      return p;
+    }, persitentConext);
+  }
+  public state = {}
 
   constructor(props) {
     super(props);
@@ -181,26 +195,12 @@ export class Layout extends React.Component<{}> {
       components
     }));
   }
-
-  public state = {}
-
-  public static getDerivedStateFromProps(props, state) {
-    return { currentPage: props.location.pathname, prevPage: state && state.currentPage };
-  }
   public shouldComponentUpdate(nextProps, nextState) {
     if(nextState.components && !this.state.components) {
       return true;
     }
     return this.props.location.pathname !== window.location.pathname;
   }
-
-  private static getContextValue(obj) {
-    // Prevent re-renders
-    return Object.entries(obj || {}).reduce((p, [k, v]) => {
-      p[k] = v;
-      return p;
-    }, persitentConext);
-  };
 
   public render() {
     const {
@@ -338,7 +338,7 @@ export class Layout extends React.Component<{}> {
           <ErrorBoundary name="sidebar">
             {hasSideMenu ? <PageContext.Provider value={Layout.getContextValue({
               pages: this.props?.data?.data?.pages,
-              pathname: pathname,
+              pathname,
               theme: allthemes,
               mode: "vertical"
             })}>
@@ -346,7 +346,7 @@ export class Layout extends React.Component<{}> {
                 <MenuStyled />
                 <Sidebar pageWrapId={`${pathname}-page-wrap`} outerContainerId={`${pathname}-outer-container`}>
                   <SkipLinkTarget id="navigation_side" />
-                  <Box direction="column" id={sidemenu || "navigation_side_marker"}>
+                  <Box direction="column" id="navigation_side_marker">
                     {__renderSubtree(sidemenu)}
                   </Box>
                 </Sidebar>
@@ -356,14 +356,14 @@ export class Layout extends React.Component<{}> {
           <ErrorBoundary name="topmenu">
             {hasTopmenu ? <PageContext.Provider value={Layout.getContextValue({
               pages: this.props?.data?.data?.pages,
-              pathname: pathname,
+              pathname,
               theme: allthemes,
               mode: "horizontal"
             })}>
               <TopMenu>
                 <HeadOverlay>
                   <SkipLinkTarget id="navigation_top" />
-                  <Box direction="row" id={topmenu || "navigation_top_marker"}>
+                  <Box direction="row" id="navigation_top_marker">
                     {__renderSubtree(topmenu)}
                   </Box>
                 </HeadOverlay>
@@ -373,7 +373,7 @@ export class Layout extends React.Component<{}> {
           <ErrorBoundary name="body">
             <PageContext.Provider value={Layout.getContextValue({
               pages: this.props?.data?.data?.pages,
-              pathname: pathname,
+              pathname,
               theme: allthemes,
               mode: "inline"
             })}>
@@ -391,13 +391,13 @@ export class Layout extends React.Component<{}> {
           <ErrorBoundary name="bottommenu">
             {hasBottommenu ? <PageContext.Provider value={Layout.getContextValue({
               pages: this.props?.data?.data?.pages,
-              pathname: pathname,
+              pathname,
               theme: allthemes,
               mode: "horizontal"
             })}>
               <BottomMenu>
                 <SkipLinkTarget id="navigation_bottom" />
-                <Box direction="row" id={bottommenu || "navigation_bottom_marker"}>
+                <Box direction="row" id="navigation_bottom_marker">
                   {bottommenu && __renderSubtree(bottommenu)}
                 </Box>
               </BottomMenu>

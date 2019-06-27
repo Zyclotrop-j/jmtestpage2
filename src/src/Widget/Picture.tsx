@@ -69,8 +69,9 @@ export const Pingback = ({ children, pingback, origin, src }) =>
           ? () => window.requestIdleCallback(() => window.setTimeout(() => {
 
             const img = document.createElement("img");
+            const suffix = src.indexOf("?") > 1 ? "&auto=format&w=1&h=1" : "?auto=format&w=1&h=1";
             img.decoding = "async";
-            img.src = pingback === true ? `${src}&auto=format&w=1&h=1` : `${pingback}&auto=format&w=1&h=1`;
+            img.src = pingback === true ? `${src}${suffix}` : `${pingback}&auto=format&w=1&h=1`;
             img.referrerpolicy = "origin-when-cross-origin";
             img.hidden = true;
             img.style.display = "none";

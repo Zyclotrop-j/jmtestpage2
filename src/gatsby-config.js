@@ -91,7 +91,8 @@ module.exports = {
   },
   plugins: [
     ...optPlugins,
-    {
+    { // &display=swap see https://github.com/typekit/webfontloader/issues/409
+      // Add https://fonts.gstatic.com to connect-src
       resolve: 'gatsby-plugin-web-font-loader',
       options: {
         classes: false,
@@ -101,7 +102,7 @@ module.exports = {
         }
       }
     },
-    /*{
+    {
       resolve: `gatsby-plugin-nprogress`,
       options: {
         // Setting a color is optional.
@@ -109,7 +110,7 @@ module.exports = {
         // Disable the loading spinner.
         showSpinner: false,
       },
-    },*/
+    },
     {
       resolve: "gatsby-source-graphql-universal",
       options: {
