@@ -216,8 +216,7 @@ module.exports = {
         icon: favicon,
       },
     },
-    'gatsby-plugin-offline',
-    /*{
+    {
       resolve: "gatsby-plugin-offline",
       options: {
         // importScripts: ['@uppy/golden-retriever/lib/ServiceWorker'],
@@ -274,7 +273,7 @@ module.exports = {
 
         ],
       }
-    }, */
+    },
     "gatsby-plugin-remove-trailing-slashes" // re-enable
   ]
 };

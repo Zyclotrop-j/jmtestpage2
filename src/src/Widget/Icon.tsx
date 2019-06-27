@@ -21,11 +21,11 @@ const StyledIcon = memoizeWith(identity, (iName, icon) => styled(icon)`
   display: inline-block;
   flex: 0 0 auto;
   ${({ size = 'medium', theme }) => `
-    width: ${theme.icon.size[size] || size};
-    height: ${theme.icon.size[size] || size};
+    width: ${theme?.icon?.size[size] || size};
+    height: ${theme?.icon?.size[size] || size};
   `}
   ${({ color }) => color !== 'plain' && colorCss}
-  ${({ theme }) => theme && theme.icon.extend}
+  ${({ theme }) => theme?.icon?.extend}
 `);
 
 interface Props {}

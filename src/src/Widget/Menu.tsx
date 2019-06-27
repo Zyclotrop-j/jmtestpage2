@@ -95,17 +95,8 @@ const RCStyle = createGlobalStyle`
     margin: 0;
     position: relative;
     display: block;
-    /* padding: 7px 7px 7px 16px; */
     white-space: nowrap;
   }
-  /*
-  .rc-menu-item.rc-menu-item-disabled,
-  .rc-menu-submenu-title.rc-menu-item-disabled,
-  .rc-menu-item.rc-menu-submenu-disabled,
-  .rc-menu-submenu-title.rc-menu-submenu-disabled {
-    color: #777 !important;
-  }
-  */
   .rc-menu > .rc-menu-item-divider {
     height: 1px;
     margin: 1px 0;
@@ -276,6 +267,15 @@ const RCStyle = createGlobalStyle`
     content: "\\f0da";
   }
 `;
+
+/*
+.rc-menu-item.rc-menu-item-disabled,
+.rc-menu-submenu-title.rc-menu-item-disabled,
+.rc-menu-item.rc-menu-submenu-disabled,
+.rc-menu-submenu-title.rc-menu-submenu-disabled {
+  color: #777 !important;
+}
+*/
 
 const A = props => {
   const as = props.href[0] === "/" ? { as: Link, to: props.href } : {};

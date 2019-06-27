@@ -2,8 +2,8 @@ import React from 'react';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
 import { complement, darken, normalize } from 'polished';
 import posed, { PoseGroup } from 'react-pose';
-import { path, map, mergeDeepWithKey, concat, isNil, memoizeWith, filter, pipe, T, identity, equals } from "ramda";
-import { Grommet, Box, SkipLinks, SkipLink, SkipLinkTarget, defaultProps } from 'grommet';
+import { path, map, mergeDeepWithKey, concat, isNil, memoizeWith, filter, pipe, T, identity, equals, tryCatch } from "ramda";
+import { Grommet, Box, SkipLinkTarget, defaultProps } from 'grommet';
 import MqInit from 'styled-components-media-query';
 import Headroom from "react-headroom";
 import SlideMenu from 'react-burger-menu/lib/menus/slide';
@@ -15,21 +15,14 @@ import ScaleRotateMenu from 'react-burger-menu/lib/menus/scaleRotate';
 import FallDownMenu from 'react-burger-menu/lib/menus/fallDown';
 import RevealMenu from 'react-burger-menu/lib/menus/reveal';
 import { colorStyle, normalizeColor } from 'grommet-styles';
-import { Menu } from "../Widget/Menu";
 import Link from 'gatsby-link';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { ModernLayout } from '../layouts/modern';
 import { PageContext } from '../utils/PageContext';
-import components from '../Widget';
-
-const availableComponents = Object.entries(components).reduce((p, [k, v]) => ({
-  ...p,
-  [`DATA_Component${k.toLowerCase()}`]: v,
-}), {});
 
 const HeadOverlay = styled.div``;
+
 const MenuStyled = createGlobalStyle`
-  /* Position and sizing of burger button */
   .bm-burger-button {
     position: fixed;
     width: 36px;
@@ -37,30 +30,22 @@ const MenuStyled = createGlobalStyle`
     left: 36px;
     top: 36px;
   }
-  /* Color/shape of burger icon bars */
   .bm-burger-bars {
     background: ${props => props?.theme?.menu?.background ? normalizeColor(props?.theme?.menu?.background, props.theme): "#bdc3c7"};
     transform: scale(1, 1);
     transition: transform 1s, background 1s;
   }
-  /* Color/shape of burger icon bars on hover*/
   .bm-burger-bars-hover {
     background: ${props => props?.theme?.menu?.background ? darken(0.2, normalizeColor(props?.theme?.menu?.background, props.theme)) : darken(0.2, "#bdc3c7")};
     transform: scale(1.2, 1.2);
   }
-  /* Position and sizing of clickable cross button */
   .bm-cross-button {
     height: 28px;
     width: 28px;
   }
-  /* Color/shape of close button cross */
   .bm-cross {
     background: ${props => props?.theme?.menu?.background ? complement(normalizeColor(props?.theme?.menu?.background, props.theme)): "#bdc3c7"};
   }
-  /*
-  Sidebar wrapper styles
-  Note: Beware of modifying this element as it can break the animations - you should not need to touch it in most cases
-  */
   .bm-menu-wrap {
     position: fixed;
     max-width: 100vw;
@@ -71,24 +56,19 @@ const MenuStyled = createGlobalStyle`
     min-height: 100%;
     -webkit-overflow-scrolling: touch;
   }
-  /* General sidebar styles */
   .bm-menu {
     height: auto !important;
     box-sizing: border-box;
-    /* overflow: auto; */
     min-height: 100%;
     ${props => props?.theme?.menu?.background && colorStyle('background-color', props?.theme?.menu?.background, props.theme) || "background: #373a47;"}
   }
-  /* Wrapper for item list */
   .bm-item-list {
     box-sizing: border-box;
     padding: 0.8em;
   }
-  /* Individual item */
   .bm-item {
     display: inline-block;
   }
-  /* Styling of overlay */
   .bm-overlay {
     background: rgba(0, 0, 0, 0.3);
   }
@@ -158,58 +138,6 @@ export class Provider extends React.PureComponent<{}> {
   }
 }
 
-const addBP = {
-  xxxs: 200,
-  xxs: 320,
-  xs: 480,
-  s: 800,
-  sl: 960,
-  m: 1024,
-  ml: 1280,
-  l: 1334,
-  xl: 1366,
-  xxl: 1600,
-  xxxl: 1920,
-  xxxxl: 2560,
-  xxxxxl: 3840,
-  'UltraHD1': 3840,
-  '4k': 3840,
-  xxxxxxl: 5120,
-  '5k': 5120,
-  'UXGA ': 6400,
-  'HSXGA  ': 6400,
-  '8k': 7680,
-  'UltraHD2': 7680,
-  '10k': 10240,
-  '16k': 15360,
-
-  small: 768,
-  medium: 1536,
-  large: 1537
-};
-const tap = x => {
-  console.log("!!!!", x);
-  return x;
-}
-const bpPipeline = pipe(map(i => i?.value), filter(i => !!i), bp => Object.entries(bp).reduce((p, [k,v], idx, arr) => ({
-  ...p,
-  [`${k}small`]: arr[idx - 1] ? (v - arr[idx - 1][1]) / 3 * 2 + arr[idx - 1][1] : v / 2,
-  [`${k}medium`]: v,
-  [`${k}large`]: arr[idx + 1] ? (arr[idx + 1][1] - v) / 3  + v : v * 2,
-}), {
-  ...addBP,
-  ...bp
-}), tap, (bp) => ({ bp }), memoizeWith(T, MqInit));
-
-// orientation: landscape portrait
-const mergeTheme = mergeDeepWithKey((k, l, r) => {
-  if(isNil(r)) return l;
-  if(isNil(l)) return r;
-  if(k === '_id') return Array.isArray(l) ? l.concat([r]) : [l, r];
-  return ['extend'].includes(k) ? concat(l, r) : r;
-});
-const mergeThemes = themes => themes.reduce((p, i) => mergeTheme(p, i), defaultProps.theme);
-
 const FixedBottomMenu = styled.footer`
   position: fixed;
   bottom: 0;
@@ -239,6 +167,7 @@ const RouteContainer = posed.div({
   fadedenter: { opacity: 0, x: 0, y:0, delay: 300, beforeChildren: true }
 });
 
+const persitentConext = {};
 export class Layout extends React.Component<{}> {
 
   constructor(props) {
@@ -247,22 +176,30 @@ export class Layout extends React.Component<{}> {
     this.renderSubtree = memoizeWith(identity, render);
   }
 
+  public componentDidMount() {
+    import(/* webpackMode: weak */ "../Widget").then(({ default: components }) => this.setState({
+      components
+    }));
+  }
+
   public state = {}
 
   public static getDerivedStateFromProps(props, state) {
     return { currentPage: props.location.pathname, prevPage: state && state.currentPage };
   }
-  public shouldComponentUpdate() {
+  public shouldComponentUpdate(nextProps, nextState) {
+    if(nextState.components && !this.state.components) {
+      return true;
+    }
     return this.props.location.pathname !== window.location.pathname;
   }
 
-  private static ___contextValue = {}
   private static getContextValue(obj) {
     // Prevent re-renders
-    return Object.entries(obj).reduce((p, [k, v]) => {
+    return Object.entries(obj || {}).reduce((p, [k, v]) => {
       p[k] = v;
       return p;
-    }, Layout.___contextValue);
+    }, persitentConext);
   };
 
   public render() {
@@ -289,11 +226,63 @@ export class Layout extends React.Component<{}> {
     }[dir]);
     const enterpose = state?.in || direction || "faded";
     const exitpose = state?.out || opposide(direction) || "faded";
+
+    const addBP = {
+      xxxs: 200,
+      xxs: 320,
+      xs: 480,
+      s: 800,
+      sl: 960,
+      m: 1024,
+      ml: 1280,
+      l: 1334,
+      xl: 1366,
+      xxl: 1600,
+      xxxl: 1920,
+      xxxxl: 2560,
+      xxxxxl: 3840,
+      'UltraHD1': 3840,
+      '4k': 3840,
+      xxxxxxl: 5120,
+      '5k': 5120,
+      'UXGA ': 6400,
+      'HSXGA  ': 6400,
+      '8k': 7680,
+      'UltraHD2': 7680,
+      '10k': 10240,
+      '16k': 15360,
+
+      small: 768,
+      medium: 1536,
+      large: 1537
+    };
+    const bpPipeline = pipe(map(i => i?.value), filter(i => !!i), bp => Object.entries(bp).reduce((p, [k,v], idx, arr) => ({
+      ...p,
+      [`${k}small`]: arr[idx - 1] ? (v - arr[idx - 1][1]) / 3 * 2 + arr[idx - 1][1] : v / 2,
+      [`${k}medium`]: v,
+      [`${k}large`]: arr[idx + 1] ? (arr[idx + 1][1] - v) / 3  + v : v * 2,
+    }), {
+      ...addBP,
+      ...bp
+    }), (bp) => ({ bp }), memoizeWith(T, MqInit));
+
+    // orientation: landscape portrait
+    const mergeTheme = mergeDeepWithKey((k, l, r) => {
+      if(isNil(r)) return l;
+      if(isNil(l)) return r;
+      if(k === '_id') return Array.isArray(l) ? l.concat([r]) : [l, r];
+      return ['extend'].includes(k) ? concat(l, r) : r;
+    });
+    const mergeThemes = tryCatch(themes => themes.reduce((p, i) => mergeTheme(p, i), defaultProps.theme), (e, i) => {
+      console.error(e);
+      return i && i[0];
+    });
+
     const allthemes = mergeThemes(themes);
+
     const sidebars = {
       SlideMenu, StackMenu, PushMenu, PushRotateMenu, ScaleDownMenu, ScaleRotateMenu, FallDownMenu, RevealMenu
     };
-
 
     const sidemenutype = this.props.pageContext?.menudata?.data?.data?.website?.sidemenu?.type;
     const hasSideMenu = sidemenutype && sidemenutype.trim() && sidemenutype.trim() !== "none";
@@ -351,7 +340,6 @@ export class Layout extends React.Component<{}> {
                 <Sidebar pageWrapId={`${pathname}-page-wrap`} outerContainerId={`${pathname}-outer-container`}>
                   <SkipLinkTarget id="navigation_side" />
                   <Box direction="column" id={sidemenu || "navigation_side_marker"}>
-                    {console.log("sidemenu sidemenu", pageContext, sidemenu, __renderSubtree(sidemenu))}
                     {__renderSubtree(sidemenu)}
                   </Box>
                 </Sidebar>
@@ -403,7 +391,7 @@ export class Layout extends React.Component<{}> {
               <BottomMenu>
                 <SkipLinkTarget id="navigation_bottom" />
                 <Box direction="row" id={bottommenu || "navigation_bottom_marker"}>
-                  {__renderSubtree(bottommenu)}
+                  {bottommenu && __renderSubtree(bottommenu)}
                 </Box>
               </BottomMenu>
             </PageContext.Provider> : <span />}
@@ -414,19 +402,29 @@ export class Layout extends React.Component<{}> {
 
   private renderSubtree(components) {
     const render = (compo, addProps = {}) => {
+
+
       if (!compo) return null;
+      if(!this.state.components) return null;
       if (Array.isArray(compo)) {
         return compo.map(i => render(i, addProps));
       }
       const { type, id, ...content } = compo;
+      const gcomponents = this.state.components;
+      const availableComponents = Object.entries(gcomponents).reduce((p, [k, v]) => ({
+        ...p,
+        [`DATA_Component${k.toLowerCase()}`]: v,
+      }), {});
+
+
       const Component = availableComponents[type];
       if (!Component) {
-        throw new Error(`Couldn't find type ${type}, available are ${Object.keys(availableComponents).join(', ')}`);
+        throw new Error(`[Layout] Couldn't find type ${type}, available are ${Object.keys(availableComponents).join(', ')}`);
       }
       const typename = `${type.substring(5).toLowerCase()}s`;
       const comp = components[typename];
       if (!comp) {
-        throw new Error(`Couldn't find comp ${typename}, available are ${Object.keys(components).join(', ')}`);
+        throw new Error(`[Layout] Couldn't find comp ${typename}, available are ${Object.keys(components).join(', ')}`);
       }
       const props = comp.find(i => i._id === id);
       return (

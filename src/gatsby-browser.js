@@ -18,6 +18,7 @@ export const wrapRootElement =  ({ element, ...rest }) => {
   )
 }
 
+/*
 export const onServiceWorkerUpdateReady = () => {
   const answer = window.confirm(
     `This application has been updated. ` +
@@ -30,3 +31,4 @@ export const onServiceWorkerUpdateReady = () => {
 }
 
 export const registerServiceWorker = () => true;
+*/
