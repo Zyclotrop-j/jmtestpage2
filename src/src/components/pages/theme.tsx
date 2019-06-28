@@ -93,14 +93,14 @@ const FontChooser = ({ onChange, headlinefont, bodyfont }) => {
     const family = event.target.value;
     onChange({
       type: "headline",
-      family: family
+      family: `"${family}"`
     });
   };
   const selectFontBody = event => {
     const family = event.target.value;
     onChange({
       type: "body",
-      family: family
+      family: `"${family}"`
     });
   };
   if(!fonts) return (<div>Loading</div>);

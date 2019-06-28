@@ -57,6 +57,7 @@ export default class Page extends React.PureComponent {
           {firstPage && <meta name="first" content={firstPage} />}
           {lastPage && <meta name="last" content={lastPage} />}
           {/* <link rel=”alternate” hreflang=”x-default” href=”https://www.mysite.com”/> */}
+          <link href="https://fonts.googleapis.com" rel="preconnect" crossorigin />
         </Helmet>
         {typeof document !== 'undefined' && <SkipLinks>
           <SkipLink id="header" label="Header" />

@@ -62,7 +62,7 @@ export class Grid extends React.PureComponent<Props> {
           <GGrid
             id={_id}
             className={className}
-            rows={size === 'small' ? gcolumns : ['full']}
+            rows={size === 'small' ? gcolumns.map(() => "auto") /* underneight each other */ : ['full']}
             columns={size === 'small' ? ['full'] : gcolumns}
             areas={this.getAreas(columns, size === 'small')}
             gap={gap}

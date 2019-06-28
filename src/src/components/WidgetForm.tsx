@@ -264,7 +264,7 @@ class AttributedPicture extends React.Component {
     const newschema = {
       ...schema,
       properties: {
-        ...omit(["src", "image", "crossorigin", "pingback"], schema.properties)
+        ...omit(["src", "image", "crossorigin"], schema.properties)
       }
     };
     const onContext = (

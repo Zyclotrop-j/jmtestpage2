@@ -5,6 +5,7 @@ import { map } from 'ramda';
 import BackgroundImage from 'gatsby-background-image';
 import { Attribution, Pingback, ImgBox } from "./Picture";
 import { HeadlineContext } from "../utils/headlineContext";
+import { PriorityContext, IMPORTANT, LOW } from "../utils/priorityContext";
 
 interface Props {
   b64: boolean;
@@ -104,9 +105,18 @@ export class Box extends React.PureComponent<Props> {
     const hasImageSharp = srcFile?.childImageSharp;
     const Wrap = ({ children }) => hasImageSharp ?
       <Pingback pingback={pingback} origin={pingback && new URL(pingback).origin} src={src}>
-        {f => <BackgroundImage id={_id} className={className} onLoad={f} {...background} fluid={srcFile.childImageSharp.fluid} backgroundColor={background.color}>
-          {children}
-        </BackgroundImage>}
+        {f =>
+          <PriorityContext.Consumer>
+          {priority => <BackgroundImage
+            critical={priority === IMPORTANT}
+            loading={priority === IMPORTANT ? "eager" : "lazy"}
+            decoding={priority === IMPORTANT ? "sync" : "async"}
+            importance={priority === IMPORTANT ? "high" : (priority === LOW ? "low" : "auto")}
+            id={_id} className={className} onLoad={f} {...background} fluid={srcFile.childImageSharp.fluid} backgroundColor={background.color}>
+            {children}
+          </BackgroundImage>}
+          </PriorityContext.Consumer>
+        }
       </Pingback> :
       <>{children}</>;
 
@@ -118,7 +128,7 @@ export class Box extends React.PureComponent<Props> {
           className={!hasImageSharp && className}
           background={hasImageSharp ? null : {
             ...background,
-            // ??? image: background.image ? `url(${background.image})` : ""
+            image: background.image ? `url(${background.image})` : ""
           }}
           pad={background?.author?.profileurl ? {
             ...pad,

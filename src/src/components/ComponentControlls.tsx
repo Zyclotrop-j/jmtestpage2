@@ -25,7 +25,7 @@ const Pad = styled.div`
   margin: ${props => props.preview ? 0 : "2px"};
   border: ${props => props.preview ? 0 : "3px"} solid transparent;
   transition: border 0.5s;
-  position: relative;
+  ${props => props.preview ? "" : "" /*"position: relative;"*/}
   *:hover > & {
     border: ${props => props.preview ? 0 : "3px"} solid rgba(192, 192, 192, 0.1);
   }

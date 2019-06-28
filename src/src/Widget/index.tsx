@@ -1,6 +1,6 @@
 import { Picture, uiSchema as pictureuiSchema } from './Picture';
 import { Headline } from './Headline';
-import { RichText } from './RichText';
+import { RichText, uiSchema as richtextuiSchema } from './RichText';
 import { Text, uiSchema as textuiSchema } from './Text';
 import { Box, uiSchema as boxuiSchema } from './Box';
 import { Grid } from './Grid';
@@ -21,7 +21,8 @@ export const uiSchema = {
   icon: iconuiSchema,
   calltoaction: ctauiSchema,
   cards: cardsuiSchema,
-  menu: menuuiSchema
+  menu: menuuiSchema,
+  richtext: richtextuiSchema
 };
 export const Calltoaction = CallToAction;
 export { Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Icon, Cards };

@@ -12,6 +12,7 @@ import * as reactAnimations from 'react-animations';
 import Observer from '@researchgate/react-intersection-observer';
 import { Attribution, Pingback, ImgBox } from "./Picture";
 import { components } from "./RichText";
+import { PriorityContext, IMPORTANT, LOW } from "../utils/priorityContext";
 
 
 function _gcd(a, b) {
@@ -137,14 +138,6 @@ export const uiSchema = {
 };
 
 const isString = is(String);
-
-const AbsBox = styled(Box)`
-  top: ${props => props.top || "unset"};
-  bottom: ${props => props.bottom || "unset"};
-  left: ${props => props.left || "unset"};
-  right: ${props => props.right || "unset"};
-  position: absolute;
-`;
 
 const Textflipper = props => {
   const modChildren = React.Children.toArray(props.children).reduce((p, i) => p.concat(
@@ -392,11 +385,15 @@ const Animation = styled.span`
 `;
 
 const slot = props => {
-  const { data, overallInterval, key, preview } = props;
+  const { data, overallInterval, key, preview, priority } = props;
   const { src, pingback, srcFile, author } = data?.image || {};
   const hasContent = data.headline?.content || data.richtext?.content || data.text?.content || data.action?.content;
   const Wrap = data.image ? ({ children }) => <Pingback pingback={pingback} origin={pingback && new URL(pingback).origin} src={src}>
     {f => <BackgroundImage
+      critical={priority === IMPORTANT}
+      loading={priority === IMPORTANT ? "eager" : "lazy"}
+      decoding={priority === IMPORTANT ? "sync" : "async"}
+      importance={priority === IMPORTANT ? "high" : (priority === LOW ? "low" : "auto")}
       fadeIn={false}
       loading={"auto"}
       onLoad={f}
@@ -460,8 +457,7 @@ const slot = props => {
           {data.richtext?.content && !data.richtext?.content2 && <Markdown key="markdown" components={{
             ...components,
             Textflipper,
-            Animation,
-            AbsBox
+            Animation
           }}>
             {data.richtext?.content}
           </Markdown>}
@@ -598,12 +594,14 @@ export class Stage extends React.Component<Props> {
     });
   };
 
+  static contextType = PriorityContext
+
   public render() {
     const { _id, className, slides, defaultTiming, fallbackDefault, preview } = this.props;
     const slots = Array.isArray(slides) ? slides : Object.values(slides);
     if(slots.length === 0) return null;
     if(slots.length === 1) return (<ImgBox id={_id} className={className} key="RBox">
-      {slot({ preview, data: slots[0], key: 0 })}
+      {slot({ preview, data: slots[0], key: 0, priority: this.context })}
       <CBox key="placeholder" preview={preview} width={slots[0].width || "100vw"} height={slots[0].height || 80}/>
     </ImgBox>);
 
@@ -618,7 +616,7 @@ export class Stage extends React.Component<Props> {
             exitPose="exit"
             flipMove={false}
           >
-            {slot({ preview, data: current, key: currentSlotIdx })}
+            {slot({ preview, data: current, key: currentSlotIdx, priority: currentSlotIdx === 0 && this.context })}
             <Observer key="placeholder" onChange={this.handleVisibilityChange}>
               <CBox key="placeholder" preview={preview} width={current.width || "100vw"} height={current.height || 80}/>
             </Observer>

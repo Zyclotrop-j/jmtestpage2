@@ -5,6 +5,7 @@ import Img from 'gatsby-image';
 import { Anchor, Box, Text } from 'grommet';
 import { noop } from 'ramda-adjunct';
 import { Location } from '@reach/router';
+import { PriorityContext, IMPORTANT, LOW } from "../utils/priorityContext";
 
 interface Props {
   src: string;
@@ -61,23 +62,24 @@ export const Attribution = ({ author, app_name }) => {
   </Attributionoverlay>}</>;
 };
 
-export const Pingback = ({ children, pingback, origin, src }) =>
+export const Pingback = ({ children, pingback = "", origin, src = "" }) =>
   (<Location>
     {({ location }) => {
       const f =
         pingback && location.origin !== origin
-          ? () => window.requestIdleCallback(() => window.setTimeout(() => {
-
-            const img = document.createElement("img");
-            const suffix = src.indexOf("?") > 1 ? "&auto=format&w=1&h=1" : "?auto=format&w=1&h=1";
-            img.decoding = "async";
-            img.src = pingback === true ? `${src}${suffix}` : `${pingback}&auto=format&w=1&h=1`;
-            img.referrerpolicy = "origin-when-cross-origin";
-            img.hidden = true;
-            img.style.display = "none";
-            document.body.appendChild(img);
-            window.setTimeout(() => img.parentElement.removeChild(img), 10);
-          }, 2000))
+          ? () => window.requestIdleCallback(() => {
+            return window.setTimeout(() => {
+              const img = document.createElement("img");
+              const suffix = (pingback === true ? src : pingback).indexOf("?") > 1 ? "&auto=format&w=1&h=1" : "?auto=format&w=1&h=1";
+              img.decoding = "async";
+              img.src = pingback === true ? `${src}${suffix}` : `${pingback}${suffix}`;
+              img.referrerpolicy = "origin-when-cross-origin";
+              img.hidden = true;
+              img.style.display = "none";
+              document.body.appendChild(img);
+              window.setTimeout(() => img.parentElement.removeChild(img), 10);
+            }, 2000)
+          })
           : noop;
       return children(f);
     }}
@@ -104,6 +106,8 @@ export class Picture extends React.PureComponent<Props> {
     width: 150,
     height: 150
   }
+
+  static contextType = PriorityContext
 
   public componentDidMount() {
     if(process.env.NODE_ENV === "development" && this.props.preview) {
@@ -138,8 +142,13 @@ export class Picture extends React.PureComponent<Props> {
       if(!this?.state?.width || !this?.state?.height) {
         return <span className={className}>Loading</span>
       }
+      const priority = this.context;
       return <ImgBox className={className} background={color} fill gridArea={gridArea}>
         <Img
+          critical={priority === IMPORTANT}
+          loading={priority === IMPORTANT ? "eager" : "lazy"}
+          decoding={priority === IMPORTANT ? "sync" : "async"}
+          importance={priority === IMPORTANT ? "high" : (priority === LOW ? "low" : "auto")}
           id={_id}
           fluid={{
             src,

@@ -43,11 +43,11 @@ websitedata.data.themes.reverse().some(id => {
     foundThemeColor = true;
   }
   if(!foundfontbody && data.data && data.data.global && data.data.global.font && data.data.global.font.family) {
-    bodyFont = data.data.global.font.family;
+    bodyFont = data.data.global.font.family.replace(/"/g, "");
     foundfontbody = true;
   }
   if(!foundfonthead && data.data && data.data.heading && data.data.heading.font && data.data.heading.font.family) {
-    headFont = data.data.heading.font.family;
+    headFont = data.data.heading.font.family.replace(/"/g, "");
     foundfonthead = true;
   }
   if(foundThemeColor && foundfontbody && foundfonthead) {

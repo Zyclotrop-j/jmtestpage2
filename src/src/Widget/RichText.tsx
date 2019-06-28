@@ -19,6 +19,25 @@ interface Props {
   gridArea: string;
 }
 
+export const uiSchema = {
+  /* // currently doesn't play well together with the markdown editor
+  markdown: {
+    "ui:widget": "transformInput",
+    "ui:options": { "transform": ["b64", "urlescaped"] },
+    "ui:title": "Content",
+    "ui:description": "Type your richttext here"
+  },
+  b64: {
+    "ui:widget": "constantInput",
+    "ui:options": { constant: true }
+  },
+  urlescaped: {
+    "ui:widget": "constantInput",
+    "ui:options": { constant: true }
+  },
+  */
+};
+
 const newline = `\n`;
 
 const mqs= [
@@ -32,14 +51,25 @@ const mq = sizes => ({ children }) => {
   </ResponsiveContext.Consumer>)
 };
 
+const AbsBox = styled(Box)`
+  top: ${props => props.top || "unset"};
+  bottom: ${props => props.bottom || "unset"};
+  left: ${props => props.left || "unset"};
+  right: ${props => props.right || "unset"};
+  position: absolute;
+`;
+
+const allmqs = mqs.map(i => i[1]);
 export const components = {
+  AbsBox,
+  Abs: AbsBox,
   Icon: {
     component: props => <Icon {...props} />
   },
   ...mqs.reduce((p, [name, size]) => ({
     ...p,
-    [`Not${name}`]: mq(size),
-    [`${name}`]: mq(size)
+    [`Not${name}`]: mq(allmqs.filter(i => i !== size)),
+    [`${name}`]: mq([size])
   }), {}),
   a: {
     component: props => {
