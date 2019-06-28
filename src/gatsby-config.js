@@ -275,6 +275,37 @@ module.exports = {
         ],
       }
     },
-    "gatsby-plugin-remove-trailing-slashes" // re-enable
+    "gatsby-plugin-remove-trailing-slashes", // re-enable
+    /*{
+      resolve: `gatsby-plugin-csp`,
+      options: {
+        disableOnDev: true,
+        reportOnly: false, // Changes header to Content-Security-Policy-Report-Only for csp testing purposes
+        mergeScriptHashes: true, // you can disable scripts sha256 hashes
+        mergeStyleHashes: false, // you can disable styles sha256 hashes
+        mergeDefaultDirectives: true,
+        directives: {
+          "default-src": "'none'",
+          "script-src": "'self' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.google-analytics.com https://www.googletagmanager.com https://www.youtube.com https://s.ytimg.com",
+          "base-uri": "'none'",
+          "frame-ancestors": "'none'",
+          "form-action": "'none'",
+          "child-src": "'self' https://www.google.com/recaptcha/ https://www.youtube.com",
+          "frame-src": "'self' https://www.google.com/recaptcha/",
+          "object-src": "'self'",
+          "style-src": "'self' 'unsafe-inline' https: https://fonts.googleapis.com/css",
+          "connect-src": "'self' https://uppycompanion.herokuapp.com/ https://fonts.googleapis.com https://zcmsapi.herokuapp.com/ https://circleci.com/api/v1.1/ https://usjdilkblg.execute-api.eu-central-1.amazonaws.com/ https://script.google.com/macros/s/AKfycbwAj7072jfxikYraJ7KYTTXBzQBDjlG42rsPg-4bFnagzRChJy8/ https://www.google-analytics.com https://stats.g.doubleclick.net https://www.google.com",
+          "font-src": "'self' data: https://fonts.gstatic.com",
+          "img-src": "'self' data: blob: https://*.unsplash.com https://s3.eu-central-1.amazonaws.com https://assets-au.s3.ap-southeast-2.amazonaws.com https://usjdilkblg.execute-api.eu-central-1.amazonaws.com https://www.google-analytics.com https://stats.g.doubleclick.net https://www.google.com",
+          "media-src": "'self' data: blob: ",
+          "worker-src": "'self' data: blob: ",
+          "manifest-src": "'self'",
+          "prefetch-src": "'self' *",
+          "block-all-mixed-content": "",
+          "report-uri": "https://mingram.report-uri.com/r/d/csp/enforce",
+          "report-to": "cspenforce"
+        }
+      }
+    }*/
   ]
 };
