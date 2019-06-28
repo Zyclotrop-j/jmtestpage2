@@ -1,5 +1,5 @@
 // todo: make non-predictable
-__webpack_nonce__ = 'c29tZSBjb29sIHN0cmluZyB3aWxsIHBvcCB1cCAxMjM=';
+// __webpack_nonce__ = 'c29tZSBjb29sIHN0cmluZyB3aWxsIHBvcCB1cCAxMjM=';
 
 import React from "react"
 import PropTypes from "prop-types"
