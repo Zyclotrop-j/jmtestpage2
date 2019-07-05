@@ -74,7 +74,7 @@ export const components = {
   a: {
     component: props => {
       const MDLink = styled(Link)``;
-      const as = props.href[0] === "/" ? { as: MDLink, to: props.href } : {};
+      const as = props.href[0] === "/" ? { as: MDLink, to: props.href } : { rel: "noopener" };
       return <Anchor {...props} {...as} href={props.href} />;
     },
   },

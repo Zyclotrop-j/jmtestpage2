@@ -84,6 +84,24 @@ const ConstantInput = ({
   return <Text as="code" margin="small" weight="bold">{JSON.stringify(value, null, "  ")}</Text>;
 };
 
+const ListChoose = ({
+  value,
+  onChange,
+  options,
+  onBlur,
+  onFocus,
+  ...props
+}) => {
+  const xoptions = options.getList();
+  return (<Select
+    {...props}
+    onBlur={onBlur && (event => onBlur(event.value))}
+    onFocus={onFocus && (event => onFocus(event.value))}
+    onChange={event => onChange(event?.value?.value || event?.value)}
+    options={xoptions}
+  />);
+};
+
 const TextWidgetHelper = ({ value, isValidId, onSelect, getSuggestions, schema, descField, ...props }) => {
   const [rawsuggestions, setSuggestions] = React.useState([]);
   const filter = (event => {
@@ -439,6 +457,7 @@ const ImageInput = ({ value, onChange: modonChange, onContext: modonContext, sch
 const MarkdownInput = MarkdownPreview;
 
 export const widgets = {
+  list: ListChoose,
   icon: IconChoose,
   markdown: MarkdownInput,
   image: ImageInput,

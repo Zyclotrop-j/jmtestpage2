@@ -84,6 +84,7 @@ export const fetchAllThemes = flow(function*() {
   themes.clear();
   try {
     const currentThemes = current.get().themes;
+    if(!currentThemes) return;
     for(let i = 0; i < currentThemes.length; i++) {
       const { data } = yield fetch(`https://zcmsapi.herokuapp.com/api/v1/theme/${currentThemes[i]}`).then(i => i.json()); // yield instead of await
       themes.push(data);

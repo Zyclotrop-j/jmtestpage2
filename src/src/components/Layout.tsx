@@ -191,7 +191,7 @@ export class Layout extends React.Component<{}> {
   }
 
   public componentDidMount() {
-    import(/* webpackMode: weak */ "../Widget").then(({ default: components }) => this.setState({
+    import("../Widget").then(({ default: components }) => this.setState({
       components
     }));
   }

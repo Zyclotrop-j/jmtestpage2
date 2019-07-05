@@ -129,11 +129,11 @@ export default observer(class EditRenderer extends React.Component<any> {
             {website.get() && <>
               <div><h2>Edit Menus</h2></div>
               <hr /><h3>Top Menu</h3><div>
-                <Box direction="row">{topmenu && render(addwf(topmenu, ["website", ["topmenu"]]))}</Box>
+                <Box direction="row">{topmenu && !(topmenu instanceof Error) && render(addwf(topmenu, ["website", ["topmenu"]]))}</Box>
               </div><hr /><h3>Side Menu</h3><div>
-                <Box direction="column">{sidemenu && render(addwf(sidemenu, ["website", ["sidemenu"]]))}</Box>
+                <Box direction="column">{sidemenu && !(sidemenu instanceof Error) && render(addwf(sidemenu, ["website", ["sidemenu"]]))}</Box>
               </div><hr /><h3>Bottom Menu</h3><div>
-                <Box direction="row">{bottommenu && render(addwf(bottommenu, ["website", ["bottommenu"]]))}</Box>
+                <Box direction="row">{bottommenu && !(bottommenu instanceof Error) && render(addwf(bottommenu, ["website", ["bottommenu"]]))}</Box>
               </div>
             </>}
           </span> :

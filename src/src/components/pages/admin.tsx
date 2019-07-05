@@ -128,7 +128,7 @@ const Viewmodechooser = observer(({ viewmode, set, options }) => {
 const Websitechooser = observer(({ loading, error, current, options, set }) => {
   return (
       loading.get() ? <Text gridArea="site">Loading website</Text> : (<>
-      {error.get() && <div>{error.get()}</div>}
+      {error.get() && <div>{/*error.get()*/}</div>}
       <Select
         gridArea="site"
         options={options}
@@ -142,11 +142,10 @@ const Websitechooser = observer(({ loading, error, current, options, set }) => {
 });
 
 const Pagechooser = observer(({ website, loading, error, current, options, set }) => {
-  console.log("current.get()", current.get());
   const NONE = Symbol("NONE");
   return (
       loading.get() ? <Text gridArea="page">Loading pages</Text> : <>
-      {error.get() && <Text gridArea="page">{error.get()}</Text>}
+      {error.get() && <Text gridArea="page">{/*error.get()*/}</Text>}
       <Select
         disabled={!website.get()}
         gridArea="page"
@@ -390,7 +389,7 @@ export default class IndexPage extends React.Component<any> {
   public render() {
 
     return (
-      <DragDropContextProvider backend={HTML5Backend}><Page>
+      <DragDropContextProvider key="DragDropContextProvider" backend={HTML5Backend}><Page>
         <Notificationbar notifications={notifications} />
         <StyledSplitPane split="vertical" minSize={250}>
             <Grid
