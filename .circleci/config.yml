@@ -20,6 +20,7 @@ jobs:
       - run:
           name: Fail job if missing env-vars
           command: if [ -z ${CUSTOMER+x} ]; then exit 1; else echo "CUSTOMER found"; fi
+      - checkout
       - run:
           name: Install pip
           command: curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python get-pip.py --user && echo 'export PATH=/home/circleci/.local/bin:$PATH' >> $BASH_ENV
@@ -30,7 +31,6 @@ jobs:
       - run:
           name: Install System Packages
           command: pip install --user ansible requests google-auth && ansible-playbook --version
-      - checkout
       - run:
           name: Install gatsby
           command: cd src && sudo npm i -g gatsby-cli
