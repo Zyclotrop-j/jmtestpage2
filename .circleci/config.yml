@@ -26,7 +26,7 @@ jobs:
       - checkout
       - run:
           name: Install gatsby
-          command: cd src && npm i -g gatsby-cli
+          command: cd src && sudo npm i -g gatsby-cli
       - run:
           name: install-yarn packages
           command: cd src && yarn
