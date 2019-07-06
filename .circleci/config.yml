@@ -42,7 +42,7 @@ jobs:
       - run:
           name: Install System Packages
           # pip issue :( https://github.com/pyenv/pyenv/issues/1141#issuecomment-381421570
-          command: python -m pip install ansible requests google-auth
+          command: python -m pip install --force-reinstall pip && python -m pip install --upgrade pip && pip install ansible requests google-auth
       - run:
           name: ls webapp
           command: ls -l target/
