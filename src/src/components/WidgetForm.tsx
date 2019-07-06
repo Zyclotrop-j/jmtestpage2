@@ -95,6 +95,7 @@ const ListChoose = ({
   const xoptions = options.getList();
   return (<Select
     {...props}
+    value={value}
     onBlur={onBlur && (event => onBlur(event.value))}
     onFocus={onFocus && (event => onFocus(event.value))}
     onChange={event => onChange(event?.value?.value || event?.value)}

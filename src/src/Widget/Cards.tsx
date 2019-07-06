@@ -69,7 +69,7 @@ export const uiSchema = {
   gridlayout: {
     "ui:widget": "list",
     "ui:options": {
-      getList: () => Cards.gridlayout
+      getList: () => Object.keys(Cards.gridlayout())
     }
   }
 };
@@ -233,8 +233,8 @@ const varients = {
       grid-row-end: span 2;
     }
   `,
-  mixedfew: `
-    & > ${IGrid}:nth-child(5n+1) {
+  mixedveryfew: `
+    & > ${IGrid}:nth-child(10n+1) {
       grid-column-end: span 2;
       grid-row-end: span 1;
     },
@@ -244,7 +244,7 @@ const varients = {
     }
   `,
 };
-const basegridlayouts = {
+const basegridlayouts = gap => ({
   auto: `
     grid-template-columns: repeat(auto-fit, 10em);
   `,
@@ -277,6 +277,54 @@ const basegridlayouts = {
   `,
   eightitem: `
     grid-template-columns: repeat(auto-fit, 80em);
+  `,
+  tenpercent: `
+    grid-template-columns: repeat(10, calc( 10% - ${gap} ));
+    ${props => props.theme.mq(null, "s")(css`
+      grid-template-columns: repeat(2, calc( 50% - ${gap} ));
+    `)}
+  `,
+  tweelvepercent: `
+    grid-template-columns: repeat(8, calc( ${100 / 8}% - ${gap} ));
+    ${props => props.theme.mq(null, "s")(css`
+      grid-template-columns: repeat(2, calc( 50% - ${gap} ));
+    `)}
+  `,
+  fourteenpercent: `
+    grid-template-columns: repeat(7, calc( ${100 / 7}% - ${gap} ));
+    ${props => props.theme.mq(null, "s")(css`
+      grid-template-columns: repeat(2, calc( 50% - ${gap} ));
+    `)}
+  `,
+  seventeenpercent: `
+    grid-template-columns: repeat(6, calc( ${100 / 6}% - ${gap} ));
+    ${props => props.theme.mq(null, "s")(css`
+      grid-template-columns: repeat(2, calc( 50% - ${gap} ));
+    `)}
+  `,
+  twentypercent: `
+    grid-template-columns: repeat(5, calc( 20% - ${gap} ));
+    ${props => props.theme.mq(null, "s")(css`
+      grid-template-columns: repeat(2, calc( 50% - ${gap} ));
+    `)}
+  `,
+  twentyfivepercent: `
+    grid-template-columns: repeat(4, calc( 25% - ${gap} ));
+    ${props => props.theme.mq(null, "s")(css`
+      grid-template-columns: repeat(2, calc( 50% - ${gap} ));
+    `)}
+  `,
+  thritypercent: `
+    grid-template-columns: repeat(3, calc( 33% - ${gap} ));
+    ${props => props.theme.mq(null, "s")(css`
+      grid-template-columns: 1fr;
+    `)}
+  `,
+  fivtypercent: `
+    grid-template-columns: repeat(2, calc( 50% - ${gap} ));
+    ${props => props.theme.mq(null, "s")(css`
+      grid-template-columns: 1fr;
+    `)}
   `,
   singlecolumn: `
     grid-template-columns: 1fr;
@@ -323,10 +371,10 @@ const basegridlayouts = {
   sixteencolumn: `
     grid-template-columns: repeat(16, 1fr);
   `,
-};
-const combinedgridlayout = zipObj(
-  ap(map(append, Object.keys(varients)), Object.keys(basegridlayouts)).map(i => i.join("")),
-  ap(map(append, Object.values(varients)), Object.values(basegridlayouts)).map(i => i.join(""))
+});
+const combinedgridlayout = (gap = "10px") => zipObj(
+  ap(map(append, Object.keys(varients)), Object.keys(basegridlayouts(gap))).map(i => i.join("")),
+  ap(map(append, Object.values(varients)), Object.values(basegridlayouts(gap))).map(i => i.join(""))
 );
 
 export class Cards extends React.PureComponent<Props> {
@@ -491,10 +539,10 @@ export class Cards extends React.PureComponent<Props> {
       }
       const iconpicture = [];
       if(itemimgtype === "ICON") {
-        iconpicture.push(<OIcon align-self={item.iconAlign} justify-self={item.iconJustify} gridArea="icon" {...___resolveid(item.icon)} />);
+        if(item.icon) iconpicture.push(<OIcon align-self={item.iconAlign} justify-self={item.iconJustify} gridArea="icon" {...___resolveid(item.icon)} />);
       }
       if(itemimgtype === "PICTURE") {
-        iconpicture.push(<OPicture align-self={item.iconAlign} justify-self={item.iconJustify} gridArea="icon" {...___resolveid(item.picture)} />);
+        if(item.picture) iconpicture.push(<OPicture align-self={item.iconAlign} justify-self={item.iconJustify} gridArea="icon" {...___resolveid(item.picture)} />);
       }
       return (<IGrid
         className={className}
@@ -509,15 +557,15 @@ export class Cards extends React.PureComponent<Props> {
         height={item.height}
       >
         {iconpicture}
-        <OHeading align-self={item.headingAlign} justify-self={item.headingJustify} gridArea="headline" {...___resolveid(item.heading)} />
-        <OParagraph align-self={item.textAlign} justify-self={item.textJustify} gridArea="text" {...___resolveid(item.paragraph)} />
-        <OButton align-self={item.ctaAlign} justify-self={item.ctaJustify} gridArea="cta" {...___resolveid(item.cta)} />
-        <OText align-self={item.disclaimAlign} justify-self={item.disclaimJustify} gridArea="disclaim" {...___resolveid(item.disclaim)} />
+        {item.heading && <OHeading align-self={item.headingAlign} justify-self={item.headingJustify} gridArea="headline" {...___resolveid(item.heading)} />}
+        {item.paragraph && <OParagraph align-self={item.textAlign} justify-self={item.textJustify} gridArea="text" {...___resolveid(item.paragraph)} />}
+        {item.cta && <OButton align-self={item.ctaAlign} justify-self={item.ctaJustify} gridArea="cta" {...___resolveid(item.cta)} />}
+        {item.disclaim && <OText align-self={item.disclaimAlign} justify-self={item.disclaimJustify} gridArea="disclaim" {...___resolveid(item.disclaim)} />}
       </IGrid>);
     });
 
     const defaultgap = "10px";
-    const defaultgridlayout = Cards.gridlayout.auto;
+    const defaultgridlayout = g => Cards.gridlayout(g).auto;
     const scrollSizes = {
       "auto": 10,
       "quarteritem": 2.5,
@@ -531,10 +579,12 @@ export class Cards extends React.PureComponent<Props> {
       "fouritem": 40,
       "eightitem": 80
     };
-    const scrollSize = Object.entries(scrollSizes).find(([k]) => (gridlayout || defaultgridlayout).indexOf(k) > -1);
+    const scrollSize = Object.entries(scrollSizes).find(([k]) => (gridlayout || "auto").indexOf(k) > -1);
     const width = (mode || "").toLowerCase() === "scroll" && scrollSize ? `calc(
       ${cardlist.length * scrollSize[1]}em + ${cardlist.length} * ${gap || defaultgap}
     )` : null;
+
+    console.log("Cards.gridlayout[gridlayout]", Cards.gridlayout[gridlayout], gridlayout, Cards.gridlayout);
 
     return (<OverflowBox
         id={_id}
@@ -545,7 +595,7 @@ export class Cards extends React.PureComponent<Props> {
       ><AutoGrid
       width={width || "unset"}
       gap={gap || defaultgap}
-      extend={Cards.gridlayout[gridlayout] || defaultgridlayout}
+      extend={Cards.gridlayout(gap || defaultgap)[gridlayout] || defaultgridlayout(gap || defaultgap)}
     >
       {cardlist}
     </AutoGrid></OverflowBox>);

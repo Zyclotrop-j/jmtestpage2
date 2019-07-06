@@ -154,6 +154,7 @@ export class Picture extends React.PureComponent<Props> {
             src,
             aspectRatio: this.state.width / this.state.height
           }}
+          fadeIn
           alt={alt}
           title={title}
           crossOrigin={crossorigin}

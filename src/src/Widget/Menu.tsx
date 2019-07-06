@@ -355,7 +355,7 @@ export class Menu extends React.PureComponent<Props> {
     const addEntries = isNaN(parseInt(autoAddDepth)) ? 1 : autoAddDepth;
     const menuentries = imenuentries.map(i => ({
       ...i,
-      path: i.path || i.href
+      path: i.path || i.href || ""
     }));
 
     const t = menuentries.reduce((p, i) => assocPath([...i.path.split("/").filter(j => j.trim()), Menu.VALUE],

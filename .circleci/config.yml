@@ -38,7 +38,7 @@ jobs:
             - ./src/node_modules
       - run:
           name: Build
-          command: cd src && gatsby build && node ./compileSHAs.js
+          command: cd src && node --max-old-space-size=4096 ./node_modules/gatsby/dist/bin/gatsby.js build && node ./compileSHAs.js
       - store_artifacts:
           path: ./src/public/
       - run:
