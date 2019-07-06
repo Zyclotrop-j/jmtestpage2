@@ -3,11 +3,8 @@ jobs:
   build:
     working_directory: ~/page
     docker:
-      - image: node:10.14.0
+      - image: circleci/node:stretch
     steps:
-      - run:
-          name: Display disk space available
-          command: cd / && du -sch .[!.]* * |sort -rh | head -10
       - run:
           name: Fail job if missing env-vars
           command: if [ -z ${WEBSITEID+x} ]; then exit 1; else echo "WEBSITEID found"; fi
