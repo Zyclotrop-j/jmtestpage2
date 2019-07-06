@@ -22,10 +22,8 @@ jobs:
           command: if [ -z ${CUSTOMER+x} ]; then exit 1; else echo "CUSTOMER found"; fi
       - run:
           name: Install pip
-          command: apt-get update -y && apt-get install -y python-pip python-dev build-essential
+          command: sudo apt-get update -y && sudo apt-get install -y python-pip python-dev build-essential
       - checkout
-      - restore_cache: # special step to restore the dependency cache
-          key: dependency-cache-v1-{{ checksum "./src/yarn.lock" }}
       - run:
           name: Install gatsby
           command: cd src && npm i -g gatsby-cli
@@ -40,7 +38,7 @@ jobs:
           command: cp -r ./src/public/* ./target/
       - run:
           name: Install python
-          command: apt-get update -y && apt-get install -y python3-pip python3-dev
+          command: sudo apt-get update -y && sudo apt-get install -y python3-pip python3-dev
       - run:
           name: Install System Packages
           # pip issue :( https://github.com/pyenv/pyenv/issues/1141#issuecomment-381421570
