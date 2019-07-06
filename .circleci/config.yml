@@ -8,16 +8,17 @@ jobs:
       - run:
           name: diagnostics for full disk space on circle
           command: |
+            sudo su
             cd /
             set -x
             echo "Disk space taken up by project subfolders"
-            sudo du -cs * | sort -n
+            du -cs * | sort -n
             echo "Disk we're on"
-            sudo df -h .
+            df -h .
             echo "All Disks"
-            sudo df -h
+            df -h
             echo "inode count"
-            sudo df -ih
+            df -ih
       - run:
           name: Fail job if missing env-vars
           command: if [ -z ${WEBSITEID+x} ]; then exit 1; else echo "WEBSITEID found"; fi
