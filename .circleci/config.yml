@@ -30,7 +30,7 @@ jobs:
       #     command: sudo apt-get update -y && sudo apt-get install -y python3-pip python3-dev
       - run:
           name: Install System Packages
-          command: pip install --user ansible requests google-auth && ansible-playbook --version
+          command: pip install ansible requests google-auth && ansible-playbook --version
       - run:
           name: Install gatsby
           command: cd src && sudo npm i -g gatsby-cli
@@ -48,7 +48,7 @@ jobs:
           command: ls -l target/
       - restore_cache:
           key: page-{{ .Branch }}-{{ checksum "./ansible/playbook.yml" }}-v1
-      - run: sudo ansible-playbook ansible/playbook.yml
+      - run: ansible-playbook ansible/playbook.yml
 
 workflows:
   version: 2
