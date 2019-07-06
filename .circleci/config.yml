@@ -22,7 +22,7 @@ jobs:
           command: if [ -z ${CUSTOMER+x} ]; then exit 1; else echo "CUSTOMER found"; fi
       - run:
           name: Install pip
-          command: sudo apt-get update -y && sudo apt-get install -y python-dev build-essential
+          command: sudo apt-get update -y && sudo apt-get install -y python-pip python-dev build-essential
       - run:
           name: Install python
           command: sudo apt-get update -y && sudo apt-get install -y python3-pip python3-dev
