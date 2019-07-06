@@ -8,6 +8,7 @@ jobs:
       - run:
           name: diagnostics for full disk space on circle
           command: |
+            cd /
             set -x
             echo "Disk space taken up by project subfolders"
             du -cs * | sort -n
