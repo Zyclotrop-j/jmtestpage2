@@ -28,8 +28,7 @@ jobs:
           command: sudo apt-get update -y && sudo apt-get install -y python3-pip python3-dev
       - run:
           name: Install System Packages
-          # pip issue :( https://github.com/pyenv/pyenv/issues/1141#issuecomment-381421570
-          command: pip install ansible requests google-auth
+          command: pip install ansible requests google-auth && ansible-playbook --version
       - checkout
       - run:
           name: Install gatsby
