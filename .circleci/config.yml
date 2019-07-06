@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/page
     docker:
-      - image: node:10.7.0
+      - image: node:10.14.0
     steps:
       - run:
           name: Fail job if missing env-vars
