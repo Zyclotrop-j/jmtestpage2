@@ -7,7 +7,6 @@ import Fuse from 'fuse.js';
 import metadata from 'grommet-icons/metadata';
 import { debounce } from "lodash";
 import debounceRender from 'react-debounce-render';
-import IconWrapper from "react-icons-kit";
 
 const StyledIcon = styled.span`
   display: inline-block;
@@ -26,12 +25,6 @@ export class IconChoose extends React.PureComponent<Props> {
 
   public componentDidMount() {
 
-    const mapToIcon = libName => lib => {
-      return Object.entries(lib).reduce((p, [k, v]) => ({ ...p, [k]:
-        (props) => <IconWrapper {...props} icon={v} />
-      }), {})
-    };
-
     const libs = {
       de: () => import(/* webpackPrefetch: true, webpackMode: "lazy" */ "grommet-icons"),
 
@@ -41,24 +34,6 @@ export class IconChoose extends React.PureComponent<Props> {
       cr: () =>  import(/* webpackPrefetch: true, webpackMode: "lazy" */ "styled-icons/crypto"),
       ev: () =>  import(/* webpackPrefetch: true, webpackMode: "lazy" */ "styled-icons/evil"),
       im: () =>  import(/* webpackPrefetch: true, webpackMode: "lazy" */ "styled-icons/icomoon"),
-
-      fa: () =>  import(/* webpackMode: "lazy" */ "react-icons-kit/fa").then(mapToIcon("fa")),
-      io: () =>  import(/* webpackMode: "lazy" */ "react-icons-kit/iconic").then(mapToIcon("io")),
-      ia: () =>  import(/* webpackMode: "lazy" */ "react-icons-kit/ionicons").then(mapToIcon("ia")),
-      md: () =>  import(/* webpackMode: "lazy" */ "react-icons-kit/md").then(mapToIcon("md")),
-      ti: () =>  import(/* webpackMode: "lazy" */ "react-icons-kit/typicons").then(mapToIcon("ti")),
-      go: () =>  import(/* webpackMode: "lazy" */ "react-icons-kit/oct").then(mapToIcon("go")),
-      fi: () =>  import(/* webpackMode: "lazy" */ "react-icons-kit/feather").then(mapToIcon("fi")),
-
-      ty: () =>  import(/* webpackPrefetch: true, webpackMode: "lazy" */ "react-icons-kit/entypo").then(mapToIcon("ty")),
-      ik: () =>  import(/* webpackPrefetch: true, webpackMode: "lazy" */ "react-icons-kit/ikons").then(mapToIcon("ik")),
-      me: () =>  import(/* webpackPrefetch: true, webpackMode: "lazy" */ "react-icons-kit/metrize").then(mapToIcon("me")),
-      li: () =>  import(/* webpackPrefetch: true, webpackMode: "lazy" */ "react-icons-kit/linea").then(mapToIcon("li")),
-      no: () =>
-        Promise.all([import(/* webpackPrefetch: true, webpackMode: "lazy" */ "react-icons-kit/noto_emoji_regular"),
-        import(/* webpackPrefetch: true, webpackMode: "lazy" */ "../utils/utf8EmojiMetadata")]).then(([noto, meta]) => {
-          return Object.entries(noto).reduce((p, [k, v]) => ({ ...p, [meta[k] || meta[`U+${k.substring(1)}`] || k]: v }), {})
-        }).then(mapToIcon("no")),
     };
     const [keys, promises] = transpose(Object.entries(libs).map(([k, v]) => [k, v()]));
     Promise.all(promises).then(libs => {

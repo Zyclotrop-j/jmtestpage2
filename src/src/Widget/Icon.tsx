@@ -71,7 +71,6 @@ export class Icon extends React.PureComponent<Props> {
       return Promise.resolve();
     }
 
-        const getIconWrapper = () => import(/* webpackMode: "lazy" */ "react-icons-kit");
         const importFn = {
 
           // gi: () => import(/* webpackMode: "lazy" */ "react-icons/gi"), // game icons
@@ -85,24 +84,6 @@ export class Icon extends React.PureComponent<Props> {
           ev: () =>  import(/* webpackMode: "lazy" */ "styled-icons/evil"),
           im: () =>  import(/* webpackMode: "lazy" */ "styled-icons/icomoon"),
 
-          fa: () =>  import(/* webpackMode: "lazy" */ "react-icons-kit/fa"),
-          io: () =>  import(/* webpackMode: "lazy" */ "react-icons-kit/iconic"),
-          ia: () =>  import(/* webpackMode: "lazy" */ "react-icons-kit/ionicons"),
-          md: () =>  import(/* webpackMode: "lazy" */ "react-icons-kit/md"),
-          ti: () =>  import(/* webpackMode: "lazy" */ "react-icons-kit/typicons"),
-          go: () =>  import(/* webpackMode: "lazy" */ "react-icons-kit/oct"),
-          fi: () =>  import(/* webpackMode: "lazy" */ "react-icons-kit/feather"),
-
-          ty: () =>  import(/* webpackMode: "lazy" */ "react-icons-kit/entypo"),
-          ik: () =>  import(/* webpackMode: "lazy" */ "react-icons-kit/ikons"),
-          me: () =>  import(/* webpackMode: "lazy" */ "react-icons-kit/metrize"),
-          li: () =>  import(/* webpackMode: "lazy" */ "react-icons-kit/linea"),
-          no: () =>
-            Promise.all([import(/* webpackMode: "lazy" */ "react-icons-kit/noto_emoji_regular"),
-            import(/* webpackMode: "lazy" */ "../utils/utf8EmojiMetadata")]).then(([noto, meta]) => {
-              return Object.entries(noto).reduce((p, [k, v]) => ({ ...p, [meta[k] || k]: v }), {})
-            }),
-
         }[`${icon[0]}${icon[1]}`] || (() => import(/* webpackPrefetch: true, webpackMode: "lazy" */ "grommet-icons"));
 
 
@@ -110,11 +91,6 @@ export class Icon extends React.PureComponent<Props> {
         return importFn().then(lib => {
           if(!lib[icon.substring(3)]) {
             return Promise.resolve();
-          }
-          if(["fa", "io", "md", "ti", "go", "fi", "ty", "ik", "me", "li", "no"].includes(`${icon[0]}${icon[1]}`)) {
-            return getIconWrapper().then(({ default: Icon }) => {
-              return props => <Icon {...props} icon={lib[icon.substring(3)]} />;
-            });
           }
           return lib[icon.substring(3)]
         });
