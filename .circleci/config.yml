@@ -23,7 +23,7 @@ jobs:
       - checkout
       - run:
           name: Install pip
-          command: curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python get-pip.py --user && echo 'export PATH=/home/circleci/.local/bin:$PATH' >> $BASH_ENV
+          command: curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && sudo python get-pip.py && echo 'export PATH=/home/circleci/.local/bin:$PATH' >> $BASH_ENV
           # command: sudo apt-get update -y && sudo apt-get install -y python-pip python-dev build-essential
       # - run:
       #     name: Install python
