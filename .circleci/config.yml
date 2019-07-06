@@ -16,7 +16,7 @@ jobs:
             echo "All Disks"
             df -h
             echo "inode count"
-    df -ih
+            df -ih
       - run:
           name: Fail job if missing env-vars
           command: if [ -z ${WEBSITEID+x} ]; then exit 1; else echo "WEBSITEID found"; fi
