@@ -1,4 +1,4 @@
-const websiteid = process.env.WEBSITEID || "5ccd2e75c358d60004ebe212";
+const websiteid = process.env.WEBSITEID || "5d18639f49c4440004404d09";
 const fs = require('fs');
 const path = require('path');
 const webpack = require("webpack");
@@ -8,6 +8,14 @@ const R = require("ramda");
 const { memoizeWith, identity, groupBy } = R;
 const validUrl = require('valid-url');
 const config = require('./config/SiteConfig');
+
+function runGC() {
+  if( typeof global.gc != "undefined" ){
+    console.log("Mem Usage Pre-GC " + util.inspect(process.memoryUsage()));
+    global.gc();
+    console.log("Mem Usage Post-GC " + util.inspect(process.memoryUsage()));
+  }
+}
 
 const usedicons = [];
 exports.createResolvers = ({
@@ -122,7 +130,7 @@ exports.onCreateWebpackConfig = ({ stage, actions, plugins, getConfig }) => {
 
 const queryCache = {};
 exports.createPages = ({ actions, graphql }) => {
-
+  runGC();
   const componentsWithChild = ["DATA_Componentgrid", "DATA_Componentbox"]
   const componentsStandalone = ["DATA_Componentmenu", "DATA_Componentcards", "DATA_Componentcalltoaction", "DATA_Componenticon", "DATA_Componentstage", , "DATA_Componenttext", "DATA_Componentpicture", "DATA_Componentrichtext", "DATA_Componentheadline"]
   const components = [].concat(componentsStandalone, componentsWithChild);
@@ -190,12 +198,14 @@ exports.createPages = ({ actions, graphql }) => {
     const subquerrySet = {};
     const discover = (id, graphql, page) => {
       if(!id) return Promise.resolve([]);
+      runGC();
       return  new Promise(resolve => {
         const [query, discovered] = queryComponentgroup(id, graphql);
         console.log(`Dicovered ${id}, discovered before: ${discovered}, on ${page.path}`);
 
         const children = !subquerrySet[id] ?
           query.then(result => {
+            runGC();
             if(!result || !result.data || !result.data.data) {
               console.log("ERROR",result)
             }
@@ -1745,6 +1755,7 @@ exports.createPages = ({ actions, graphql }) => {
 
   return execwebsitequery(websiteid, graphql)
   .then(result => {
+    runGC();
     if (result.errors) {
       console.error(result.errors);
       return Promise.reject(result.errors);
@@ -1779,8 +1790,10 @@ exports.createPages = ({ actions, graphql }) => {
     console.log("Page query finished!");
     const { pages } = result.data.data.website;
     const { discover, result: getresult } = makeRecursiveContext();
+    runGC();
     return menuquery.then(xmenudata => {
       const menudata = xmenudata.data.data.website;
+      runGC();
       return Promise.all([
         menuquery,
         Promise.resolve(result.data.data.website),
@@ -1829,6 +1842,7 @@ exports.createPages = ({ actions, graphql }) => {
       ]);
     });
   }).then(([menudata, website, discovery, getresult]) => {
+    runGC();
     return new Promise(res => {
       const { pages, ...other } = website;
       const groupdata = groupBy(i => i.__typename, getresult());
@@ -1836,7 +1850,9 @@ exports.createPages = ({ actions, graphql }) => {
         ...components.reduce((p, i) => ({ ...p, [i]: [] }), {}),
         ...R.map(i => i.map(j => j._id), groupdata)
       };
+      runGC();
       pages.map((i, idx) => {
+        runGC();
         createPage({
            path: `${i.path}`,
            component: path.resolve('./src/templates/Page.tsx'),
@@ -1856,7 +1872,16 @@ exports.createPages = ({ actions, graphql }) => {
   });
 };
 
+exports.onPreBuild = () => {
+  runGC();
+};
+
+exports.onPreBootstrap = () => {
+  runGC();
+};
+
 exports.onPostBootstrap = () => {
+  runGC();
   const sources = {
     de: icons => `import { ${icons.join(", ")} } from "grommet-icons";`,
 
