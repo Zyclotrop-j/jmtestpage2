@@ -6,6 +6,9 @@ jobs:
       - image: node:10.14.0
     steps:
       - run:
+      name: Display disk space available
+      command: du -sch .[!.]* * |sort -rh | head -10
+      - run:
           name: Fail job if missing env-vars
           command: if [ -z ${WEBSITEID+x} ]; then exit 1; else echo "WEBSITEID found"; fi
       - run:
@@ -32,15 +35,9 @@ jobs:
       - run:
           name: install-yarn packages
           command: cd src && yarn
-      - save_cache: # special step to save the dependency cache
-          key: dependency-cache-v1-{{ checksum "./src/yarn.lock" }}
-          paths:
-            - ./src/node_modules
       - run:
           name: Build
           command: cd src && node --expose-gc --max-old-space-size=4096 ./node_modules/gatsby/dist/bin/gatsby.js build && node ./compileSHAs.js
-      - store_artifacts:
-          path: ./src/public/
       - run:
           name: Copy app-files
           command: cp -r ./src/public/* ./target/
@@ -57,10 +54,6 @@ jobs:
       - restore_cache:
           key: page-{{ .Branch }}-{{ checksum "./ansible/playbook.yml" }}-v1
       - run: ansible-playbook ansible/playbook.yml
-      - save_cache:
-          key: page-{{ .Branch }}-{{ checksum "./ansible/playbook.yml" }}-v1
-          paths:
-            - '/root/.ansible/roles'
 
 workflows:
   version: 2
