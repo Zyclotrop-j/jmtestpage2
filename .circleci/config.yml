@@ -23,6 +23,13 @@ jobs:
       - run:
           name: Install pip
           command: sudo apt-get update -y && sudo apt-get install -y python-dev build-essential
+      - run:
+          name: Install python
+          command: sudo apt-get update -y && sudo apt-get install -y python3-pip python3-dev
+      - run:
+          name: Install System Packages
+          # pip issue :( https://github.com/pyenv/pyenv/issues/1141#issuecomment-381421570
+          command: python -m pip install --force-reinstall pip && pip install ansible requests google-auth
       - checkout
       - run:
           name: Install gatsby
@@ -36,13 +43,6 @@ jobs:
       - run:
           name: Copy app-files
           command: cp -r ./src/public/* ./target/
-      - run:
-          name: Install python
-          command: sudo apt-get update -y && sudo apt-get install -y python3-pip python3-dev
-      - run:
-          name: Install System Packages
-          # pip issue :( https://github.com/pyenv/pyenv/issues/1141#issuecomment-381421570
-          command: python -m pip install --force-reinstall pip && pip install ansible requests google-auth
       - run:
           name: ls webapp
           command: ls -l target/
