@@ -11,13 +11,13 @@ jobs:
             cd /
             set -x
             echo "Disk space taken up by project subfolders"
-            du -cs * | sort -n
+            sudo du -cs * | sort -n
             echo "Disk we're on"
-            df -h .
+            sudo df -h .
             echo "All Disks"
-            df -h
+            sudo df -h
             echo "inode count"
-            df -ih
+            sudo df -ih
       - run:
           name: Fail job if missing env-vars
           command: if [ -z ${WEBSITEID+x} ]; then exit 1; else echo "WEBSITEID found"; fi
