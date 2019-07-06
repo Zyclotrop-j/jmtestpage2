@@ -22,13 +22,14 @@ jobs:
           command: if [ -z ${CUSTOMER+x} ]; then exit 1; else echo "CUSTOMER found"; fi
       - run:
           name: Install pip
-          command: sudo apt-get update -y && sudo apt-get install -y python-pip python-dev build-essential
-      - run:
-          name: Install python
-          command: sudo apt-get update -y && sudo apt-get install -y python3-pip python3-dev
+          command: curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python get-pip.py --user
+          # command: sudo apt-get update -y && sudo apt-get install -y python-pip python-dev build-essential
+      # - run:
+      #     name: Install python
+      #     command: sudo apt-get update -y && sudo apt-get install -y python3-pip python3-dev
       - run:
           name: Install System Packages
-          command: pip install ansible requests google-auth && ansible-playbook --version
+          command: pip install --user ansible requests google-auth && ansible-playbook --version
       - checkout
       - run:
           name: Install gatsby
