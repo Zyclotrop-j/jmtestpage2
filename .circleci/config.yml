@@ -24,13 +24,13 @@ jobs:
       - run:
           name: Install pip
           # command: curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && sudo python get-pip.py && echo 'export PATH=/home/circleci/.local/bin:$PATH' >> $BASH_ENV
-          command: sudo apt-get update -y && sudo apt-get upgrade -y && sudo apt-get install -y python3-pip python3-dev build-essential
+          command: sudo apt-get update -y && sudo apt-get upgrade -y && sudo apt-get install -y python-pip python-dev build-essential
       - run:
           name: Install ansible
-          command: sudo pip3 install ansible && ansible --version
+          command: sudo pip install ansible && ansible --version
       - run:
           name: Install System Packages
-          command: pip3 install requests google-auth
+          command: pip install requests google-auth
       - run:
           name: Install gatsby
           command: cd src && sudo npm i -g gatsby-cli
