@@ -27,7 +27,7 @@ jobs:
           command: sudo apt-get update -y && sudo apt-get install -y python-pip python-dev build-essential
       - run:
           name: Install ansible
-          command: pip install --user ansible && echo 'export PATH=/home/circleci/.local/bin:$PATH' >> $BASH_ENV && ansible --version
+          command: pip install ansible && echo 'export PATH=/home/circleci/.local/bin:$PATH' >> $BASH_ENV && ansible --version
       - run:
           name: Install System Packages
           command: pip install requests google-auth && ansible-playbook --version
