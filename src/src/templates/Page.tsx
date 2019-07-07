@@ -98,6 +98,12 @@ export default class Page extends React.PureComponent {
 
 
 export const postQuery = graphql`
+  fragment fcomponentflowchart on DATA_Componentflowchart {
+    _id
+    graph
+    theme
+    a11yTitle
+  }
   fragment fcalltoaction on DATA_Componentcalltoaction {
     _id
     a11yTitle
@@ -528,8 +534,12 @@ export const postQuery = graphql`
     $DATA_Componentcalltoaction: [ID!]
     $DATA_Componentcards: [ID!]
     $DATA_Componentmenu: [ID!]
+    $DATA_Componentflowchart: [ID!]
   ) {
     data {
+      componentflowcharts(_ids: $DATA_Componentflowchart) {
+        ...fcomponentflowchart
+      }
       componentmenus(_ids: $DATA_Componentmenu) {
         ...fmenus
       }

@@ -130,6 +130,7 @@
     "jszip": "^3.2.1",
     "mailgun.js": "^2.0.1",
     "mathjs": "^5.10.3",
+    "mermaid": "^8.1.0",
     "mobx": "^5.9.4",
     "mobx-react": "^5.4.3",
     "object-hash": "^1.3.1",

@@ -11,6 +11,7 @@ import { Icon, uiSchema as iconuiSchema } from "./Icon";
 import { CallToAction, uiSchema as ctauiSchema } from "./CallToAction";
 import { Cards, uiSchema as cardsuiSchema } from "./Cards";
 import { Menu, uiSchema as menuuiSchema } from "./Menu";
+import { FlowChart, uiSchema as flowchartuiSchema } from "./FlowChart";
 
 export const uiSchema = {
   text: textuiSchema,
@@ -22,8 +23,9 @@ export const uiSchema = {
   calltoaction: ctauiSchema,
   cards: cardsuiSchema,
   menu: menuuiSchema,
-  richtext: richtextuiSchema
+  richtext: richtextuiSchema,
+  flowchart: flowchartuiSchema
 };
 export const Calltoaction = CallToAction;
-export { Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Icon, Cards };
-export default { Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Calltoaction: CallToAction, Icon, Cards };
+export { FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Icon, Cards };
+export default { FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Calltoaction: CallToAction, Icon, Cards };
