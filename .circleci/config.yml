@@ -27,7 +27,7 @@ jobs:
           command: sudo apt-get update -y && sudo apt-get upgrade -y && sudo apt-get install -y python3-pip python3-dev build-essential
       - run:
           name: Install ansible
-          command: sudo pip install ansible && ansible --version
+          command: sudo pip3 install ansible && ansible --version
       - run:
           name: Install System Packages
           command: pip3 install requests google-auth && ansible-playbook --version
