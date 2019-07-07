@@ -48,7 +48,7 @@ jobs:
           command: ls -l target/
       - restore_cache:
           key: page-{{ .Branch }}-{{ checksum "./ansible/playbook.yml" }}-v1
-      - run: sudo ansible-playbook ansible/playbook.yml
+      - run: ansible-playbook ansible/playbook.yml
 
 workflows:
   version: 2
