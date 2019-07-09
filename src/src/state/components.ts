@@ -227,7 +227,8 @@ export const removeComponentfromGroup = flow(function*(componentid, groupid, res
     }
 });
 
-export const addComponenttoGroup = flow(function*(componentid, groupid, resolve, reject, options) {
+export const addComponenttoGroup = flow(function*(componentid, _groupid, resolve, reject, options) {
+    const groupid = _groupid?.content || _groupid;
     if(!componentid) {
       return reject("componentid is a required argument!");
     }

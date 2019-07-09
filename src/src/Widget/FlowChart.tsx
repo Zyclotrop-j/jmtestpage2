@@ -45,6 +45,7 @@ export class FlowChart extends React.PureComponent<Props> {
 
   private handleVisibilityChange(event) {
     const { _id, graph, theme } = this.props;
+    const xtheme = theme ? theme.toLowerCase() : theme;
     if(this.state.__html) {
       this.setState({
         visible: event.isIntersecting
@@ -63,7 +64,7 @@ export class FlowChart extends React.PureComponent<Props> {
       mermaidAPI.initialize({
         startOnLoad: false,
         logLevel: 3,
-        theme: (!theme || theme === "none" || theme === null) ? null : theme,
+        theme: (xtheme === "none" || xtheme === null) ? null : xtheme,
       });
       const rerender = () => {
         try {
@@ -108,7 +109,7 @@ export class FlowChart extends React.PureComponent<Props> {
 
     return (<Observer key="placeholder" onChange={this.handleVisibilityChange}>
       <Box className={className} gridArea={gridArea} a11yTitle={a11yTitle}>
-        <FadeGraph visible={visible && __html.trim()} dangerouslySetInnerHTML={{ __html }} />
+        <FadeGraph visible={__html && __html.trim() && visible} dangerouslySetInnerHTML={{ __html }} />
       </Box>
     </Observer>);
   }

@@ -12,6 +12,7 @@ import { CallToAction, uiSchema as ctauiSchema } from "./CallToAction";
 import { Cards, uiSchema as cardsuiSchema } from "./Cards";
 import { Menu, uiSchema as menuuiSchema } from "./Menu";
 import { FlowChart, uiSchema as flowchartuiSchema } from "./FlowChart";
+import { Accordion, uiSchema as accordionuiSchema } from "./AccordionLazy";
 
 export const uiSchema = {
   text: textuiSchema,
@@ -24,8 +25,9 @@ export const uiSchema = {
   cards: cardsuiSchema,
   menu: menuuiSchema,
   richtext: richtextuiSchema,
-  flowchart: flowchartuiSchema
+  flowchart: flowchartuiSchema,
+  accordion: accordionuiSchema
 };
 export const Calltoaction = CallToAction;
-export { FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Icon, Cards };
-export default { FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Calltoaction: CallToAction, Icon, Cards };
+export { Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Icon, Cards };
+export default { Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Calltoaction: CallToAction, Icon, Cards };

@@ -1,8 +1,7 @@
 import * as React from 'react';
 import styled, { keyframes } from 'styled-components';
-import { Accordion, AccordionPanel } from "grommet";
 import {
-    Accordion,
+    Accordion as XAccordion,
     AccordionItem,
     AccordionItemHeading,
     AccordionItemButton,
@@ -18,7 +17,7 @@ const fadein = keyframes`
       opacity: 1;
   }
 `;
-const StyledAccordion = styled(Accordion)`
+const StyledAccordion = styled(XAccordion)`
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 2px;
 `;
@@ -59,16 +58,6 @@ const StyledAccordionItemPanel = styled(AccordionItemPanel)`
   animation: ${fadein} 0.35s ease-in;
 `;
 
-export const schema = {
-
-};
-
-export const uiSchema = {
-  icon: {
-    "ui:widget": "icon"
-  }
-};
-
 export class Accordion extends React.Component<any> {
 
   static defaultProps = {
@@ -86,34 +75,25 @@ export class Accordion extends React.Component<any> {
       allowZeroExpanded,
       level,
       preExpanded,
+      content,
       __children: { children = [] },
       __renderSubtree
     } = this.props;
 
-    const content = children.map(({ content: u, headline }, idx) => (
-      <AccordionPanel key={u._id || idx} label={headline}>
-        {u.map(__renderSubtree)}
-      </AccordionPanel>
-    ));
-
-    return (<Accordion>
-      {content}
-    </Accordion>);
-
-    const content2 = children.map(({ content: u, headline }, idx) => (
+    const content2 = children.map((u, idx) => (
       <StyledAccordionItem
-        uuid={u._id || id}
-        key={u._id || idx}
+        uuid={`${_id}-${idx}`}
+        key={u ? u._id : idx}
       >
           <StyledAccordionItemHeading
             aria-level={level}
           >
               <StyledAccordionItemButton>
-                  {headline}
+                  {content?.[idx]?.headline}
               </StyledAccordionItemButton>
           </StyledAccordionItemHeading>
           <StyledAccordionItemPanel>
-              {u.map(__renderSubtree)}
+              {u?.map(__renderSubtree)}
           </StyledAccordionItemPanel>
       </StyledAccordionItem>
     ));
@@ -122,7 +102,7 @@ export class Accordion extends React.Component<any> {
         <StyledAccordion
           allowMultipleExpanded={allowMultipleExpanded}
           allowZeroExpanded={allowZeroExpanded}
-          preExpanded={preExpanded}
+          preExpanded={preExpanded.map(i => `${_id}-${i}`)}
         >
             {content2}
         </StyledAccordion>

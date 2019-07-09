@@ -5,11 +5,6 @@ import config from '../../config/SiteConfig';
 import { Link } from 'gatsby';
 import { Anchor } from 'grommet';
 
-const sample = `
-graph LR
-    Start --> Stop
-`;
-
 export default class NotFoundPage extends React.Component<any> {
   public render() {
     return (

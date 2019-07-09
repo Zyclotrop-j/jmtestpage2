@@ -98,6 +98,19 @@ export default class Page extends React.PureComponent {
 
 
 export const postQuery = graphql`
+  fragment fcomponentaccordion on DATA_Componentaccordion {
+    _id
+    allowMultipleExpanded
+    allowZeroExpanded
+    level
+    preExpanded
+    content {
+      content {
+        _id
+      }
+      headline
+    }
+  }
   fragment fcomponentflowchart on DATA_Componentflowchart {
     _id
     graph
@@ -535,8 +548,12 @@ export const postQuery = graphql`
     $DATA_Componentcards: [ID!]
     $DATA_Componentmenu: [ID!]
     $DATA_Componentflowchart: [ID!]
+    $DATA_Componentaccordion: [ID!]
   ) {
     data {
+      componentaccordions(_ids: $DATA_Componentaccordion) {
+        ...fcomponentaccordion
+      }
       componentflowcharts(_ids: $DATA_Componentflowchart) {
         ...fcomponentflowchart
       }

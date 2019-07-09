@@ -36,6 +36,15 @@ const SubtreeRenderer = observer(({ render, compo, addProps, page, website, comp
     const parentids = addProps.parentids ? addProps.parentids.concat([ compo ]) : [ compo ];
     return render(group, { ...addProps, ___parentid: compo, ___parentids: parentids, ___groupid: compo });
   }
+  if(compo.content && is(String, compo.content)) {
+    // Nested components like accordion, where subgroup-id is in comp.content
+    const group = xcomponents.get(compo.content)?.components?.map(i => xcomponents.get(i));
+    if(group) {
+      const parentids = addProps.parentids ? addProps.parentids.concat([ compo ]) : [ compo ];
+      return render(group, { ...addProps, ___parentid: compo, ___parentids: parentids, ___groupid: compo });
+    }
+  }
+
   const type = compo["x-type"];
   const Component = availableComponents[type];
   const content = compo.content;

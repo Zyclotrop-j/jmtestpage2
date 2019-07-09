@@ -45,6 +45,7 @@ const addComp = props => {
 };
 
 const inject = (Comp, observables) => {
+  if(!Comp) return () => null;
   const Fn = observer(props => <Comp {...props} />);
   return props => <Fn {...observables} {...props} />;
 };
