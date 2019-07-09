@@ -102,7 +102,7 @@ export class Accordion extends React.Component<any> {
         <StyledAccordion
           allowMultipleExpanded={allowMultipleExpanded}
           allowZeroExpanded={allowZeroExpanded}
-          preExpanded={preExpanded.map(i => `${_id}-${i}`)}
+          preExpanded={preExpanded && preExpanded.map(i => `${_id}-${i}`)}
         >
             {content2}
         </StyledAccordion>
