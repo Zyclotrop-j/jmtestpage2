@@ -22,6 +22,7 @@ const availableComponents = renameKeysWith(key => `component${key.toLowerCase()}
 
 const HeaderGrid = styled(Grid)``;
 const Pad = styled.div`
+  display: inline-block;
   margin: ${props => props.preview ? 0 : "2px"};
   border: ${props => props.preview ? 0 : "3px"} solid transparent;
   transition: border 0.5s;

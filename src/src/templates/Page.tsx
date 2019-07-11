@@ -98,6 +98,14 @@ export default class Page extends React.PureComponent {
 
 
 export const postQuery = graphql`
+  fragment flist on DATA_Componentlist {
+    _id
+    type
+    adjustForMobile
+    content {
+      _id
+    }
+  }
   fragment fcomponentaccordion on DATA_Componentaccordion {
     _id
     allowMultipleExpanded
@@ -549,8 +557,12 @@ export const postQuery = graphql`
     $DATA_Componentmenu: [ID!]
     $DATA_Componentflowchart: [ID!]
     $DATA_Componentaccordion: [ID!]
+    $DATA_Componentlist: [ID!]
   ) {
     data {
+      componentlists(_ids : $DATA_Componentlist) {
+        ...flist
+      }
       componentaccordions(_ids: $DATA_Componentaccordion) {
         ...fcomponentaccordion
       }

@@ -132,7 +132,7 @@ exports.onCreateWebpackConfig = ({ stage, actions, plugins, getConfig }) => {
 const queryCache = {};
 exports.createPages = ({ actions, graphql }) => {
   runGC();
-  const componentsWithChild = ["DATA_Componentaccordion", "DATA_Componentgrid", "DATA_Componentbox"]
+  const componentsWithChild = ["DATA_Componentlist", "DATA_Componentaccordion", "DATA_Componentgrid", "DATA_Componentbox"]
   const componentsStandalone = ["DATA_Componentflowchart", "DATA_Componentmenu", "DATA_Componentcards", "DATA_Componentcalltoaction", "DATA_Componenticon", "DATA_Componentstage", , "DATA_Componenttext", "DATA_Componentpicture", "DATA_Componentrichtext", "DATA_Componentheadline"]
   const components = [].concat(componentsStandalone, componentsWithChild);
   const makeRecursiveContext = () => {
@@ -161,6 +161,12 @@ exports.createPages = ({ actions, graphql }) => {
                 ... on DATA_Componentgrid {
                   _id
                   gridcontent: content {
+                    _id
+                  }
+                }
+                ... on DATA_Componentlist {
+                  _id
+                  listcontent: content {
                     _id
                   }
                 }
@@ -200,6 +206,11 @@ exports.createPages = ({ actions, graphql }) => {
           const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
           return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
+        if(type === "DATA_Componentlist") {
+          const childids = (i.listcontent || []).map(i => i._id);
+          const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
+          return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
+        }
         if(type === "DATA_Componentaccordion") {
           const childids = (i.accordioncontent || []).map(i => i.content._id);
           const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
@@ -232,9 +243,10 @@ exports.createPages = ({ actions, graphql }) => {
               .filter(({ __typename }) => [
                 "DATA_Componentgrid",
                 "DATA_Componentbox",
-                "DATA_Componentaccordion"
+                "DATA_Componentaccordion",
+                "DATA_Componentlist"
               ].includes(__typename))
-              .map(i => i.gridcontent || i.boxcontent || i.accordioncontent && i.accordioncontent.map(i => i && i.content) || [])
+              .map(i => i.gridcontent || i.listcontent || i.boxcontent || i.accordioncontent && i.accordioncontent.map(i => i && i.content) || [])
               .map(i => (i._id && [i._id]) || i.map(i => i._id))
               .filter(i => i.length)
               .reduce((p, i) => p.concat(i.map(id => discover(id, graphql, page))), []);

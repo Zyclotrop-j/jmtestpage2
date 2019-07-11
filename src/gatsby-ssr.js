@@ -1,4 +1,5 @@
 import React from "react"
+import { RenderingContext, SSR } from "./src/utils/renderingContext";
 // import { useStaticRendering } from "mobx-react";
 import { Layout, Provider } from "./src/components/Layout";
 
@@ -10,8 +11,8 @@ export const wrapPageElement = ({ element, props }) => {
 
 export const wrapRootElement = ({ element }) => {
   return (
-    <Provider>
+    <RenderingContext.Provider value={SSR}><Provider>
       {element}
-    </Provider>
+    </Provider></RenderingContext.Provider>
   )
 }

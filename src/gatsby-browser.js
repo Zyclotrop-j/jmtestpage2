@@ -1,4 +1,5 @@
 import React from "react"
+import { RenderingContext, BROWSER } from "./src/utils/renderingContext";
 // import mobx from "mobx";
 import { Layout, Provider } from "./src/components/Layout"
 
@@ -12,9 +13,9 @@ export const wrapPageElement = ({ element, props }, b) => {
 
 export const wrapRootElement =  ({ element, ...rest }) => {
   return (
-    <Provider>
+    <RenderingContext.Provider value={BROWSER}><Provider>
       {element}
-    </Provider>
+    </Provider></RenderingContext.Provider>
   )
 }
 
