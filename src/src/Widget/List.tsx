@@ -2,15 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { Accordion as YAccordion, AccordionPanel } from "grommet";
 import styled, { css } from 'styled-components';
 import ReactDOM from 'react-dom';
-import LazyLoad from 'react-lazyload';
 import { once } from "ramda";
-import Observer from '@researchgate/react-intersection-observer';
 
 interface Props {
 
 }
 
-const Li = styled.li``;
+const Li = styled.li`
+  & > * {
+    display: inline-flex;
+  }
+`;
 const basedefs = [
   "disc",
   "square",
@@ -39,7 +41,12 @@ const stlyeDefs = {
   none: css`list-style: none;`,
   None: css`list-style: none;`,
   Circle: css`
+  ${Li} {
+    padding-left: 4.25em;
+  }
   ${Li}:before{
+    position: absolute;
+    left: 2.75em;
     width: 1em;
     height: 1em;
     padding: .5em;
@@ -54,7 +61,12 @@ const stlyeDefs = {
   }
   `,
   Square: css`
+  ${Li} {
+    padding-left: 4.25em;
+  }
   ${Li}:before{
+    position: absolute;
+    left: 2.75em;
     width: 1em;
     height: 1em;
     padding: .5em;
@@ -70,7 +82,12 @@ const stlyeDefs = {
   }
   `,
   Diamond: css`
+  ${Li} {
+    padding-left: 4.25em;
+  }
   ${Li}:before{
+    position: absolute;
+    left: 2.75em;
     width: 1em;
     height: 1em;
     padding: .5em;
@@ -85,7 +102,12 @@ const stlyeDefs = {
   }
   `,
   Large: css`
+  ${Li} {
+    padding-left: 2em;
+  }
   ${Li}:before{
+    position: absolute;
+    left: 0.5em;
     color:#666;
     font: bold;
     font-size: 2em;
@@ -229,8 +251,6 @@ export const List = (props) => {
     "square",
     "circle"
   ];
-
-  console.log("props props props props", props);
 
   const content = children.map((u, idx) => (
     <Li key={u._id || idx}>

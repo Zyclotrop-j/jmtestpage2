@@ -14,6 +14,7 @@ import { Menu, uiSchema as menuuiSchema } from "./Menu";
 import { FlowChart, uiSchema as flowchartuiSchema } from "./FlowChart";
 import { Accordion, uiSchema as accordionuiSchema } from "./AccordionLazy";
 import { List, uiSchema as listuiSchema } from "./List";
+import { QRCode, uiSchema as qrcodeuiSchema } from "./QRCode";
 
 
 export const uiSchema = {
@@ -29,8 +30,9 @@ export const uiSchema = {
   richtext: richtextuiSchema,
   flowchart: flowchartuiSchema,
   accordion: accordionuiSchema,
-  list: listuiSchema
+  list: listuiSchema,
+  qrcode: qrcodeuiSchema
 };
 export const Calltoaction = CallToAction;
-export { List, Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Icon, Cards };
-export default { List, Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Calltoaction: CallToAction, Icon, Cards };
+export { QRCode, List, Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Icon, Cards };
+export default { QRCode, List, Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Calltoaction: CallToAction, Icon, Cards };

@@ -98,6 +98,16 @@ export default class Page extends React.PureComponent {
 
 
 export const postQuery = graphql`
+  fragment fqrcode on DATA_Componentqrcode {
+    _id
+    value
+    renderAs
+    size
+    bgColor
+    fgColor
+    level
+    includeMargin
+  }
   fragment flist on DATA_Componentlist {
     _id
     type
@@ -558,8 +568,12 @@ export const postQuery = graphql`
     $DATA_Componentflowchart: [ID!]
     $DATA_Componentaccordion: [ID!]
     $DATA_Componentlist: [ID!]
+    $DATA_Componentqrcode: [ID!]
   ) {
     data {
+      componentqrcodes(_ids: $DATA_Componentqrcode) {
+        ...fqrcode
+      }
       componentlists(_ids : $DATA_Componentlist) {
         ...flist
       }
