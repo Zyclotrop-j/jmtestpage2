@@ -58,12 +58,12 @@ export default class VerticalTimelineComponent extends React.Component<any> {
 
     const dateFormatter = {
       absolute: date => parseISO(date).toLocaleDateString(),
-      relative: date => formatDistanceToNow(date, { addSuffix: true }),
+      relative: date => formatDistanceToNow(parseISO(date), { addSuffix: true }),
       none: date => date
     }[dateformat] || (date => date);
 
     const convertParseDate = date =>
-      isValid(date) ?
+      isValid(parseISO(date)) ?
       (<time datetime={parseISO(date).toISOString()}>{dateFormatter(date)}</time>):
       date;
 

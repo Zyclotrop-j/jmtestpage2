@@ -79,6 +79,11 @@ const GlobalStyle = createGlobalStyle`
   :root{
    --scrollbar-width: calc(100vw - 100%);
   }
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation: none !important;
+    }
+  }
   html {
     height: 100%;
     [type="button"], [type="reset"], [type="submit"] {
