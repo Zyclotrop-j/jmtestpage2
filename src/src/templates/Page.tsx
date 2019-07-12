@@ -96,8 +96,23 @@ export default class Page extends React.PureComponent {
   }
 }
 
-
 export const postQuery = graphql`
+  fragment fverticaltimelinecontent on DATA_Componentverticaltimeline {
+    _id
+    animate
+    dateformat
+    layout
+    content {
+      content {
+        _id
+      }
+      tag
+      background
+      color
+      icon
+      tagcolor
+    }
+  }
   fragment fqrcode on DATA_Componentqrcode {
     _id
     value
@@ -569,8 +584,12 @@ export const postQuery = graphql`
     $DATA_Componentaccordion: [ID!]
     $DATA_Componentlist: [ID!]
     $DATA_Componentqrcode: [ID!]
+    $DATA_Componentverticaltimeline: [ID!]
   ) {
     data {
+      componentverticaltimelines(_ids: $DATA_Componentverticaltimeline) {
+        ...fverticaltimelinecontent
+      }
       componentqrcodes(_ids: $DATA_Componentqrcode) {
         ...fqrcode
       }
@@ -622,6 +641,7 @@ export const postQuery = graphql`
       componentheadlines(_ids: $DATA_Componentheadline) {
         ...fheadline
       }
+
     }
   }
 `;

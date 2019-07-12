@@ -15,6 +15,7 @@ import { FlowChart, uiSchema as flowchartuiSchema } from "./FlowChart";
 import { Accordion, uiSchema as accordionuiSchema } from "./AccordionLazy";
 import { List, uiSchema as listuiSchema } from "./List";
 import { QRCode, uiSchema as qrcodeuiSchema } from "./QRCode";
+import { VerticalTimeline, uiSchema as verticaltimelineuiSchema } from "./VerticalTimeline";
 
 
 export const uiSchema = {
@@ -31,8 +32,9 @@ export const uiSchema = {
   flowchart: flowchartuiSchema,
   accordion: accordionuiSchema,
   list: listuiSchema,
-  qrcode: qrcodeuiSchema
+  qrcode: qrcodeuiSchema,
+  verticaltimeline: verticaltimelineuiSchema
 };
 export const Calltoaction = CallToAction;
-export { QRCode, List, Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Icon, Cards };
-export default { QRCode, List, Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Calltoaction: CallToAction, Icon, Cards };
+export { VerticalTimeline, QRCode, List, Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Icon, Cards };
+export default { VerticalTimeline, QRCode, List, Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Calltoaction: CallToAction, Icon, Cards };

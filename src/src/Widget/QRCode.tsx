@@ -1,8 +1,6 @@
 import React, { Suspense } from 'react';
 import styled from 'styled-components';
-import { Box } from 'grommet';
 import LazyLoad from 'react-lazyload';
-import Observer from '@researchgate/react-intersection-observer';
 import { Spinning } from 'grommet-controls';
 
 interface Props {

@@ -5,8 +5,6 @@ import config from '../../config/SiteConfig';
 import { Link } from 'gatsby';
 import { Anchor } from 'grommet';
 
-import { QRCode } from "../widget/QRCode";
-
 export default class NotFoundPage extends React.Component<any> {
   public render() {
     return (
