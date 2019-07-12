@@ -40,21 +40,21 @@ export const uiSchema = {
     "ui:widget": "list",
     "ui:options": {
       "getList": () => [
-        "all"
+        "all",
         "only all",
         "not all",
-        "screen"
+        "screen",
         "only screen",
         "not screen",
-        "print"
+        "print",
         "only print",
         "not print",
-        "speech"
+        "speech",
         "only speech",
         "not speech",
         "(aspect-ratio: 1/1)",
         "(aspect-ratio: 6/5)",
-        "(aspect-ratio: 5/4)"
+        "(aspect-ratio: 5/4)",
         "(aspect-ratio: 4/3)",
         "(aspect-ratio: 11/8)",
         "(aspect-ratio: 3/2)",
@@ -177,8 +177,6 @@ const MediaQueryComponent = React.lazy(() => import('react-responsive'));
 
 export class MediaQuery extends React.PureComponent<Props> {
 
-  static contextType = HeadlineContext;
-
   static defaultProps = {
     content: "",
     query: "only screen"
@@ -192,9 +190,11 @@ export class MediaQuery extends React.PureComponent<Props> {
       __renderSubtree,
     } = this.props;
 
+    console.log("propspropsprops", this.props);
+
     const content = child.map(__renderSubtree);
-    return (<Suspense fallback={<CssQuery key={_id} query={`all and ${query}`}>{content}</CssQuery>}>
-      <MediaQueryComponent key={_id}  query={`all and ${query}`}>
+    return (<Suspense fallback={<CssQuery key={_id} query={`${query}`}>{content}</CssQuery>}>
+      <MediaQueryComponent key={_id}  query={`${query}`}>
         {content}
       </MediaQueryComponent>
     </Suspense>);

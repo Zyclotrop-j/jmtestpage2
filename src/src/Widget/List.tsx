@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Accordion as YAccordion, AccordionPanel } from "grommet";
 import styled, { css } from 'styled-components';
 import ReactDOM from 'react-dom';
 import { once } from "ramda";

@@ -97,6 +97,12 @@ export default class Page extends React.PureComponent {
 }
 
 export const postQuery = graphql`
+  fragment fcomponentmediaquery on DATA_Componentmediaquery {
+    query
+    content {
+      _id
+    }
+  }
   fragment fverticaltimelinecontent on DATA_Componentverticaltimeline {
     _id
     animate
@@ -585,8 +591,12 @@ export const postQuery = graphql`
     $DATA_Componentlist: [ID!]
     $DATA_Componentqrcode: [ID!]
     $DATA_Componentverticaltimeline: [ID!]
+    $DATA_Componentmediaquery: [ID!]
   ) {
     data {
+      componentmediaquerys(_ids: $DATA_Componentmediaquery) {
+        ...fcomponentmediaquery
+      }
       componentverticaltimelines(_ids: $DATA_Componentverticaltimeline) {
         ...fverticaltimelinecontent
       }

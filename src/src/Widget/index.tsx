@@ -16,6 +16,7 @@ import { Accordion, uiSchema as accordionuiSchema } from "./AccordionLazy";
 import { List, uiSchema as listuiSchema } from "./List";
 import { QRCode, uiSchema as qrcodeuiSchema } from "./QRCode";
 import { VerticalTimeline, uiSchema as verticaltimelineuiSchema } from "./VerticalTimeline";
+import { MediaQuery, uiSchema as mediaqueryuiSchema } from "./MediaQuery";
 
 
 export const uiSchema = {
@@ -33,8 +34,9 @@ export const uiSchema = {
   accordion: accordionuiSchema,
   list: listuiSchema,
   qrcode: qrcodeuiSchema,
-  verticaltimeline: verticaltimelineuiSchema
+  verticaltimeline: verticaltimelineuiSchema,
+  mediaquery: mediaqueryuiSchema
 };
 export const Calltoaction = CallToAction;
-export { VerticalTimeline, QRCode, List, Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Icon, Cards };
-export default { VerticalTimeline, QRCode, List, Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Calltoaction: CallToAction, Icon, Cards };
+export { MediaQuery, VerticalTimeline, QRCode, List, Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Icon, Cards };
+export default { MediaQuery, VerticalTimeline, QRCode, List, Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Calltoaction: CallToAction, Icon, Cards };

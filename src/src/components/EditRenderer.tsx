@@ -22,6 +22,7 @@ const availableComponents = renameKeysWith(key => `component${key.toLowerCase()}
 const DebouncedPreview = debounceRender(({ children, ...props }) => children(props));
 
 const SubtreeRenderer = observer(({ render, compo, addProps, page, website, components: xcomponents, loading, error, Layout }) => {
+  console.log("compo compo compo", compo, compo["x-type"], {...compo});
   if(!compo) return null;
   if(Array.isArray(compo)) {
     const a = (pos) => <AddWidget parentcomponent={addProps.___component || page.get() || website.get()} parentgroup={addProps.___parentid} addProps={addProps} pos={pos} area={addProps.___context} page={page.get()} __renderSubtree={render} />
@@ -36,7 +37,7 @@ const SubtreeRenderer = observer(({ render, compo, addProps, page, website, comp
     const parentids = addProps.parentids ? addProps.parentids.concat([ compo ]) : [ compo ];
     return render(group, { ...addProps, ___parentid: compo, ___parentids: parentids, ___groupid: compo });
   }
-  if(compo.content && is(String, compo.content)) {
+  if(compo.content && is(String, compo.content) && !compo["x-type"]) {
     // Nested components like accordion, where subgroup-id is in comp.content
     const group = xcomponents.get(compo.content)?.components?.map(i => xcomponents.get(i));
     if(group) {
@@ -48,6 +49,8 @@ const SubtreeRenderer = observer(({ render, compo, addProps, page, website, comp
   const type = compo["x-type"];
   const Component = availableComponents[type];
   const content = compo.content;
+
+  console.log("Rendering ", type, Component, content)
 
   const WatchedComponentControlls = observer(ComponentControlls);
   const WatchedComponent = observer(Component);

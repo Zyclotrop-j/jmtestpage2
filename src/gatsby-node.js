@@ -132,7 +132,7 @@ exports.onCreateWebpackConfig = ({ stage, actions, plugins, getConfig }) => {
 const queryCache = {};
 exports.createPages = ({ actions, graphql }) => {
   runGC();
-  const componentsWithChild = ["DATA_Componentverticaltimeline", "DATA_Componentlist", "DATA_Componentaccordion", "DATA_Componentgrid", "DATA_Componentbox"]
+  const componentsWithChild = ["DATA_Componentmediaquery", "DATA_Componentverticaltimeline", "DATA_Componentlist", "DATA_Componentaccordion", "DATA_Componentgrid", "DATA_Componentbox"]
   const componentsStandalone = ["DATA_Componentqrcode", "DATA_Componentflowchart", "DATA_Componentmenu", "DATA_Componentcards", "DATA_Componentcalltoaction", "DATA_Componenticon", "DATA_Componentstage", , "DATA_Componenttext", "DATA_Componentpicture", "DATA_Componentrichtext", "DATA_Componentheadline"]
   const components = [].concat(componentsStandalone, componentsWithChild);
   const makeRecursiveContext = () => {
@@ -182,6 +182,12 @@ exports.createPages = ({ actions, graphql }) => {
                     _id
                   }
                 }
+                ... on DATA_Componentmediaquery {
+                  _id
+                  mediacontent: content {
+                    _id
+                  }
+                }
               }
             }
         }
@@ -227,6 +233,11 @@ exports.createPages = ({ actions, graphql }) => {
           const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
           return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
+        if(type === "DATA_Componentmediaquery") {
+          const { _id: childid } = i.mediacontent || {};
+          const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
+          return { id, type, child, componentgroupid: group.componentgroupid };
+        }
         return { id, type, componentgroupid: group.componentgroupid };
       });
     };
@@ -256,13 +267,14 @@ exports.createPages = ({ actions, graphql }) => {
                 "DATA_Componentbox",
                 "DATA_Componentaccordion",
                 "DATA_Componentlist",
-                "DATA_Componentverticaltimeline"
-
+                "DATA_Componentverticaltimeline",
+                "DATA_Componentmediaquery"
               ].includes(__typename))
               .map(i =>
                 i.gridcontent ||
                 i.listcontent ||
                 i.boxcontent ||
+                i.mediacontent ||
                 i.accordioncontent && i.accordioncontent.map(i => i && i.content) ||
                 i.verticaltimelinecontent && i.verticaltimelinecontent.map(i => i && i.content) ||
                 []

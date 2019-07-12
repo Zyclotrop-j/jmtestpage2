@@ -69,7 +69,7 @@ const RawComponentControlls = observer(({ connectDragSource, schemas, __renderSu
     throw new Error('Type not defined - widgets need a type to be rendered!');
   }
 
-  const minimize = viewmode.get() === "minimize" && !['componentaccordion', 'componentbox', 'componentgrid'].includes(type);
+  const minimize = viewmode.get() === "minimize" && !['componentmediaquery', 'componentlist', 'componentaccordion', 'componentbox', 'componentgrid'].includes(type);
   const preview = viewmode.get() === "preview";
 
   const enhancedChildren = Array.isArray(__children)
