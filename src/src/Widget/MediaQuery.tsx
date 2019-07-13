@@ -40,6 +40,8 @@ export const uiSchema = {
     "ui:widget": "list",
     "ui:options": {
       "getList": () => [
+        "online",
+        "offline",
         "all",
         "only all",
         "not all",
@@ -174,6 +176,7 @@ const CssQuery = styled.div`
 `;
 
 const MediaQueryComponent = React.lazy(() => import('react-responsive'));
+const IsInlineComponent = React.lazy(() => import('is-online-component'));
 
 export class MediaQuery extends React.PureComponent<Props> {
 
@@ -190,9 +193,15 @@ export class MediaQuery extends React.PureComponent<Props> {
       __renderSubtree,
     } = this.props;
 
-    console.log("propspropsprops", this.props);
-
     const content = child.map(__renderSubtree);
+    if(query === "online" || query === "offline") {
+      return <Suspense fallback={query === "online" ? <>{content}</> : null}>
+        <IsInlineComponent
+          OnlineComponent={query === "online" ? <>{content}</> : null}
+          OfflineComponent={query === "offline" ? <>{content}</> : null}
+        />
+      </Suspense>
+    }
     return (<Suspense fallback={<CssQuery key={_id} query={`${query}`}>{content}</CssQuery>}>
       <MediaQueryComponent key={_id}  query={`${query}`}>
         {content}
