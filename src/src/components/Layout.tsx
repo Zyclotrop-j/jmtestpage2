@@ -128,6 +128,10 @@ const GlobalStyle = createGlobalStyle`
   b {
     font-weight: bold;
   }
+  .leaflet-div-icon {
+    background: transparent !important;
+    border: 1px none transparent !important;
+  }
 `;
 
 export class Provider extends React.PureComponent<{}> {

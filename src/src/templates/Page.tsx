@@ -97,6 +97,34 @@ export default class Page extends React.PureComponent {
 }
 
 export const postQuery = graphql`
+  fragment fcomponentmaps on DATA_Componentmap {
+    _id
+    defaultView {
+      lat
+      lng
+    }
+    defaultZoom
+    height
+    objects {
+      type
+      position
+      icon
+      color
+      background
+      size
+      radius
+      popup
+      bounds
+    }
+  }
+  fragment fcomponentshowmore on DATA_Componentshowmore {
+    initiallyOpen
+    showMore
+    showLess
+    content {
+      _id
+    }
+  }
   fragment fcomponentmediaquery on DATA_Componentmediaquery {
     query
     content {
@@ -592,8 +620,16 @@ export const postQuery = graphql`
     $DATA_Componentqrcode: [ID!]
     $DATA_Componentverticaltimeline: [ID!]
     $DATA_Componentmediaquery: [ID!]
+    $DATA_Componentshowmore: [ID!]
+    $DATA_Componentmap: [ID!]
   ) {
     data {
+      componentmaps(_ids: $DATA_Componentmap) {
+        ...fcomponentmaps
+      }
+      componentshowmores(_ids: $DATA_Componentshowmore) {
+        ...fcomponentshowmore
+      }
       componentmediaquerys(_ids: $DATA_Componentmediaquery) {
         ...fcomponentmediaquery
       }

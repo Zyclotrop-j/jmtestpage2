@@ -132,8 +132,8 @@ exports.onCreateWebpackConfig = ({ stage, actions, plugins, getConfig }) => {
 const queryCache = {};
 exports.createPages = ({ actions, graphql }) => {
   runGC();
-  const componentsWithChild = ["DATA_Componentmediaquery", "DATA_Componentverticaltimeline", "DATA_Componentlist", "DATA_Componentaccordion", "DATA_Componentgrid", "DATA_Componentbox"]
-  const componentsStandalone = ["DATA_Componentqrcode", "DATA_Componentflowchart", "DATA_Componentmenu", "DATA_Componentcards", "DATA_Componentcalltoaction", "DATA_Componenticon", "DATA_Componentstage", , "DATA_Componenttext", "DATA_Componentpicture", "DATA_Componentrichtext", "DATA_Componentheadline"]
+  const componentsWithChild = ["DATA_Componentshowmore", "DATA_Componentmediaquery", "DATA_Componentverticaltimeline", "DATA_Componentlist", "DATA_Componentaccordion", "DATA_Componentgrid", "DATA_Componentbox"]
+  const componentsStandalone = ["DATA_Componentmap", "DATA_Componentqrcode", "DATA_Componentflowchart", "DATA_Componentmenu", "DATA_Componentcards", "DATA_Componentcalltoaction", "DATA_Componenticon", "DATA_Componentstage", , "DATA_Componenttext", "DATA_Componentpicture", "DATA_Componentrichtext", "DATA_Componentheadline"]
   const components = [].concat(componentsStandalone, componentsWithChild);
   const makeRecursiveContext = () => {
     const componentgroups = new Set();
@@ -188,6 +188,12 @@ exports.createPages = ({ actions, graphql }) => {
                     _id
                   }
                 }
+                ...on DATA_Componentshowmore {
+                  _id
+                  showmorecontent: content {
+                    _id
+                  }
+                }
               }
             }
         }
@@ -235,6 +241,11 @@ exports.createPages = ({ actions, graphql }) => {
         }
         if(type === "DATA_Componentmediaquery") {
           const { _id: childid } = i.mediacontent || {};
+          const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
+          return { id, type, child, componentgroupid: group.componentgroupid };
+        }
+        if(type === "DATA_Componentshowmore") {
+          const { _id: childid } = i.showmorecontent || {};
           const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
           return { id, type, child, componentgroupid: group.componentgroupid };
         }

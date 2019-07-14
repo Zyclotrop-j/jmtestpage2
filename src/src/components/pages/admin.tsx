@@ -393,7 +393,7 @@ export default class IndexPage extends React.Component<any> {
         <Notificationbar notifications={notifications} />
         <StyledSplitPane split="vertical" minSize={250}>
             <Grid
-              rows={['auto', 'flex', 'auto', 'auto', 'xsmall']}
+              rows={['auto', 'flex', 'auto', 'auto', 'flex']}
               columns={['auto']}
               fill={true}
               areas={[

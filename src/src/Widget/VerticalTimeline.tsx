@@ -5,6 +5,7 @@ import LazyLoad from 'react-lazyload';
 import { once } from "ramda";
 import Observer from '@researchgate/react-intersection-observer';
 import { Spinning } from 'grommet-controls';
+import { AnnounceContext } from "grommet";
 import metadata from "grommet-icons/metadata";
 import 'react-vertical-timeline-component/style.min.css';
 
@@ -104,17 +105,26 @@ const Tmp = (props) => {
     _id,
   } = props;
 
-  const Placeholder = <Spinning
+  const Placeholder = () => <div aria-label="Loading Timeline"><Spinning
     id={`loading-${_id}`}
     kind="circle"
     color="currentColor"
     size="medium"
-  />;
+  /></div>;
   // We Wrap the Component to avoid react doing reducer magic
-  const [{ Component }, setContent] = useState({ Component: () => Placeholder });
+  const [{ Component }, setContent] = useState({ Component: Placeholder });
 
-  const f = event => Placeholder !== Component && event.isIntersecting && importComponent(Component => setContent({
-    Component
+  const f = event => Placeholder === Component && event.isIntersecting && importComponent(Component => setContent({
+    Component: props => (<AnnounceContext.Consumer>
+      {announce => {
+        announce(
+          "Timeline loaded",
+          "polite",
+          2000
+        );
+        return <Component {...props} />;
+      }}
+    </AnnounceContext.Consumer>)
   }));
 
   return (<Observer rootMargin="-25% 0% -25% 0%" key={_id} onChange={f}>
