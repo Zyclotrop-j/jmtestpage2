@@ -19,6 +19,7 @@ import { VerticalTimeline, uiSchema as verticaltimelineuiSchema } from "./Vertic
 import { MediaQuery, uiSchema as mediaqueryuiSchema } from "./MediaQuery";
 import { ShowMore, uiSchema as showmoreuiSchema } from "./ShowMore";
 import { Map, uiSchema as mapuiSchema } from "./Map";
+import { ContactForm, uiSchema as contactformuiSchema } from "./ContactForm";
 
 
 export const uiSchema = {
@@ -39,8 +40,9 @@ export const uiSchema = {
   verticaltimeline: verticaltimelineuiSchema,
   mediaquery: mediaqueryuiSchema,
   showmore: showmoreuiSchema,
-  map: mapuiSchema
+  map: mapuiSchema,
+  contactform: contactformuiSchema
 };
 export const Calltoaction = CallToAction;
-export { Map, ShowMore, MediaQuery, VerticalTimeline, QRCode, List, Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Icon, Cards };
-export default { Map, ShowMore, MediaQuery, VerticalTimeline, QRCode, List, Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Calltoaction: CallToAction, Icon, Cards };
+export { ContactForm, Map, ShowMore, MediaQuery, VerticalTimeline, QRCode, List, Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Icon, Cards };
+export default { ContactForm, Map, ShowMore, MediaQuery, VerticalTimeline, QRCode, List, Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Calltoaction: CallToAction, Icon, Cards };

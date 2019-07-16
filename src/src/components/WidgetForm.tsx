@@ -5,11 +5,12 @@ import { EmailInput, DateInput, ColorInput, PasswordInput, NumberInput, Colors }
 import { Close, Search } from 'grommet-icons';
 import chroma from "chroma-js";
 import { when } from "mobx";
-import { omit, map, compose, pipe, identity, tryCatch, dissocPath, hasPath, has, max, mergeDeepLeft, memoizeWith } from "ramda";
+import { omit, map, compose, pipe, identity, tryCatch, dissocPath, hasPath, has, max, mergeDeepLeft, memoizeWith, once } from "ramda";
 import { noop } from 'ramda-adjunct';
 import { observer } from 'mobx-react';
 import Fuse from 'fuse.js';
 import Unsplash, { toJson } from 'unsplash-js';
+import { debounce } from "lodash";
 import Form from 'react-jsonschema-form';
 import debounceRender from 'react-debounce-render';
 import MarkdownPreview from './MarkdownInput';
@@ -20,16 +21,24 @@ import { Modal } from '../components/Modal';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { IconChoose } from './IconChooser';
 
+const dofetch = once(() => fetch("https://zcmsapi.herokuapp.com/api/v1/clientsidesecret", {
+  cache: "no-cache",
+  headers: {
+    "authorization": `Bearer ${auth.idToken}`,
+  }
+}).then(i => i.json()));
 const unsplash = new Promise((res, rej) => {
   when(() => auth.idToken).then(function(change) {
-    fetch("https://zcmsapi.herokuapp.com/api/v1/clientsidesecret", {
-      cache: "no-cache",
-      headers: {
-        "authorization": `Bearer ${auth.idToken}`,
-      }
-    }).then(i => i.json()).then(i => new Unsplash({
+    dofetch().then(i => new Unsplash({
       applicationId: i.data.find(i => i.title === "unsplashaccess").secret,
-      secret: i.data.find(i => i.title === "unsplashsecret").secret
+      secret: i.data.find(i => i.title === "unsplashsecret").secret,
+    })).then(i => res(i));
+  });
+});
+const createemail = new Promise((res, rej) => {
+  when(() => auth.idToken).then(function(change) {
+    dofetch().then(i => ({
+      createemail: i.data.find(i => i.title === "createemail").secret,
     })).then(i => res(i));
   });
 });
@@ -455,9 +464,95 @@ const ImageInput = ({ value, onChange: modonChange, onContext: modonContext, sch
     </>);
 };
 
+const debouncedChange = debounce((v, onChange) => createemail.then(secret =>
+  fetch("https://script.google.com/macros/s/AKfycbwAj7072jfxikYraJ7KYTTXBzQBDjlG42rsPg-4bFnagzRChJy8/exec?callback=&callbacke=", {
+    redirect: "follow",
+    method: "POST",
+    mode: "cors",
+    body: JSON.stringify({
+      passcode: secret.createemail,
+      operation: "encypt",
+      data: v
+    })
+})).then(i => i.text()).then(onChange), 1800, {
+  'leading': false,
+  'trailing': true,
+  'maxWait': 30000
+});
+const emailregex = /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i;
+
+const EncryptedEmail = ({
+  value,
+  onChange,
+  options,
+  onBlur,
+  onFocus,
+  ...props
+}) => {
+  const [plaintext, setplaintext] = React.useState();
+  const [working, setworking] = React.useState(false);
+
+  const valueChanged = (v, event) => {
+    if(emailregex.test(v)) {
+      debouncedChange(v, q => {
+        onChange(q);
+        setworking(false);
+      });
+      setworking(true);
+    }
+    setplaintext(v);
+  };
+  return (<>
+    <TextInput
+      {...props}
+      placeholder="Your email"
+      value={plaintext}
+      onBlur={onBlur && (event => onBlur(event.value))}
+      onFocus={onFocus && (event => onFocus(event.value))}
+      onChange={event => valueChanged(event?.target?.value || event?.value, event)}
+    />
+    <TextInput
+      {...props}
+      placeholder="Encrypted email"
+      readonly
+      disabled
+      value={working ? "... encrypting ..." : value}
+      onBlur={onBlur && (event => onBlur(event.value))}
+      onFocus={onFocus && (event => onFocus(event.value))}
+      onChange={() => null}
+    />
+  </>);
+  // todo: get clientside secret createemail
+  // todo: send to
+  /*
+    fetch("https://script.google.com/macros/s/AKfycbwAj7072jfxikYraJ7KYTTXBzQBDjlG42rsPg-4bFnagzRChJy8/exec?callback=&callbacke=", {
+            redirect: "follow",
+            method: "POST",
+            mode: "cors",
+            body: JSON.stringify({
+              passcode: "<SECRET>",
+              operation: "encypt",
+              data: "<EMAIL>"
+            })
+    }).then(i => i.text()).then(i => console.log("!!!", i))
+
+    fetch("https://script.google.com/macros/s/AKfycbwAj7072jfxikYraJ7KYTTXBzQBDjlG42rsPg-4bFnagzRChJy8/exec?callback=&callbacke=", {
+            redirect: "follow",
+            method: "POST",
+            mode: "cors",
+            body: JSON.stringify({
+              passcode: "<SECRET>",
+              operation: "decypt",
+              data: "<DATA FROM WIDGET>"
+            })
+    }).then(i => i.text()).then(i => console.log("!!!", i))
+  */
+};
+
 const MarkdownInput = MarkdownPreview;
 
 export const widgets = {
+  EncryptedEmail,
   list: ListChoose,
   icon: IconChoose,
   markdown: MarkdownInput,

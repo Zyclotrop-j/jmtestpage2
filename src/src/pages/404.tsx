@@ -4,6 +4,7 @@ import Helmet from 'react-helmet';
 import config from '../../config/SiteConfig';
 import { Link } from 'gatsby';
 import { Anchor } from 'grommet';
+import { ContactForm } from "../Widget"
 
 export default class NotFoundPage extends React.Component<any> {
   public render() {
@@ -11,6 +12,7 @@ export default class NotFoundPage extends React.Component<any> {
       <Wrapper>
         <h1>NOT FOUND</h1>
         <p>You just hit a route that doesn&#39;t exist... the sadness.</p>
+        <ContactForm />
       </Wrapper>
     );
   }

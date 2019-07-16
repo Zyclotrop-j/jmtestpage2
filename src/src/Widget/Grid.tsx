@@ -20,7 +20,10 @@ export class Grid extends React.PureComponent<Props> {
 
   static defaultProps = {
       content: [],
-      columns: []
+      columns: [],
+      advanced: {
+        fill: false
+      }
   }
 
   public render() {

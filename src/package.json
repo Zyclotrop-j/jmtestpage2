@@ -173,6 +173,8 @@
     "react-unveil": "^0.0.2",
     "react-vertical-timeline-component": "^2.4.0",
     "react-virtualized": "^9.21.1",
+    "reaptcha": "^1.5.1",
+    "recaptcha-v3": "^1.5.0",
     "rxjs": "^6.5.2",
     "slate": "^0.47.3",
     "slate-plain-serializer": "^0.7.5",

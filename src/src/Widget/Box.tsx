@@ -42,7 +42,10 @@ export class Box extends React.PureComponent<Props> {
       },
       alt: "",
       width: 150,
-      height: 150
+      height: 150,
+      advanced: {
+        fill: false
+      }
     }
   }
 
