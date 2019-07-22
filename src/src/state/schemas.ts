@@ -1,7 +1,8 @@
 import { observable, flow, computed, autorun } from 'mobx';
 import Ajv from 'ajv';
+import fetch from "./fetch";
 
-export const ajv = new Ajv({ allErrors: true, nullable: true });
+export const ajv = new Ajv({ allErrors: true, nullable: true, unknownFormats: "ignore" });
 
 export const schemas = observable([]);
 export const loading = observable.box(false);

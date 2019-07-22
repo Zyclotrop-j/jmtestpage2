@@ -5,6 +5,7 @@ import { Form, FormField, TextInput, TextArea, Button, MaskedInput } from "gromm
 import { Spinning } from 'grommet-controls';
 import { tryCatch, identity } from "ramda";
 import { StatusGood, Alert } from "grommet-icons";
+import { OutboundLink } from 'gatsby-plugin-gtag';
 
 interface Props {}
 
@@ -575,8 +576,8 @@ export class ContactForm extends React.PureComponent<Props> {
           <br /><br />
           This form relies on reCAPTCHA to prevent spam and bots.<br />
           This site is protected by reCAPTCHA and the Google{" "}
-          <a href="https://policies.google.com/privacy" rel="noreferrer">Privacy Policy</a> and{" "}
-          <a href="https://policies.google.com/terms" rel="noreferrer">Terms of Service</a> apply.
+          <OutboundLink href="https://policies.google.com/privacy" rel="noreferrer">Privacy Policy</OutboundLink> and{" "}
+          <OutboundLink href="https://policies.google.com/terms" rel="noreferrer">Terms of Service</OutboundLink> apply.
         </small>
         <br />
         <Button type="submit" primary label="Submit" disabled={!this.validate() || this.state.loading || !to} />

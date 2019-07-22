@@ -1,6 +1,7 @@
 import { observable, flow, action, autorun } from "mobx";
 import { auth } from "../utils/auth";
 import { current as website, websites } from "./websites";
+import fetch from "./fetch";
 
 export const pages = observable([]);
 export const current = observable.box(null);

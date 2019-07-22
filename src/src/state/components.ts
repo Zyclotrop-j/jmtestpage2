@@ -8,6 +8,7 @@ import { current as website, websites } from "./websites";
 import { componentschemas, ajv } from "./schemas";
 import { pages } from "./pages";
 import { auth } from "../utils/auth";
+import fetch from "./fetch";
 
 export const components = observable.map({});
 export const loading = observable.box(false);

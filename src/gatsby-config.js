@@ -81,13 +81,57 @@ wstream.end();
 const favicon = tmpobj.name;
 // Fav-icon end
 
-const optPlugins = process.env.CI ? [] : ["gatsby-plugin-webpack-bundle-analyser-v2"];
+const ga = {
+  resolve: `gatsby-plugin-gtag`,
+  options: {
+    trackingId: websitedata.data.googleAnalytics || "UA-144040671-1",
+    // Defines where to place the tracking script - `true` in the head and `false` in the body
+    head: false,
+    // Setting this parameter is optional
+    anonymize: true,
+    // Setting this parameter is also optional
+    respectDNT: true,
+    // Avoids sending pageview hits from custom paths
+    exclude: ["/___/**", "/__/**", "/_/**", "/admin/", "/callback/", "/theme/"],
+    // Delays sending pageview hits on route update (in milliseconds)
+    pageTransitionDelay: 1000,
+    // Enables Google Optimize using your container Id
+    // optimizeId: "YOUR_GOOGLE_OPTIMIZE_TRACKING_ID",
+    // Enables Google Optimize Experiment ID
+    // experimentId: "YOUR_GOOGLE_EXPERIMENT_ID",
+    // Set Variation ID. 0 for original 1,2,3....
+    // variationId: "YOUR_GOOGLE_OPTIMIZE_VARIATION_ID",
+    // Any additional create only fields (optional)
+    name: "ℊÅ",
+    sampleRate: 100,
+    siteSpeedSampleRate: 10,
+    cookieName: "ℊÅ",
+    cookieDomain: (function() {
+      const x = require("parse-domain")(websitedata.data.domain);
+      return x.domain + "." + x.tld;
+    })(),
+    allowLinker: true,
+    anonymizeIp: true,
+    forceSSL: true,
+    transport: 'beacon'
+  },
+};
+const optPlugins = process.env.CI ? websitedata.data.googleAnalytics ? [ga] : [] : ["gatsby-plugin-webpack-bundle-analyser-v2"];
 
 // console.log("Created config for "+websitedata.data.domain);
 
+const dr = x => x.split("").map((i, idx) => i.charCodeAt(0) + idx).join("-");
 module.exports = {
   siteMetadata: {
-    siteUrl: config.siteUrl,
+    siteUrl: `https://${websitedata.data.domain}`,
+    name: dr("...."),
+    addr: dr(`
+      .....
+    `),
+    email: dr("...."),
+    phone: dr("...."),
+    websitename: `"${websitedata.data.title}"`,
+    website: websitedata.data.domain
   },
   plugins: [
     ...optPlugins,
@@ -215,6 +259,20 @@ module.exports = {
         theme_color: themeColor,
         display: 'standalone',
         icon: favicon,
+        links:  [
+          // about
+          // preview
+          {
+            "href": "/_/privacy",
+            "type": "text/html",
+            "rel": "privacy-policy"
+          },
+          {
+            "href": "/_/terms",
+            "type": "text/html",
+            "rel": "terms-of-service"
+          }
+        ],
       },
     },
     {

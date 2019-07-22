@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Link } from 'gatsby';
 import { Button } from "grommet";
 import { map } from 'ramda';
+import { OutboundLink } from 'gatsby-plugin-gtag';
 import { Icon } from "./Icon";
 import { RichText } from "./RichText";
 
@@ -146,7 +147,7 @@ export class CallToAction extends React.PureComponent<Props> {
     const pageActions = {};
 
     // the following regex is how gatsby tests it!
-    const localLink = /^\/(?!\/)/.test(href) ? { as: Link, to: href } : { rel: "noopener" };
+    const localLink = /^\/(?!\/)/.test(href) ? { as: Link, to: href } : { as: OutboundLink, rel: "noopener" };
     const onClick = pageActions[pageAction] || undefined;
     const cfill = ["false", "none", ""].includes(fill) ? false : (
       ["horizontal", "vertical"].includes(fill) ? fill : true

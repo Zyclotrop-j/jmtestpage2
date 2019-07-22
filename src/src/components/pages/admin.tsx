@@ -18,6 +18,7 @@ import { viewmode, viewmodes, setViewmode } from "../../state/viewmode";
 import { fetchAllSchemas, pageschema, websiteschema, componentschemas, loading as schemaloading, error as schemaerror } from "../../state/schemas";
 import { editComponent, addComponent, fetchAllComponents, components as allComponents, loading as componentloading, error as componenterror, request } from "../../state/components";
 import { pages, setCurrentPage, current as currentpage, loading as pageloading, error as pageerror } from "../../state/pages";
+import { entities, loading as entitiesloading, error as entitieserror, progress as entityprogress } from "../../state/entities";
 import { themes, addSite, addPage, fetchAllWebsites, setCurrentWebsite, websites, current as currentwebsite, loading as websiteloading, error as websiteerror } from "../../state/websites";
 import { auth } from "../../utils/auth";
 import { ModernLayout } from "../../layouts/modern";
@@ -26,6 +27,7 @@ import { Notificationbar } from "../../components/Notificationbar";
 import { ComponentControlls } from "../../components/ComponentControlls";
 import EditRenderer from "../../components/EditRenderer";
 import AssetManager from "../../components/AssetManager";
+import EntityManager from "../../components/EntityManager";
 import components from '../../Widget';
 import SEOPreview from "../../components/SEOPreview";
 import { deployment, isDeploying, doDeploy } from "../../state/deployments";
@@ -393,13 +395,14 @@ export default class IndexPage extends React.Component<any> {
         <Notificationbar notifications={notifications} />
         <StyledSplitPane split="vertical" minSize={250}>
             <Grid
-              rows={['auto', 'flex', 'auto', 'auto', 'flex']}
+              rows={['auto', 'flex', 'auto', 'auto', 'auto', 'flex']}
               columns={['auto']}
               fill={true}
               areas={[
                 { name: 'modals', start: [0, 0], end: [0, 0] },
                 { name: 'viewmode', start: [0, 2], end: [0, 2] },
                 { name: 'assetmanager', start: [0, 3], end: [0, 3] },
+                { name: 'entitymanager', start: [0, 4], end: [0, 4] },
               ]}
             >
               <Box gridArea="modals">
@@ -408,6 +411,9 @@ export default class IndexPage extends React.Component<any> {
               <Viewmodechooser viewmode={viewmode} set={setViewmode} options={viewmodes} />
               <Box gridArea="assetmanager">
                 <AssetManager current={currentwebsite} auth={auth} />
+              </Box>
+              <Box gridArea="entitymanager">
+                <EntityManager progress={entityprogress} current={currentwebsite} auth={auth} error={entitieserror} loading={entitiesloading} entities={entities} />
               </Box>
             </Grid>
             <StyledSplitPane split="horizontal" minSize={150}>

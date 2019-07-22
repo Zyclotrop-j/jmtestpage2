@@ -602,7 +602,7 @@ export const widgets = {
   ColorWidget: ({ onChange, ...props }) => <ColorInput {...props} onChange={event => onChange(event.target.value)} />,
 };
 
-const CustomIconForm = styled(Form)`
+export const CustomIconForm = styled(Form)`
   i.glyphicon { display: none; }
   .btn-add::after { content: 'Add'; }
   .array-item-move-up::after { content: 'Move Up'; }

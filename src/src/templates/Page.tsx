@@ -36,6 +36,8 @@ export default class Page extends React.PureComponent {
     } = this.props.data.data;
     // ltr, rtl, auto
 
+    console.log("PAGE DATA", this.props.data)
+
     return (
       <>
         <Helmet>
@@ -58,6 +60,20 @@ export default class Page extends React.PureComponent {
           {lastPage && <meta name="last" content={lastPage} />}
           {/* <link rel=”alternate” hreflang=”x-default” href=”https://www.mysite.com”/> */}
           {/* <link href="https://fonts.googleapis.com" rel="preconnect" crossorigin /> */}
+          <script type="application/ld+json">
+          {/*
+            JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              "itemListElement": x.split("/").slice(1).map((j, jdx) => ({
+                "@type": "ListItem",
+                "position": jdx + 1,
+                "name": j.title,
+                "item": j.path
+              }))
+              })
+          */}
+          </script>
         </Helmet>
         {typeof document !== 'undefined' && <SkipLinks>
           <SkipLink id="header" label="Header" />

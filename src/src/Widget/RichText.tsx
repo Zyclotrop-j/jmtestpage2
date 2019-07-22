@@ -6,6 +6,7 @@ import { tryCatch, identity } from "ramda";
 import { Markdown, Paragraph, Anchor, Box, ResponsiveContext } from 'grommet';
 import Image from 'react-shimmer';
 import LazyLoad from 'react-lazyload';
+import { OutboundLink } from 'gatsby-plugin-gtag';
 import { Icon } from "./Icon";
 import { atob, decodeURIComponent, escape } from "../utils/b64";
 
@@ -74,7 +75,7 @@ export const components = {
   a: {
     component: props => {
       const MDLink = styled(Link)``;
-      const as = props.href[0] === "/" ? { as: MDLink, to: props.href } : { rel: "noopener" };
+      const as = props.href[0] === "/" ? { as: MDLink, to: props.href } : { as: OutboundLink, rel: "noopener" };
       return <Anchor {...props} {...as} href={props.href} />;
     },
   },
