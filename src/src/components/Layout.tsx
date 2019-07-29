@@ -19,6 +19,7 @@ import Link from 'gatsby-link';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { ModernLayout } from '../layouts/modern';
 import { PageContext } from '../utils/PageContext';
+import { MenuContext } from '../utils/menuContext';
 
 const HeadOverlay = styled.div``;
 
@@ -160,7 +161,10 @@ const FlexTopMenu = styled.header`
   display: block;
 `;
 
-const RouteContainer = posed.div({
+const NoOverflowdiv = styled.div`
+  overflow-x: hidden;
+`;
+const RouteContainer = posed(NoOverflowdiv)({
   default: { opacity: 1, x: 0, y:0 },
 
   leftexit: { opacity: 1, x: "-100%", y: 0 },
@@ -175,6 +179,19 @@ const RouteContainer = posed.div({
   bottomenter: { opacity: 1, x: 0, y: "100%", delay: 300, beforeChildren: true },
   fadedenter: { opacity: 0, x: 0, y:0, delay: 300, beforeChildren: true }
 });
+
+const Sidebarstatefull = ({
+  component: Component,
+  ...props
+}) => {
+  const [menuOpen, setMenuOpen] = React.useState(false);
+
+  return (<MenuContext.Provider value={setMenuOpen}><Component
+    {...props}
+    isOpen={menuOpen}
+    onStateChange={state => setMenuOpen(state)}
+  /></MenuContext.Provider>);
+}
 
 const persitentConext = {};
 export class Layout extends React.Component<{}> {
@@ -334,7 +351,7 @@ export class Layout extends React.Component<{}> {
       "Android"; // Mobile first
 
     return (
-        <Grommet
+        <MenuContext.Provider value={() => null}><Grommet
           cssVars
           full
           userAgent={initialMobileBreakpoint}
@@ -353,12 +370,16 @@ export class Layout extends React.Component<{}> {
             })}>
               <>
                 <MenuStyled />
-                <Sidebar pageWrapId={`${pathname}-page-wrap`} outerContainerId={`${pathname}-outer-container`}>
+                <Sidebarstatefull
+                  component={Sidebar}
+                  pageWrapId={`${pathname}-page-wrap`}
+                  outerContainerId={`${pathname}-outer-container`}
+                >
                   <SkipLinkTarget id="navigation_side" />
                   <Box direction="column" id="navigation_side_marker">
                     {__renderSubtree(sidemenu)}
                   </Box>
-                </Sidebar>
+                </Sidebarstatefull>
               </>
             </PageContext.Provider> : <span />}
           </ErrorBoundary>
@@ -412,7 +433,7 @@ export class Layout extends React.Component<{}> {
               </BottomMenu>
             </PageContext.Provider> : <span />}
           </ErrorBoundary>
-        </Grommet>
+        </Grommet></MenuContext.Provider>
     );
   }
 

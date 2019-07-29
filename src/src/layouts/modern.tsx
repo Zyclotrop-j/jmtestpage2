@@ -5,10 +5,13 @@ import { mq } from '../utils/media';
 import { PriorityContext, LOW, DEFAULT, IMPORTANT } from "../utils/priorityContext";
 import { ThemeContext } from 'styled-components';
 
+const NoOverflowBox = styled(Box)`
+  overflow-x: hidden;
+`;
 const Main = ({ children, value }) => {
   const MMain = styled.main`
     position: relative;
-    padding: 0;
+    padding: 1rem;
     ${props => mq('small')(`
      padding: 0 calc( ( 100vw - ${props.theme.global.size.xlarge} ) / 2 );
     `)}
@@ -53,9 +56,9 @@ export const ModernLayout = (props) => {
     <PriorityContext.Provider value={DEFAULT}>
       <Main>
         <SkipLinkTarget id="main" />
-        <Box direction="column" id="pagebodybodycenter">
+        <NoOverflowBox direction="column" id="pagebodybodycenter">
           {props.__renderSubtree(props?.main)}
-        </Box>
+        </NoOverflowBox>
       </Main>
     </PriorityContext.Provider>
     <PriorityContext.Provider value={LOW}>

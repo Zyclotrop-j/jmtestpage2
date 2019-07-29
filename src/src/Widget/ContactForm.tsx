@@ -364,7 +364,7 @@ export class ContactForm extends React.PureComponent<Props> {
 
         Form submitted at ${(new Date()).toISOString()}
 
-        You are receiving this message, because of your website's contact form under ${window.location}.
+        You are receiving this message, because of your website's contact form (${window.location}).
         All the content of this form is unfiltered, usergenerated.
         Please be reminded to safeguard the personal details this email contains.
         To discontinue receiving contact requests please contact websites.mingram.net.
@@ -393,7 +393,7 @@ export class ContactForm extends React.PureComponent<Props> {
         <p>${this.props.text}</p>
         <p>Form was submitted at ${(new Date()).toISOString()}</p>
         <p><small>
-          You are receiving this message, because of your website's contact form under ${window.location}.
+          You are receiving this message, because of your website's contact form (${window.location}).
           All the content of this form is unfiltered, usergenerated.
           Please be reminded to safeguard the personal details this email contains.
           To discontinue receiving contact requests please contact websites.mingram.net.
@@ -404,9 +404,6 @@ export class ContactForm extends React.PureComponent<Props> {
       from: this.state.from,
       customer: this.props.customer || "demo" // to do: extract from website
     }, f);
-
-
-
   }
 
   public componentDidMount() {
@@ -488,7 +485,7 @@ export class ContactForm extends React.PureComponent<Props> {
         <FormField htmlFor={`${_id}-email`} aria-required label={<>Your email{req}</>}>
           <MaskedInput
             id={`${_id}-email`}
-            placeholder="you@youremail.com"
+            placeholder="JonDoe@email.com"
             value={this.state.from}
             onChange={setValue("from")}
             mask={[

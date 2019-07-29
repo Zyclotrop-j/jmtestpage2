@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'gatsby';
+import { OutboundLink } from 'gatsby-plugin-gtag';
 import styled, { createGlobalStyle, keyframes } from 'styled-components';
 import { path, map, filter, T, assocPath } from "ramda";
 import { defaultProps, Anchor } from 'grommet';
@@ -7,6 +8,7 @@ import RCMenu, { SubMenu, MenuItem } from 'rc-menu';
 import { normalizeColor } from 'grommet-styles';
 import { complement, darken } from 'polished';
 import { PageContext } from "../utils/PageContext";
+import { MenuContext } from '../utils/menuContext';
 
 const rcMenuOpenSlideUpIn = keyframes`
   0% {
@@ -278,7 +280,10 @@ const RCStyle = createGlobalStyle`
 */
 
 const A = props => {
-  const as = props.href[0] === "/" ? { as: Link, to: props.href } : {};
+  const { href } = props;
+  const as = /^\/(?!\/)/.test(href) ?
+    { as: Link, to: href } :
+    { as: OutboundLink, rel: "noopener", referrerpolicy: "origin" };
   return <Anchor {...props} {...as} href={props.href} />;
 };
 
@@ -371,7 +376,7 @@ export class Menu extends React.PureComponent<Props> {
         return assocPath([...arrpath, Menu.VALUE], i, p);
       }, {})
     );
-    const objToMenu = (obj, depth) => {
+    const objToMenu = (obj, depth, fnmenu) => {
       return Object.values(obj || {}).sort((a, b) => {
         const av = a[Menu.VALUE];
         const bv = b[Menu.VALUE];
@@ -386,7 +391,7 @@ export class Menu extends React.PureComponent<Props> {
         return aidx - bidx;
       }).map(q => {
         const link = q[Menu.VALUE];
-        const children = objToMenu(q, depth + 1);
+        const children = objToMenu(q, depth + 1, fnmenu);
         if(!link) {
           if(!children.length) {
             return null;
@@ -396,7 +401,7 @@ export class Menu extends React.PureComponent<Props> {
           </StyledSubMenu>);
         }
         const item = link.path && link.path.trim() ? <SyledMenuItem key={link.path}>
-          <A {...link} icon={
+          <A onClick={fnmenu} {...link} icon={
             link.icon && link.icon.trim() && link.icon.trim() !== "none" ? link.icon : undefined
           } href={link.path} className={`${link.className || ""} menu-item--small`} title={
             link.label ? link.menutitle : link.menutitle ? link.tabname : link.title
@@ -411,13 +416,15 @@ export class Menu extends React.PureComponent<Props> {
       });
     };
 
-    return (<><RCStyle /><StyledMenu
-      mode={mode || "vertical"}
-      selectable={false}
-      activeKey={pathname}
-      expandIcon={theme.menu.icons.down}
-    >
-      {objToMenu(t, 0)}
-    </StyledMenu></>);
+    return (<><RCStyle /><MenuContext.Consumer>{
+      (fnmenu = T) => (<StyledMenu
+        mode={mode || "vertical"}
+        selectable={false}
+        activeKey={pathname}
+        expandIcon={theme.menu.icons.down}
+      >
+        {objToMenu(t, 0, () => fnmenu(false))}
+      </StyledMenu>)
+    }</MenuContext.Consumer></>);
   }
 }
