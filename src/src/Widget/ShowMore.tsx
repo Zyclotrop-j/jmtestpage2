@@ -11,17 +11,17 @@ const schema = {
   "properties": {
     "initiallyOpen": {
       "description": "The initial state of the container. true means open",
-      "defualt": false,
+      "default": false,
       "type": "boolean"
     },
     "showMore": {
       "description": "The text on the 'show-more' button",
-      "defualt": "Show more",
+      "default": "Show more",
       "type": "string"
     },
     "showLess": {
       "description": "The text on the 'show-less' button. Leave blank to omit the button",
-      "defualt": "Show less",
+      "default": "Show less",
       "type": "string"
     },
     "content": {

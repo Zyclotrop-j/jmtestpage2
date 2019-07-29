@@ -8,6 +8,8 @@ require('ts-node').register({
   },
 });
 
+const R = require("ramda");
+
 const config = require('./config/SiteConfig');
 
 var request = require('sync-request');
@@ -20,14 +22,24 @@ const reqconfig = {
     "User-Agent": "JM CI"
   },
   retry: true,
-  retryDelay: 60000,
+  retryDelay: 6000,
   maxRetries: 2
 };
 
+const srequest = R.tryCatch(request, () => ({ getBody: () => "{}" }));
 
 const res = request('GET', 'https://zcmsapi.herokuapp.com/api/v1/website/'+websiteid, reqconfig);
-
+console.log("Fetched website");
 const websitedata = JSON.parse(res.getBody('utf8'));
+const ownerraw = websitedata.data.owner && srequest('GET', 'https://zcmsapi.herokuapp.com/api/v1/person/'+websitedata.data.owner, reqconfig);
+console.log("Fetched owner");
+const owner = ownerraw && JSON.parse(ownerraw.getBody('utf8')).data || {};
+const addressraw = owner.address && srequest('GET', 'https://zcmsapi.herokuapp.com/api/v1/postaladdress/'+owner.address, reqconfig);
+console.log("Fetched address");
+const address = addressraw && JSON.parse(addressraw.getBody('utf8')).data || {};
+const countryraw = address.addressCountry && srequest('GET', 'https://zcmsapi.herokuapp.com/api/v1/country/'+address.addressCountry, reqconfig);
+console.log("Fetched country");
+const country = countryraw && JSON.parse(countryraw.getBody('utf8')).data || {};
 
 let themeColor = "#FFFFFF";
 let bodyFont = "";
@@ -118,18 +130,22 @@ const ga = {
 };
 const optPlugins = process.env.CI ? websitedata.data.googleAnalytics ? [ga] : [] : ["gatsby-plugin-webpack-bundle-analyser-v2"];
 
-// console.log("Created config for "+websitedata.data.domain);
-
-const dr = x => x.split("").map((i, idx) => i.charCodeAt(0) + idx).join("-");
+const dr = x => x && x.split("").map((i, idx) => i.charCodeAt(0) + idx).join("-");
 module.exports = {
   siteMetadata: {
     siteUrl: `https://${websitedata.data.domain}`,
-    name: dr("...."),
-    addr: dr(`
-      .....
-    `),
-    email: dr("...."),
-    phone: dr("...."),
+    name: `ENCRYPT_${dr(owner && owner.name)}`,
+    firstname: `ENCRYPT_${dr(owner && owner.givenName && owner.givenName[0])}`,
+    lastname: `ENCRYPT_${dr(owner && owner.familyName)}`,
+    addr: `ENCRYPT_${dr(`
+      ${owner && owner.name}
+      ${address && address.streetAddress}
+      ${address && address.postalCode} ${address && address.addressLocality}
+      ${address && address.addressRegion}
+      ${country && country.name}
+    `)}`,
+    email: `ENCRYPT_${dr(owner.email && owner.email[0] || address.email && address.email[0])}`,
+    phone: `ENCRYPT_${dr(owner.telephone || address.telephone)}`,
     websitename: `"${websitedata.data.title}"`,
     website: websitedata.data.domain
   },

@@ -576,8 +576,8 @@ export class ContactForm extends React.PureComponent<Props> {
           <br /><br />
           This form relies on reCAPTCHA to prevent spam and bots.<br />
           This site is protected by reCAPTCHA and the Google{" "}
-          <OutboundLink href="https://policies.google.com/privacy" rel="noreferrer">Privacy Policy</OutboundLink> and{" "}
-          <OutboundLink href="https://policies.google.com/terms" rel="noreferrer">Terms of Service</OutboundLink> apply.
+          <OutboundLink rel="noreferrer nofollow noopener" href="https://policies.google.com/privacy">Privacy Policy</OutboundLink> and{" "}
+          <OutboundLink rel="noreferrer nofollow noopener" href="https://policies.google.com/terms">Terms of Service</OutboundLink> apply.
         </small>
         <br />
         <Button type="submit" primary label="Submit" disabled={!this.validate() || this.state.loading || !to} />

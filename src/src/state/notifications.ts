@@ -2,7 +2,7 @@ import { observable, action } from 'mobx';
 
 export const notifications = observable([]);
 
-export const removeNotification = action(({ nid, idx }) => {
+export const removeNotification = action(({ nid, idx = -1 }) => {
   const index = notifications.findIndex(i => i.nid && nid === i.nid) || idx;
   if (index > -1) {
     notifications.splice(index, 1);

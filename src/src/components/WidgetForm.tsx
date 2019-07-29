@@ -5,7 +5,7 @@ import { EmailInput, DateInput, ColorInput, PasswordInput, NumberInput, Colors }
 import { Close, Search } from 'grommet-icons';
 import chroma from "chroma-js";
 import { when } from "mobx";
-import { omit, map, compose, pipe, identity, tryCatch, dissocPath, hasPath, has, max, mergeDeepLeft, memoizeWith, once } from "ramda";
+import { omit, map, compose, pipe, identity, tryCatch, dissocPath, hasPath, has, max, mergeDeepRight, mergeDeepLeft, memoizeWith, once } from "ramda";
 import { noop } from 'ramda-adjunct';
 import { observer } from 'mobx-react';
 import Fuse from 'fuse.js';
@@ -200,10 +200,10 @@ const assembleColorCode = (theme, fallbacks) => (p, color) => ({
 const makeColors = (theme, fallbacks) => ({
   transparent: "rgba(255,255,255,0)",
   brand: theme?.global?.colors?.brand || "#7D4CDB",
-  ...["dark1", "accent-1", "neutral1", "light1"].reduce(assembleColorCode(theme, fallbacks), {}),
-  ...["dark2", "accent-2", "neutral2", "light2"].reduce(assembleColorCode(theme, fallbacks), {}),
-  ...["dark3", "accent-3", "neutral3", "light3"].reduce(assembleColorCode(theme, fallbacks), {}),
-  ...["dark4", "accent-4", "neutral4", "light4"].reduce(assembleColorCode(theme, fallbacks), {}),
+  ...["dark-1", "accent-1", "neutral-1", "light-1"].reduce(assembleColorCode(theme, fallbacks), {}),
+  ...["dark-2", "accent-2", "neutral-2", "light-2"].reduce(assembleColorCode(theme, fallbacks), {}),
+  ...["dark-3", "accent-3", "neutral-3", "light-3"].reduce(assembleColorCode(theme, fallbacks), {}),
+  ...["dark-4", "accent-4", "neutral-4", "light-4"].reduce(assembleColorCode(theme, fallbacks), {}),
   ...["statuscritical","statusdisabled","statusok","statusunknown","statuswarning"].reduce(assembleColorCode(theme, fallbacks), {}),
   black: theme?.global?.colors.black || "black",
   white: theme?.global?.colors.white || "white",
@@ -222,7 +222,9 @@ const GrommetColor =  ({ value, onChange, ...props }) => {
     }), {})
   }), {});
   return (<>
-    <Box background={value} pad="small">{value}</Box>
+    <Box background={value} pad="small">
+      <TextInput value={value} onChange={event => onChange(event.target.value)} />
+    </Box>
     <ThemeContext.Consumer>
     {theme => {
       const defaultColors = {
@@ -230,28 +232,28 @@ const GrommetColor =  ({ value, onChange, ...props }) => {
         "accent-2": "#FD6FFF",
         "accent-3": "#81FCED",
         "accent-4": "#FFCA58",
-        "neutral1": "#00873D",
-        "neutral2": "#3D138D",
-        "neutral3": "#00739D",
-        "neutral4": "#A2423D",
+        "neutral-1": "#00873D",
+        "neutral-2": "#3D138D",
+        "neutral-3": "#00739D",
+        "neutral-4": "#A2423D",
         "statuscritical": "#FF4040",
         "statuserror": "#FF4040",
         "statuswarning": "#FFAA15",
         "statusok": "#00C781",
         "statusunknown": "#CCCCCC",
         "statusdisabled": "#CCCCCC",
-        "light1": "#F8F8F8",
-        "light2": "#F2F2F2",
-        "light3": "#EDEDED",
-        "light4": "#DADADA",
-        "light5": "#DADADA",
-        "light6": "#DADADA",
-        "dark1": "#333333",
-        "dark2": "#555555",
-        "dark3": "#777777",
-        "dark4": "#999999",
-        "dark5": "#999999",
-        "dark6": "#999999"
+        "light-1": "#F8F8F8",
+        "light-2": "#F2F2F2",
+        "light-3": "#EDEDED",
+        "light-4": "#DADADA",
+        "light-5": "#DADADA",
+        "light-6": "#DADADA",
+        "dark-1": "#333333",
+        "dark-2": "#555555",
+        "dark-3": "#777777",
+        "dark-4": "#999999",
+        "dark-5": "#999999",
+        "dark-6": "#999999"
       };
       const madeColors = makeColors(theme, defaultColors);
       const cromaobjs = map(x => chroma(x), madeColors);
@@ -434,7 +436,7 @@ const ImageInput = ({ value, onChange: modonChange, onContext: modonContext, sch
       label: (<Box>
           <ImageWidthDimensions style={{ maxWidth: 120 }} src={json.fileUrl || json.urls.thumb} alt={json.alt_description || json.description} />
           {json.user && <>
-            By <a target="_blank" rel="noreferrer" href={`${json.user?.profileurl}?utm_source=${app_name}&utm_medium=referral`}>{json.user?.name}</a> on <a target="_blank" rel="noreferrer" href={`https://unsplash.com/?utm_source=${app_name}&utm_medium=referral`}>Unsplash</a>
+            By <a target="_blank" rel="noreferrer noopener" href={`${json.user?.profileurl}?utm_source=${app_name}&utm_medium=referral`}>{json.user?.name}</a> on <a target="_blank" rel="noreferrer noopener" href={`https://unsplash.com/?utm_source=${app_name}&utm_medium=referral`}>Unsplash</a>
           </>}
         </Box>),
       value: json.id || json._id,
@@ -615,10 +617,9 @@ const DebouncedPreview = debounceRender(({ children, ...props }) => children(pro
 export const WidgetForm = ({ allComponents, schema, initialValues, title, onSubmit, onError, Preview, button, focusgroup }) => {
   const [currentProps, setCurrentProps] = React.useState(initialValues);
   const shorttitle = title.startsWith("component") ? title.substring("component".length) : title;
-  const fn = schema => mergeDeepLeft({
+  const fn = schema => mergeDeepRight({
     properties: { title: { type: "string" }, description: { type: "string" } }
   }, schema);
-  console.log(allComponents, schema, initialValues, title, onSubmit, onError, Preview, button, focusgroup);
 
   return (
     <Modal focusgroup={focusgroup} box={{}} layer={{}} button={button || (open => <Button label={`${title}`} onClick={open} />)}>

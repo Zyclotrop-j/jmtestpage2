@@ -9,8 +9,11 @@ const Main = ({ children, value }) => {
   const MMain = styled.main`
     position: relative;
     padding: 0;
-    ${mq('small')(`
-     padding: 0 calc( 100vw - ${props => props.theme.global.size.xxlarge} / 2 );
+    ${props => mq('small')(`
+     padding: 0 calc( ( 100vw - ${props.theme.global.size.xlarge} ) / 2 );
+    `)}
+    ${props => mq('medium')(`
+     padding: 0 calc( ( 100vw - ${props.theme.global.size.xxlarge} ) / 2 );
     `)}
   `;
   return (<ThemeContext.Consumer>

@@ -133,7 +133,21 @@ export const postQuery = graphql`
       bounds
     }
   }
+  fragment fcomponentjsonld on DATA_Componentjsonld {
+    _id
+    text
+  }
+  fragment fcomponentlink on DATA_Componentlink {
+    _id
+    plain
+    a11yTitle
+    href
+    content {
+      _id
+    }
+  }
   fragment fcomponentshowmore on DATA_Componentshowmore {
+    _id
     initiallyOpen
     showMore
     showLess
@@ -142,6 +156,7 @@ export const postQuery = graphql`
     }
   }
   fragment fcomponentmediaquery on DATA_Componentmediaquery {
+    _id
     query
     content {
       _id
@@ -638,10 +653,18 @@ export const postQuery = graphql`
     $DATA_Componentmediaquery: [ID!]
     $DATA_Componentshowmore: [ID!]
     $DATA_Componentmap: [ID!]
+    $DATA_Componentlink: [ID!]
+    $DATA_Componentjsonld: [ID!]
   ) {
     data {
       componentmaps(_ids: $DATA_Componentmap) {
         ...fcomponentmaps
+      }
+      componentjsonlds(_ids: $DATA_Componentjsonld) {
+        ...fcomponentjsonld
+      }
+      componentlinks(_ids: $DATA_Componentlink) {
+        ...fcomponentlink
       }
       componentshowmores(_ids: $DATA_Componentshowmore) {
         ...fcomponentshowmore

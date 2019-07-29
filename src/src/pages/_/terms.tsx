@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StaticQuery, graphql } from 'gatsby';
+import { graphql } from 'gatsby';
 import { Wrapper } from '../../components';
 import { RichText } from "../../Widget";
 import { TermsAndConditions, copyright } from "../../components/Imprint_And_Privacy";
@@ -8,6 +8,8 @@ export const query = graphql`
   query {
     site {
       buildTime(formatString: "YYYY-MM-DD")
+      fulldate: buildTime(formatString: "YYYY-MM-DD")
+      year: buildTime(formatString: "YYYY")
       siteMetadata {
         name
         addr
@@ -20,7 +22,12 @@ export const query = graphql`
   }
 `;
 
-const ur = x => x.split("-").map((i, idx) => String.fromCharCode(i - idx)).join("");
+const ur = x => {
+  if(x.startsWith("ENCRYPT_")) {
+    return x.substring("ENCRYPT_".length).split("-").map((i, idx) => String.fromCharCode(i - idx)).join("");
+  }
+  return x;
+};
 export default class PrivacyPolicy extends React.Component<any> {
 
   componentDidMount() {
@@ -66,7 +73,9 @@ export default class PrivacyPolicy extends React.Component<any> {
             phone: this.state.phone,
             websitename: this.state.websitename,
             website: this.state.website,
-            date: this.props?.data?.site.buildTime
+            date: this.props?.data?.site.buildTime,
+            fulldate: this.props?.data?.site.fulldate,
+            year: this.props?.data?.site.year
           })}
           urlescaped={false}
           escaped={false}

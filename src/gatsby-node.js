@@ -47,7 +47,7 @@ exports.createResolvers = ({
         }
       }
     },
-    DATA_ImageMod4AaS95Fedjwh: {
+    DATA_ImageMod1NnsrnvwA5TS1: {
       srcFile: {
         type: `File`,
         // projection: { url: true },
@@ -66,7 +66,7 @@ exports.createResolvers = ({
         }
       }
     },
-    DATA_BackgroundMod2K2J492P3Hngh: {
+    DATA_BackgroundMod23FwuT6Q8V5Z5: {
       srcFile: {
         type: `File`,
         // projection: { url: true },
@@ -132,8 +132,8 @@ exports.onCreateWebpackConfig = ({ stage, actions, plugins, getConfig }) => {
 const queryCache = {};
 exports.createPages = ({ actions, graphql }) => {
   runGC();
-  const componentsWithChild = ["DATA_Componentshowmore", "DATA_Componentmediaquery", "DATA_Componentverticaltimeline", "DATA_Componentlist", "DATA_Componentaccordion", "DATA_Componentgrid", "DATA_Componentbox"]
-  const componentsStandalone = ["DATA_Componentmap", "DATA_Componentqrcode", "DATA_Componentflowchart", "DATA_Componentmenu", "DATA_Componentcards", "DATA_Componentcalltoaction", "DATA_Componenticon", "DATA_Componentstage", , "DATA_Componenttext", "DATA_Componentpicture", "DATA_Componentrichtext", "DATA_Componentheadline"]
+  const componentsWithChild = ["DATA_Componentlink", "DATA_Componentshowmore", "DATA_Componentmediaquery", "DATA_Componentverticaltimeline", "DATA_Componentlist", "DATA_Componentaccordion", "DATA_Componentgrid", "DATA_Componentbox"]
+  const componentsStandalone = ["DATA_Componentjsonld", "DATA_Componentmap", "DATA_Componentqrcode", "DATA_Componentflowchart", "DATA_Componentmenu", "DATA_Componentcards", "DATA_Componentcalltoaction", "DATA_Componenticon", "DATA_Componentstage", , "DATA_Componenttext", "DATA_Componentpicture", "DATA_Componentrichtext", "DATA_Componentheadline"]
   const components = [].concat(componentsStandalone, componentsWithChild);
   const makeRecursiveContext = () => {
     const componentgroups = new Set();
@@ -185,6 +185,12 @@ exports.createPages = ({ actions, graphql }) => {
                 ... on DATA_Componentmediaquery {
                   _id
                   mediacontent: content {
+                    _id
+                  }
+                }
+                ...on DATA_Componentlink {
+                  _id
+                  linkcontent: content {
                     _id
                   }
                 }
@@ -249,6 +255,11 @@ exports.createPages = ({ actions, graphql }) => {
           const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
           return { id, type, child, componentgroupid: group.componentgroupid };
         }
+        if(type === "DATA_Componentlink") {
+          const { _id: childid } = i.linkcontent || {};
+          const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
+          return { id, type, child, componentgroupid: group.componentgroupid };
+        }
         return { id, type, componentgroupid: group.componentgroupid };
       });
     };
@@ -279,13 +290,17 @@ exports.createPages = ({ actions, graphql }) => {
                 "DATA_Componentaccordion",
                 "DATA_Componentlist",
                 "DATA_Componentverticaltimeline",
-                "DATA_Componentmediaquery"
+                "DATA_Componentmediaquery",
+                "DATA_Componentlink",
+                "DATA_Componentshowmore"
               ].includes(__typename))
               .map(i =>
                 i.gridcontent ||
                 i.listcontent ||
                 i.boxcontent ||
                 i.mediacontent ||
+                i.showmorecontent ||
+                i.linkcontent ||
                 i.accordioncontent && i.accordioncontent.map(i => i && i.content) ||
                 i.verticaltimelinecontent && i.verticaltimelinecontent.map(i => i && i.content) ||
                 []

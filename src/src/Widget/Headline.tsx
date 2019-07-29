@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'gatsby';
 import { Heading } from 'grommet';
+import { OutboundLink } from 'gatsby-plugin-gtag';
 import { HeadlineContext } from "../utils/headlineContext";
 
 interface Props {
@@ -27,12 +28,11 @@ export class Headline extends React.PureComponent<Props> {
   public render() {
     const { _id, className, a11yTitle, alignSelf, color, href, gridArea, level, margin = {}, size, textAlign, truncate, text } = this.props;
 
+    const localLink = href && (/^\/(?!\/)/.test(href) ?
+      { href, as: styled(Link)``, to: href } :
+      { href, as: styled(OutboundLink)``, rel: "noopener", referrerpolicy: "origin" });
     const linkProps = href
-      ? {
-          href,
-          as: styled(Link)``,
-          to: href,
-        }
+      ? localLink
       : {};
 
     return (<HeadlineContext.Consumer>

@@ -1,6 +1,7 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { Link } from 'gatsby';
+import { OutboundLink } from 'gatsby-plugin-gtag';
 import { is, mergeDeepRight, memoizeWith } from "ramda";
 import Img from 'gatsby-image';
 import { Markdown, Paragraph, Anchor, Box, Heading, Button, Text } from 'grommet';
@@ -372,7 +373,12 @@ const AnimatedParagraph = styled(Paragraph)`
   animation-delay: ${props => props.delay || 0}s;
   animation-fill-mode: both;
 `;
-const AnimatedButton = styled(Button)`
+const AnimatedLink = styled(Link)`
+  animation: 1s ${props => props.animation && getKeyframes(props.animation)};
+  animation-delay: ${props => props.delay || 0}s;
+  animation-fill-mode: both;
+`;
+const AnimatedOutboundLink = styled(OutboundLink)`
   animation: 1s ${props => props.animation && getKeyframes(props.animation)};
   animation-delay: ${props => props.delay || 0}s;
   animation-fill-mode: both;
@@ -430,6 +436,13 @@ const slot = props => {
 
   const app_name = typeof location !== 'undefined' && location && location.origin; // not defined in SSR
 
+  const href = data.action?.href;
+  const localLink = href && (/^\/(?!\/)/.test(href) ?
+    { href, as: AnimatedLink, to: href } :
+    { href, as: AnimatedOutboundLink, rel: "noopener", referrerpolicy: "origin" });
+  const linkprops = href
+    ? localLink
+    : {};
   return <Animated
     key={key}
   >
@@ -467,7 +480,7 @@ const slot = props => {
           {data.text?.content && <AnimatedParagraph delay={data.text?.delay} animation={data.text?.animation} {...data.text}>
             {data.text?.content}
           </AnimatedParagraph>}
-          {data.action && data.action?.content && <AnimatedButton as={data.action?.href ? Link : null} delay={data.action?.delay} animation={data.action?.animation} {...data.action} label={data.action?.content} href={data.action?.href ? `${data.action?.href}` : null} to={data.action?.href ? `${data.action?.href}` : null}/>}
+          {data.action && data.action?.content && <Button delay={data.action?.delay} animation={data.action?.animation} {...linkprops} {...data.action} label={data.action?.content} children={data.action?.content} />}
         </FBox>}
       </CBox>
     </Wrap>

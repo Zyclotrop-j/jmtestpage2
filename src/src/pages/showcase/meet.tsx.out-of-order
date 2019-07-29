@@ -60,7 +60,7 @@ export default class ContactPage extends React.Component<PageProps> {
                     <b>
                       {this.state.form.success.traveltime} ({this.state.form.success.distance})
                     </b>
-                    away from each other. <a href={this.state.form.success.url}>Show me on Google Maps!</a>
+                    away from each other. <a rel="noreferrer noopener" referrerpolicy="no-referrer" href={this.state.form.success.url}>Show me on Google Maps!</a>
                     <br />
                   </>
                 ) : (
@@ -148,9 +148,9 @@ export default class ContactPage extends React.Component<PageProps> {
                   This site currently does not have Terms of Use or a Privacy Policy. Nevertheless be made aware that:
                   <br />
                   Using this application application (the meetup functionality), users (you) are bound by{' '}
-                  <a href="https://www.google.com/intl/en/policies/terms">Google’s Terms of Service</a>.<br />
+                  <a rel="noreferrer nofollow noopener" referrerpolicy="no-referrer" href="https://www.google.com/intl/en/policies/terms">Google’s Terms of Service</a>.<br />
                   This application (the meetup functionality) uses Google Maps APIs and which adhere to{' '}
-                  <a href="https://www.google.com/policies/privacy">Google Privacy Policy</a>.
+                  <a rel="noreferrer nofollow noopener" referrerpolicy="no-referrer" href="https://www.google.com/policies/privacy">Google Privacy Policy</a>.
                 </p>
                 <Button type="submit" primary label="Submit" />
               </Form>

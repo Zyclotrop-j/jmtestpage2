@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { graphql } from 'gatsby';
 import { Wrapper } from '../../components';
 import { RichText } from "../../Widget";
 import { Licences } from "../../components/Imprint_And_Privacy";
@@ -48,7 +49,12 @@ export const query = graphql`
   }
 `;
 
-const ur = x => x.split("-").map((i, idx) => String.fromCharCode(i - idx)).join("");
+const ur = x => {
+  if(x.startsWith("ENCRYPT_")) {
+    return x.substring("ENCRYPT_".length).split("-").map((i, idx) => String.fromCharCode(i - idx)).join("");
+  }
+  return x;
+};
 export default class PrivacyPolicy extends React.Component<any> {
 
   componentDidMount() {
@@ -74,7 +80,6 @@ export default class PrivacyPolicy extends React.Component<any> {
       ...(this.props?.data?.data?.componentstages?.reduce((p, i) =>
         p.concat(i?.slides?.map(j => j.image) || []), []) || [])
     ].filter(pcss => pcss?.author?.name);
-    console.log("!!!!!", pcs);
 
     const c_pcs = pcs => `
 "[${pcs.alt || pcs.src}](${pcs.src})"

@@ -125,7 +125,7 @@ const GlobalStyle = createGlobalStyle`
   samp {
     font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace
   }
-  b {
+  b, strong {
     font-weight: bold;
   }
   .leaflet-div-icon {

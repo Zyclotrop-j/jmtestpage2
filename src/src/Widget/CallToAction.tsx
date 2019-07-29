@@ -147,7 +147,7 @@ export class CallToAction extends React.PureComponent<Props> {
     const pageActions = {};
 
     // the following regex is how gatsby tests it!
-    const localLink = /^\/(?!\/)/.test(href) ? { as: Link, to: href } : { as: OutboundLink, rel: "noopener" };
+    const localLink = /^\/(?!\/)/.test(href) ? { as: Link, to: href } : { as: OutboundLink, rel: "noopener", referrerpolicy: "origin" };
     const onClick = pageActions[pageAction] || undefined;
     const cfill = ["false", "none", ""].includes(fill) ? false : (
       ["horizontal", "vertical"].includes(fill) ? fill : true

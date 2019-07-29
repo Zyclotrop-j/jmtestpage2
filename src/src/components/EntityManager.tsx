@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { observer } from "mobx-react";
 import { decorate, observable } from "mobx"
-import { memoizeWith, mergeDeepLeft, map as rmap, is } from "ramda";
+import { memoizeWith, mergeDeepLeft, mergeDeepRight, map as rmap, is } from "ramda";
 import { Accordion, AccordionPanel, Box, Button, CheckBox, Layer, Grid, Heading } from "grommet";
 import { PagingTable } from 'grommet-controls';
 import { toJS } from 'mobx';
@@ -149,13 +149,7 @@ export default decorate(observer(class EntityManager extends React.Component {
       (!["schema", "website", "page"].includes(i.title) && !i.title.startsWith("component"))
     );
 
-    const fn = schema => mergeDeepLeft({
-      properties: { title: { type: "string" }, description: { type: "string" } },
-      format: undefined
-    }, schema, {
-      properties: { title: { type: "string" }, description: { type: "string" } },
-      format: undefined
-    });
+    const fn = schema => mergeDeepRight({ properties: { title: { type: "string" }, description: { type: "string" } } }, mergeDeepLeft({ format: undefined }, schema));
 
     return <>
       <span>{requests.size}</span>

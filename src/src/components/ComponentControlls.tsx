@@ -3,13 +3,13 @@ import { findDOMNode } from 'react-dom';
 import { DragSource } from 'react-dnd';
 import styled from 'styled-components';
 import { Grid, Box, Button, Text } from 'grommet';
-import { Edit, Pan, Trash } from 'grommet-icons';
-import { pick, without } from 'ramda';
+import { Edit, Pan, Trash, Clone } from 'grommet-icons';
+import { pick, without, omit } from 'ramda';
 import { renameKeysWith } from 'ramda-adjunct';
 import { observer } from 'mobx-react';
 import { newNotification } from '../state/notifications';
 import { viewmode } from "../state/viewmode";
-import { removeComponentfromGroup, editComponent, components as allComponents } from '../state/components';
+import { addComponent, removeComponentfromGroup, editComponent, components as allComponents } from '../state/components';
 import { WidgetForm } from '../components/WidgetForm';
 import { AddWidget } from '../components/AddWidget';
 import components from '../Widget';
@@ -69,7 +69,7 @@ const RawComponentControlls = observer(({ connectDragSource, schemas, __renderSu
     throw new Error('Type not defined - widgets need a type to be rendered!');
   }
 
-  const minimize = viewmode.get() === "minimize" && !['componentmediaquery', 'componentlist', 'componentaccordion', 'componentbox', 'componentgrid'].includes(type);
+  const minimize = viewmode.get() === "minimize" && !['componentlink', 'componentshowmore', 'componentmediaquery', 'componentlist', 'componentaccordion', 'componentbox', 'componentgrid'].includes(type);
   const preview = viewmode.get() === "preview";
 
   const enhancedChildren = Array.isArray(__children)
@@ -91,6 +91,40 @@ const RawComponentControlls = observer(({ connectDragSource, schemas, __renderSu
       children: [[<span key="Demo">Demo Content</span>]],
     },
     __renderSubtree: i => i,
+  };
+  const clone = () => {
+    const opid = `opid${Math.floor(Math.random() * 10e8)}`;
+    newNotification({
+      message: 'Cloning...',
+      nid: opid,
+      status: 'info',
+    });
+    const { ___groupid: groupid } = addProps;
+    const { _id: componentid } = props;
+    const omitkeys = Object.keys(props).filter(x => x.startsWith("x-") || x.startsWith("_"))
+    const omitfn = omit(omitkeys);
+    const copy = omitfn(JSON.parse(JSON.stringify(props)));
+    copy.title = `Copy of ${copy.title.length > 50 ? `${copy.title.slice(0, 50)}...` : copy.title}`;
+    const hasCloned = new Promise((res, rej) =>
+      addComponent(props["x-type"], copy, res, rej, {
+        optimistic: true,
+      }),
+    );
+    hasCloned
+      .then(() => {
+        newNotification({
+          message: 'Cloned content',
+          nid: opid,
+          status: 'ok',
+        });
+      })
+      .catch(() => {
+        newNotification({
+          message: 'Error cloning content',
+          nid: opid,
+          status: 'error',
+        });
+      });
   };
   const del = () => {
     const opid = `opid${Math.floor(Math.random() * 10e8)}`;
@@ -171,19 +205,20 @@ const RawComponentControlls = observer(({ connectDragSource, schemas, __renderSu
       <Overlaybox>
         <HeaderGrid
           rows={['full']}
-          columns={['auto', 'flex', 'flex', 'flex']}
+          columns={['auto', 'flex', 'flex', 'flex', 'flex']}
           fill={true}
           areas={[
             { name: 'title', start: [0, 0], end: [0, 0] },
             { name: 'icon1', start: [1, 0], end: [1, 0] },
             { name: 'icon2', start: [2, 0], end: [2, 0] },
             { name: 'icon3', start: [3, 0], end: [3, 0] },
+            { name: 'icon4', start: [4, 0], end: [4, 0] },
           ]}
           alignContent="between"
           justifyContent="between"
         >
           <Box gridArea="title" overflow="hidden">
-            <Text color="white">{customtitle || type}</Text>
+            <Text color="white">{(customtitle || type).replace(/component/i, "")}</Text>
           </Box>
           {!plain && <Box gridArea="icon1" overflow="hidden">
             {connectDragSource && connectDragSource(
@@ -202,7 +237,8 @@ const RawComponentControlls = observer(({ connectDragSource, schemas, __renderSu
             onError={i => Promise.resolve(console.log('error', i))}
             allComponents={allComponents}
           />
-          {!plain && <RButton gridArea="icon3" a11yTitle="Delete" icon={<Trash color="white" />} plain onClick={del} />}
+          {!plain && <RButton gridArea="icon4" a11yTitle="Delete" icon={<Trash color="white" />} plain onClick={del} />}
+          {!plain && <RButton gridArea="icon3" a11yTitle="Clone" icon={<Clone color="white" />} plain onClick={clone} />}
         </HeaderGrid>
       </Overlaybox>
       {minimize ? <Mini>{inner}</Mini> : inner}

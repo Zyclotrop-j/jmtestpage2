@@ -125,7 +125,7 @@ export default props => {
         animate={!window?.matchMedia("(prefers-reduced-motion: reduce)")?.matches}
       >
         <TileLayer
-          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          attribution='&copy; <a rel="noreferrer nofollow noopener" referrerpolicy="no-referrer" href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url='https://{s}.tile.osm.org/{z}/{x}/{y}.png'
         />
         {objects.map((i, idx) => objectmakers[i.type](i, idx))}

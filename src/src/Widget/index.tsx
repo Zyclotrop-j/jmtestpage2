@@ -20,6 +20,9 @@ import { MediaQuery, uiSchema as mediaqueryuiSchema } from "./MediaQuery";
 import { ShowMore, uiSchema as showmoreuiSchema } from "./ShowMore";
 import { Map, uiSchema as mapuiSchema } from "./Map";
 import { ContactForm, uiSchema as contactformuiSchema } from "./ContactForm";
+import { Link, uiSchema as linkuiSchema } from "./Link";
+import { JSONLDData, uiSchema as jsonlddatauiSchema } from "./JSONLDData";
+
 
 
 export const uiSchema = {
@@ -41,8 +44,11 @@ export const uiSchema = {
   mediaquery: mediaqueryuiSchema,
   showmore: showmoreuiSchema,
   map: mapuiSchema,
-  contactform: contactformuiSchema
+  contactform: contactformuiSchema,
+  link: linkuiSchema,
+  jsonlddata: jsonlddatauiSchema
 };
 export const Calltoaction = CallToAction;
-export { ContactForm, Map, ShowMore, MediaQuery, VerticalTimeline, QRCode, List, Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Icon, Cards };
-export default { ContactForm, Map, ShowMore, MediaQuery, VerticalTimeline, QRCode, List, Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Calltoaction: CallToAction, Icon, Cards };
+export const JSONLD = JSONLDData;
+export { JSONLDData, Link, ContactForm, Map, ShowMore, MediaQuery, VerticalTimeline, QRCode, List, Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Icon, Cards };
+export default { JSONLD, JSONLDData, Link, ContactForm, Map, ShowMore, MediaQuery, VerticalTimeline, QRCode, List, Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Calltoaction: CallToAction, Icon, Cards };

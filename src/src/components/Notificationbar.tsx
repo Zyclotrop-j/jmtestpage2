@@ -43,6 +43,7 @@ const FixedArea = styled(Box)`
 `;
 
 export const Notificationbar = observer(({ notifications }) => {
+  notifications.get();
   return (
     <TransitionMotion
       defaultStyles={getDefaultStyles(notifications)}
@@ -51,7 +52,7 @@ export const Notificationbar = observer(({ notifications }) => {
       willEnter={willEnter}
     >
       {interpolatedStyles => (
-        <FixedArea role="log" aria-live="polite" aria-atomic="false">
+        <FixedArea key="FixedArea" role="log" aria-live="polite" aria-atomic="false">
           {interpolatedStyles.map(({ key, style, data }, idx) => {
             if (timeouts[idx]) {
               window.clearTimeout(timeouts[idx]);

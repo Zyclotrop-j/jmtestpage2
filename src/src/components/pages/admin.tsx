@@ -3,10 +3,10 @@ import Helmet from 'react-helmet';
 import styled from 'styled-components';
 import config from '../../../config/SiteConfig';
 import { Link } from 'gatsby';
-import { Grommet, Box, Text, Grid, Heading, Anchor, Button, Select } from 'grommet';
-import { New, Close, ChapterAdd, Edit, Deploy } from 'grommet-icons';
+import { TextInput, Grommet, Box, Text, Grid, Heading, Anchor, Button, Select, Accordion, AccordionPanel } from 'grommet';
+import { New, Close, ChapterAdd, Edit, Deploy, Trash } from 'grommet-icons';
 import SplitPane from "react-split-pane";
-import { without, pick, mergeDeepRight } from "ramda";
+import { without, pick, mergeDeepRight, groupBy, toLower, is } from "ramda";
 import { renameKeysWith } from 'ramda-adjunct';
 import { computed } from 'mobx';
 import { observer } from 'mobx-react';
@@ -16,7 +16,7 @@ import { WidgetForm } from '../../components/WidgetForm';
 import { notifications } from "../../state/notifications";
 import { viewmode, viewmodes, setViewmode } from "../../state/viewmode";
 import { fetchAllSchemas, pageschema, websiteschema, componentschemas, loading as schemaloading, error as schemaerror } from "../../state/schemas";
-import { editComponent, addComponent, fetchAllComponents, components as allComponents, loading as componentloading, error as componenterror, request } from "../../state/components";
+import { deleteComponent, editComponent, addComponent, fetchAllComponents, components as allComponents, loading as componentloading, error as componenterror, request } from "../../state/components";
 import { pages, setCurrentPage, current as currentpage, loading as pageloading, error as pageerror } from "../../state/pages";
 import { entities, loading as entitiesloading, error as entitieserror, progress as entityprogress } from "../../state/entities";
 import { themes, addSite, addPage, fetchAllWebsites, setCurrentWebsite, websites, current as currentwebsite, loading as websiteloading, error as websiteerror } from "../../state/websites";
@@ -169,7 +169,7 @@ const DeployButton = observer(({ status = {}, busy, deploy, website, loading }) 
   </Box>);
   return <Button gridArea="deployment" label="Deploy" margin={{horizontal: "medium"}} icon={<Deploy />} onClick={() => deploy({
     ...website.get(),
-    customer: "Jannes Mingram Test"
+    customer: website.get().owner
   })}/>;
 });
 
@@ -358,6 +358,9 @@ const style = {
   border: '1px dashed gray',
   cursor: 'move',
 };
+const StyledAccordion = styled(Accordion)`
+  overflow: auto;
+`;
 
 const Dragger = makeDragSource(({ isDragging, connectDragSource, children }) => connectDragSource(<div
     style={Object.assign({}, style)}
@@ -365,15 +368,205 @@ const Dragger = makeDragSource(({ isDragging, connectDragSource, children }) => 
         {children({ isDragging })}
       </div>));
 
-const Modals = observer(({ schemas, onSubmit, onError }) => {
-  return (!schemas.get().length ?
-    <div>Fetching Component</div> :
-    <>{
-      schemas.get().map((i) => {
-        const Component = availableComponents[i.title];
-        return <Dragger key={i.title} componenttype={i.title}>{({ isDragging }) => <Box >{i.title}</Box>}</Dragger>
-      })
-    }</>);
+const makeDragSourceExisting = DragSource(
+  ItemTypes.COMPONENT,
+  {
+    beginDrag: props => ({
+      type: "EXISTING",
+      componenttype: props.componenttype,
+      id: props._id,
+    }),
+  },
+  (connect, monitor) => ({
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging(),
+  }),
+);
+const DraggerExisting = makeDragSourceExisting(({ isDragging, connectDragSource, children }) => connectDragSource(<div
+  style={Object.assign({}, style)}
+>
+  {children({ isDragging })}
+</div>));
+
+const order = ["Layout", "Basic View", "Advanced View", "Text", "Graphic", "Form", "Other"];
+const byGrade = groupBy(i => {
+  const mapping = {
+    Link: ["Layout"],
+    JSONLDData: ["Other"],
+    ContactForm: ["Form"],
+    Map: ["Graphic"],
+    ShowMore: ["Layout"],
+    MediaQuery: ["Layout"],
+    VerticalTimeline: ["Advanced View"],
+    QRCode: ["Graphic"],
+    List: ["Basic View"],
+    Accordion: ["Basic View"],
+    FlowChart: ["Graphic"],
+    Menu: ["Basic View"],
+    RichText: ["Text"],
+    Headline: ["Text"],
+    Picture: ["Graphic"],
+    Text: ["Text"],
+    Box: ["Layout"],
+    Grid: ["Layout"],
+    Group: ["Other"],
+    Stage: ["Advanced View"],
+    CallToAction: ["Form"],
+    Icon: ["Graphic"],
+    Cards: ["Basic View"]
+  };
+  const u = Object.entries(mapping).find(([k, v]) => {
+    return toLower(`Component${k}`) === toLower(`${i.o.title}`);
+  });
+  return (u && u[1][0]) || i.o.cat || i.imp.cat || "Other";
+});
+
+const SearchForWidgets = props => {
+  const [value, setValue] = React.useState('');
+  return (
+    <>
+      <TextInput
+        placeholder="Search"
+        value={value}
+        onChange={event => setValue(event.target.value)}
+      />
+      {(value === "" || value.trim() === "") ? <div>{props.wnumber} components found.</div> : props.children(compon =>
+        console.log("compon", compon) ||
+        compon.title.indexOf(value) > -1 ||
+        compon["x-type"].indexOf(value) > -1 ||
+        compon._id.indexOf(value) > -1)
+      }
+    </>
+  );
+};
+const Modals = observer(({ schemas, components, website, pages, onSubmit, onError }) => {
+  if(!schemas.get().length) return <div>Fetching Component</div>;
+
+  const objs = byGrade(schemas.get().map((i) => {
+    const Component = availableComponents[i.title];
+    return {
+      component: <Dragger key={i.title} componenttype={i.title}>{({ isDragging }) => <Box pad="small" margin="none">{i.title}</Box>}</Dragger>,
+      imp: Component,
+      o: i
+    };
+  }));
+  const {
+    header,
+    footer,
+    sidemenu,
+    topmenu,
+    bottommenu,
+    pages: pageids
+  } = website.get() || {};
+  const pagevalues = pages.map(i => ({
+    _id: i._id,
+    main: i.main,
+    header: { right: i?.header?.right, left: i?.header.left, center: i?.header.center },
+    footer: { right: i?.footer?.right, left: i?.footer.left, center: i?.footer.center }
+  }));
+
+  const componentsall = components;
+
+  // components.get(website.get().sidemenu.content).components
+  const usedids = [];
+  const xpairs = [];
+  const reg = /^[a-zA-Z0-9]{24}$/;
+  const isArray = is(Array);
+  const isObject = is(Object);
+  const f = (id, path) => {
+    if(!id || !reg.test(id) || !components.get(id)) return; // Not an id
+    const c = components.get(id);
+    xpairs.push({
+      c,
+      joined: path.join(),
+    });
+    if(usedids.includes(id)) return; // Already processed
+    usedids.push(id);
+
+    const dm = (p, dp) => {
+      if(isArray(p)) {
+        return p.map((o, idx) => dm(o, dp.concat([idx])));
+      }
+      if(isObject(p)) {
+        return Object.entries(p).map(([k, o]) => dm(o, dp.concat([k])));
+      }
+      if(typeof p === 'string') return f(p, dp);
+      if(typeof p === 'boolean') return;
+      if(typeof p === 'number') return;
+      console.log("property of weird type found", p, dp);
+    };
+    return Object.entries(c).map(([k, v]) => dm(v, path.concat([k])));
+  };
+  const startingids = pagevalues
+    .filter(q => pageids.includes(q._id))
+    .reduce((p, i) => p.concat([
+    i.main,
+    i.header.left,
+    i.header.right,
+    i.header.center,
+    i.footer.left,
+    i.footer.right,
+    i.footer.center,
+  ]), [
+    sidemenu?.content,
+    topmenu?.content,
+    bottommenu?.content
+  ]).map(id => f(id, []));
+  const usedidscomponents = usedids.map(l => components.get(l));
+  const unusedids = [...components.values()].map(i => i._id).filter(i => !usedids.includes(i));
+
+  // fill the usedin property of the components
+  /*
+  window.setTimeout(() => {
+    xpairs.forEach(({
+      c,
+      joined
+    }) => {
+      try {
+        c.usedin = c.usedin || [];
+        c.usedin.push(joined);
+      } catch(e) {
+        console.error(e);
+      }
+    });
+  }, 200);
+  */
+
+  return (
+    <StyledAccordion pad="none" margin="none">
+      {Object.entries(objs).sort((a, b) => {
+        const oa = order.findIndex(k => k === a[0]);
+        const ob = order.findIndex(k => k === b[0]);
+        return oa - ob;
+      }).map(([key, val]) => (<AccordionPanel label={<Box pad="none" margin="none">{key}</Box>} pad="none" margin="none" >
+          {val.map(q => q.component)}
+        </AccordionPanel>))}
+      <AccordionPanel label={<Box pad="none" margin="none">Spare</Box>} pad="none" margin="none" >
+        {unusedids.filter(id => {
+          const compo = components.get(id);
+          return compo["x-type"].replace(/component/i, "") !== "group";
+        }).map(id => {
+          const compo = components.get(id);
+          return (<DraggerExisting key={compo._id} {...compo} componenttype={compo["x-type"]}>
+            {({ isDragging }) => isDragging ? null : <Box pad="small" margin="none">
+              [{compo["x-type"].replace(/component/i, "")}] {compo.title}
+              <Button icon={<Trash />} a11yTitle="Delete this component permanently" onClick={() => deleteComponent(compo["x-type"], compo._id, () => null, () => null, { optimistic: true })} />
+            </Box>}
+          </DraggerExisting>);
+        })}
+      </AccordionPanel>
+      <AccordionPanel label={<Box pad="none" margin="none">Used</Box>} pad="none" margin="none" >
+        <SearchForWidgets wnumber={usedids.length}>
+          {fn => usedidscomponents.filter(q => q["x-type"] !== "group").filter(fn).map(compo => {
+            return (<DraggerExisting key={compo._id} {...compo} componenttype={compo["x-type"]}>
+              {({ isDragging }) => isDragging ? null : <Box pad="small" margin="none">
+                [{compo["x-type"].replace(/component/i, "")}] {compo.title}
+              </Box>}
+            </DraggerExisting>);
+          })}
+        </SearchForWidgets>
+      </AccordionPanel>
+    </StyledAccordion>);
 });
 
 export default class IndexPage extends React.Component<any> {
@@ -406,7 +599,7 @@ export default class IndexPage extends React.Component<any> {
               ]}
             >
               <Box gridArea="modals">
-                <Modals schemas={componentschemas} onSubmit={() => null} onError={() => null} />
+                <Modals schemas={componentschemas} pages={pages} website={currentwebsite} components={allComponents} onSubmit={() => null} onError={() => null} />
               </Box>
               <Viewmodechooser viewmode={viewmode} set={setViewmode} options={viewmodes} />
               <Box gridArea="assetmanager">

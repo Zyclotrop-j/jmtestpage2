@@ -71,6 +71,35 @@ export const fetchComponent = flow(function*(type, id, resolve, reject) {
     }
 });
 
+export const deleteComponent = flow(function*(type, id, resolve, reject, options = {}) {
+    if(!website.get()) {
+      return;
+    }
+    if(!components.get(id)) {
+      reject(`Component ${id} not found`);
+    }
+    const oldValue = components.get(id);
+    if(options?.optimistic) {
+      components.delete(id);
+    }
+    try {
+      yield request(`https://zcmsapi.herokuapp.com/api/v1/${type}/${id}`, {
+        method: "DELETE",
+        cache: "no-cache"
+      });
+      if(!options?.optimistic) {
+        components.delete(id);
+      }
+      resolve(oldValue);
+    } catch (err) {
+      if(options?.optimistic) {
+        components.set(id, oldValue)
+      }
+      error.set(err);
+      reject(err);
+    }
+});
+
 // aka createComponent = addComponent
 export const addComponent = flow(function*(type, data, resolve, reject, options = {}) {
     try {

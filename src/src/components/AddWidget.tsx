@@ -72,15 +72,17 @@ export const AddWidget = DropTarget(
           const { type, id, parentid, componenttype } = monitor.getItem();
           let insertid = id;
           if (type === 'EXISTING') {
-            awaiters.push(
-              new Promise((res, rej) =>
-                removeComponentfromGroup(id, parentid, res, rej, {
-                  optimistic: true,
-                  parent: props.parent,
-                  parentpath: props.area[1],
-                }),
-              ),
-            );
+            if(parentid) {
+              awaiters.push(
+                new Promise((res, rej) =>
+                  removeComponentfromGroup(id, parentid, res, rej, {
+                    optimistic: true,
+                    parent: props.parent,
+                    parentpath: props.area[1],
+                  }),
+                ),
+              );  
+            }
           } else if (type === 'NEW') {
             // todo: data
             const data = {};

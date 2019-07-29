@@ -20,7 +20,12 @@ export const query = graphql`
   }
 `;
 
-const ur = x => x.split("-").map((i, idx) => String.fromCharCode(i - idx)).join("");
+const ur = x => {
+  if(x.startsWith("ENCRYPT_")) {
+    return x.substring("ENCRYPT_".length).split("-").map((i, idx) => String.fromCharCode(i - idx)).join("");
+  }
+  return x;
+};
 export default class PrivacyPolicy extends React.Component<any> {
 
   componentDidMount() {
@@ -74,7 +79,7 @@ export default class PrivacyPolicy extends React.Component<any> {
         />
         <hr />
         <Heading level={2}>Opt-out</Heading>
-        <a id="GA-Opt-Out" onClick={window.gaOptout} href="#GA-Opt-Out">Deactivate Google Analytics</a>
+        <a rel="nofollow" referrerpolicy="no-referrer" id="GA-Opt-Out" onClick={window.gaOptout} href="#GA-Opt-Out">Deactivate Google Analytics</a>
       </Wrapper>
     );
   }

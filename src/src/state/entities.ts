@@ -212,8 +212,8 @@ export const editEntity = flow(function*(id, iidata, resolve, reject, options = 
       body: JSON.stringify(options?.verb ? idata : removeAttrs(mergeDeepRight(prevValue, idata.d)))
     }, options).then(i => !i.ok ? Promise.reject(i) : i.json());
     entities.set(id, data);
-    resolve({ d: data, sub: qdata.addedIds });
-    return { d: data, sub: qdata.addedIds };
+    resolve({ d: data, sub: idata.addedIds });
+    return { d: data, sub: idata.addedIds };
   } catch (err) {
     if(options?.optimistic) { // rollback
       entities.set(id, prevValue);

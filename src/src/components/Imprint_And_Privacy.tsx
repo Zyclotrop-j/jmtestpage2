@@ -77,17 +77,19 @@ export const copyright = ({
   addr,
   email,
   phone,
-  date
+  date,
+  year,
+  fulldate
 }) => `
 # Copyright
 
-© ${name} ${(new Date(date)).getFullYear()}
+© ${name} ${year}
 
-[${(new Date(date)).toDateString()}]
+[${fulldate}]
 
 Except as permitted by the copyright law applicable to you, you may not reproduce or communicate any of the content on this website, including files downloadable from this website, without the permission of the copyright owner.
 
-The Australian Copyright Act allows certain uses of content from the internet without the copyright owner’s permission. This includes uses by educational institutions and by Commonwealth and State governments, provided fair compensation is paid. For more information, see www.copyright.com.au and www.copyright.org.au.
+The Australian Copyright Act allows certain uses of content from the internet without the copyright owner’s permission. This includes uses by educational institutions and by Commonwealth and State governments, provided fair compensation is paid. For more information, see <a rel="noreferrer nofollow noopener" referrerpolicy="no-referrer" href="https://www.copyright.com.au">www.copyright.com.au</a> and <a rel="noreferrer nofollow noopener" referrerpolicy="no-referrer" href="https://www.copyright.com.au">www.copyright.org.au</a>.
 
 The owners of copyright in the content on this website may receive compensation for the use of their content by educational institutions and governments, including from licensing schemes managed by Copyright Agency.
 
@@ -152,7 +154,7 @@ Note that ${website} has no access to or control over these cookies that are use
 ### Google Analytics
 
 This website uses Google Analytics. It is set to not process any personal data including full IP annonymisation.
-If you wish to opt-out nevertheless, you can do so <a aria-label="Google Analytics opt-out" href="#GA-Opt-Out">here</a>
+If you wish to opt-out nevertheless, you can do so <a rel="nofollow" aria-label="Google Analytics opt-out" href="#GA-Opt-Out">here</a>
 
 ### Third Party Privacy Policies
 
@@ -195,7 +197,7 @@ export const TermsAndConditions = ({
   websitename,
   website
 }) => `
-Terms and Conditions for ${name}
+# Terms and Conditions for ${name}
 
 ## Introduction
 
@@ -209,7 +211,7 @@ You must not use this Website if you disagree with any of these Website Standard
 ## Intellectual Property Rights
 
 Other than the content you own, under these Terms, ${name} and/or its licensors own all the intellectual property rights and materials contained in this Website.
-<a href="/licences">There is a full list of licensors (including used Open Source Software and Pictures) here.</a>
+<a href="/_/licences">There is a full list of licensors (including used Open Source Software and Pictures) here.</a>
 
 You are granted limited license only for purposes of viewing the material contained on this Website.
 
@@ -236,7 +238,7 @@ By displaying Your Content, you grant ${name} a non-exclusive, worldwide irrevoc
 
 ## Your Privacy
 
-Please read <a href="/privacy">our Privacy Policy</a>.
+Please read <a href="/_/privacy">our Privacy Policy</a>.
 
 Your Content must be your own and must not be invading any third-party’s rights.
 ${name} reserves the right to remove any of Your Content from this and any commisioned or ordered Website at any time without notice.
@@ -274,8 +276,8 @@ These Terms constitute the entire agreement between ${name} and you in relation 
 
 ## Governing Law & Jurisdiction
 
-These Terms will be governed by and interpreted in accordance with the laws of Australia or Germany,
-and you submit to the non-exclusive jurisdiction of the state and federal courts located in au for the resolution of any disputes.
+These Terms will be governed by and interpreted in accordance with the laws of Australia,
+and you submit to the non-exclusive jurisdiction of the state and federal courts located in Australia for the resolution of any disputes.
 `;
 
 export const Licences = ({
@@ -295,8 +297,8 @@ Thank you!
 ## This website
 The source-code of this website is open source.
 Beware that the source code excludes all images, text, content and other data, which are seperatly licenced and copyright protected as outlined in the
-<a href="/terms">terms</a>.
-Find the source code creating this website under <a href="https://github.com/Zyclotrop-j/jmtestpage2">https://github.com/Zyclotrop-j/jmtestpage2</a>.
+<a href="/_/terms">terms</a>.
+Find the source code used to build this website under <a rel="noreferrer noopener" referrerpolicy="no-referrer" href="https://github.com/Zyclotrop-j/jmtestpage2">https://github.com/Zyclotrop-j/jmtestpage2</a>.
 
 ${others}
 
