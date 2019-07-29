@@ -37,7 +37,8 @@ export default class PrivacyPolicy extends React.Component<any> {
         email: ur(this.props?.data?.site?.siteMetadata?.email),
         phone: ur(this.props?.data?.site?.siteMetadata?.phone),
         websitename: (this.props?.data?.site?.siteMetadata?.websitename),
-        website: (this.props?.data?.site?.siteMetadata?.website)
+        website: (this.props?.data?.site?.siteMetadata?.website),
+        gaOptout: window.gaOptout
       });
     });
   }
@@ -79,7 +80,7 @@ export default class PrivacyPolicy extends React.Component<any> {
         />
         <hr />
         <Heading level={2}>Opt-out</Heading>
-        <a rel="nofollow" referrerpolicy="no-referrer" id="GA-Opt-Out" onClick={window.gaOptout} href="#GA-Opt-Out">Deactivate Google Analytics</a>
+        <a rel="nofollow" referrerpolicy="no-referrer" id="GA-Opt-Out" onClick={this.state.gaOptout} href="#GA-Opt-Out">Deactivate Google Analytics</a>
       </Wrapper>
     );
   }
