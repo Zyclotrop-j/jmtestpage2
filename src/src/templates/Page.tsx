@@ -286,9 +286,7 @@ export const postQuery = graphql`
           relativePath
           childImageSharp {
             fluid(maxWidth: 2000) {
-              tracedSVG
               base64
-              tracedSVG
               aspectRatio
               src
               srcSet
@@ -376,9 +374,7 @@ export const postQuery = graphql`
       relativePath
       childImageSharp {
         fluid(maxWidth: 2000) {
-          tracedSVG
           base64
-          tracedSVG
           aspectRatio
           src
           srcSet
@@ -461,9 +457,7 @@ export const postQuery = graphql`
         relativePath
         childImageSharp {
           fluid(maxWidth: 2000) {
-            tracedSVG
             base64
-            tracedSVG
             aspectRatio
             src
             srcSet

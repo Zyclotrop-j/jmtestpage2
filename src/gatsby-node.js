@@ -18,6 +18,13 @@ function runGC() {
   }
 }
 
+const transformunsplashpath = src => {
+  if(src.indexOf("images.unsplash.com") > -1) {
+    return `${src}&w=2000`;
+  }
+  return src;
+}
+
 const usedicons = [];
 exports.createResolvers = ({
   actions,
@@ -35,7 +42,7 @@ exports.createResolvers = ({
         async resolve(source, args, context, info) {
           if(validUrl.isWebUri(source.src)) {
             return createRemoteFileNode({
-              url: source.src,
+              url: transformunsplashpath(source.src),
               store,
               cache,
               createNode,
@@ -54,7 +61,7 @@ exports.createResolvers = ({
         async resolve(source, args, context, info) {
           if(validUrl.isWebUri(source.src)) {
             return createRemoteFileNode({
-              url: source.src,
+              url: transformunsplashpath(source.src),
               store,
               cache,
               createNode,
@@ -73,7 +80,7 @@ exports.createResolvers = ({
         async resolve(source, args, context, info) {
           if(validUrl.isWebUri(source.image)) {
             return createRemoteFileNode({
-              url: source.image,
+              url: transformunsplashpath(source.image),
               store,
               cache,
               createNode,
