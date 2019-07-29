@@ -182,15 +182,25 @@ const RouteContainer = posed(NoOverflowdiv)({
 
 const Sidebarstatefull = ({
   component: Component,
+  children,
   ...props
 }) => {
-  const [menuOpen, setMenuOpen] = React.useState(false);
+  const [menuOpen, xsetMenuOpen] = React.useState(false);
+  const setMenuOpen = toState => {
+    if(menuOpen !== toState) return xsetMenuOpen(toState);
+    console.warn(`Trying to change menu state from ${menuOpen} to ${toState} - this function should only be called if state is different!`)
+    return null;
+  };
 
-  return (<MenuContext.Provider value={setMenuOpen}><Component
+  return (<Component
     {...props}
     isOpen={menuOpen}
-    onStateChange={state => setMenuOpen(state)}
-  /></MenuContext.Provider>);
+    onStateChange={setMenuOpen}
+  >
+    <MenuContext.Provider value={{ setMenuOpen }}>
+      {children}
+    </MenuContext.Provider>
+  </Component>);
 }
 
 const persitentConext = {};
@@ -351,7 +361,7 @@ export class Layout extends React.Component<{}> {
       "Android"; // Mobile first
 
     return (
-        <MenuContext.Provider value={() => null}><Grommet
+        <MenuContext.Provider value={{ setMenuOpen: () => null }}><Grommet
           cssVars
           full
           userAgent={initialMobileBreakpoint}

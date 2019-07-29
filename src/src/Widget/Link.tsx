@@ -47,5 +47,5 @@ export const Link = props => {
   if(plain) {
     return <a aria-label={a11yTitle} {...as} href={href} >{content}</a>;
   }
-  return <Anchor a11yTitle={a11yTitle} {...as} href={href} label={content} />;
+  return <Anchor a11yTitle={a11yTitle} {...as} href={href} label={content} children={content} />;
 };

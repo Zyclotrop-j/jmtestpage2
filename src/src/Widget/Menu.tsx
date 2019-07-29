@@ -417,13 +417,13 @@ export class Menu extends React.PureComponent<Props> {
     };
 
     return (<><RCStyle /><MenuContext.Consumer>{
-      (fnmenu = T) => (<StyledMenu
+      ({ setMenuOpen: fnmenu = T }) => (<StyledMenu
         mode={mode || "vertical"}
         selectable={false}
         activeKey={pathname}
         expandIcon={theme.menu.icons.down}
       >
-        {objToMenu(t, 0, () => fnmenu(false))}
+        {objToMenu(t, 0, (() => fnmenu(false)))}
       </StyledMenu>)
     }</MenuContext.Consumer></>);
   }
