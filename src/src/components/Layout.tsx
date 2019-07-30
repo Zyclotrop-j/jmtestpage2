@@ -195,7 +195,7 @@ const Sidebarstatefull = ({
   return (<Component
     {...props}
     isOpen={menuOpen}
-    onStateChange={setMenuOpen}
+    onStateChange={state => setMenuOpen(state.isOpen, "onStateChange")}
   >
     <MenuContext.Provider value={{ setMenuOpen }}>
       {children}
