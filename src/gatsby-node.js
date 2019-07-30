@@ -290,7 +290,7 @@ exports.createPages = ({ actions, graphql }) => {
             console.log(`Query done; ${page.path}:`, tmp && tmp.componentgroupid, tmp && tmp.components);
             const data = result.data.data.componentgroup && result.data.data.componentgroup.components || [];
             resultset.push(...data);
-            const subquerries = data
+            const xysubquerries = data
               .filter(({ __typename }) => [
                 "DATA_Componentgrid",
                 "DATA_Componentbox",
@@ -300,7 +300,8 @@ exports.createPages = ({ actions, graphql }) => {
                 "DATA_Componentmediaquery",
                 "DATA_Componentlink",
                 "DATA_Componentshowmore"
-              ].includes(__typename))
+              ].includes(__typename));
+          const subquerries = xysubquerries
               .map(i =>
                 i.gridcontent ||
                 i.listcontent ||
@@ -312,9 +313,9 @@ exports.createPages = ({ actions, graphql }) => {
                 i.verticaltimelinecontent && i.verticaltimelinecontent.map(i => i && i.content) ||
                 []
               )
-              .map(i => (i._id && [i._id]) || i.map(j => {
+              .map((i, didx) => (i._id && [i._id]) || i.map(j => {
                 if(!j || !j._id) {
-                  console.error("Expected the nested content to have an _id", i, j)
+                  console.error("Expected the nested content to have an _id", i, j, xysubquerries[didx])
                 }
                 return j && j._id;
               }))
