@@ -312,7 +312,12 @@ exports.createPages = ({ actions, graphql }) => {
                 i.verticaltimelinecontent && i.verticaltimelinecontent.map(i => i && i.content) ||
                 []
               )
-              .map(i => (i._id && [i._id]) || i.map(i => i._id))
+              .map(i => (i._id && [i._id]) || i.map(j => {
+                if(!j || !j._id) {
+                  console.error("Expected the nested content to have an _id", i, j)
+                }
+                return j?._id;
+              }))
               .filter(i => i.length)
               .reduce((p, i) => p.concat(i.map(id => discover(id, graphql, page))), []);
             return Promise.all(subquerries);
