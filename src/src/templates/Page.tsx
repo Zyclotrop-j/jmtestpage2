@@ -655,7 +655,7 @@ export const postQuery = graphql`
     $DATA_Componentmap: [ID!]
     $DATA_Componentlink: [ID!]
     $DATA_Componentjsonld: [ID!]
-    DATA_Componentcontactform: [ID!]
+    $DATA_Componentcontactform: [ID!]
   ) {
     data {
       componentcontactforms(_ids: $DATA_Componentcontactform) {
