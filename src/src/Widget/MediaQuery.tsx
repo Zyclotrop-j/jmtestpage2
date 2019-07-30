@@ -1,5 +1,6 @@
 import React, { Suspense } from 'react';
 import styled from 'styled-components';
+import LazyLoad from 'react-lazyload';
 
 interface Props {
   query: string;
@@ -195,17 +196,22 @@ export class MediaQuery extends React.PureComponent<Props> {
 
     const content = child.map(__renderSubtree);
     if(query === "online" || query === "offline") {
-      return <Suspense fallback={query === "online" ? <>{content}</> : null}>
-        <IsInlineComponent
-          OnlineComponent={query === "online" ? <>{content}</> : null}
-          OfflineComponent={query === "offline" ? <>{content}</> : null}
-        />
-      </Suspense>
+      return <LazyLoad placeholder={query === "online" ? <>{content}</> : null} offset={100} once >
+        <Suspense fallback={query === "online" ? <>{content}</> : null}>
+          <IsInlineComponent
+            OnlineComponent={query === "online" ? <>{content}</> : null}
+            OfflineComponent={query === "offline" ? <>{content}</> : null}
+          />
+        </Suspense>
+      </LazyLoad>
     }
-    return (<Suspense fallback={<CssQuery key={_id} query={`${query}`}>{content}</CssQuery>}>
-      <MediaQueryComponent key={_id}  query={`${query}`}>
-        {content}
-      </MediaQueryComponent>
-    </Suspense>);
+    const size = <CssQuery key={_id} query={`${query}`}>{content}</CssQuery>;
+    return (<LazyLoad placeholder={size} offset={100} once >
+      <Suspense fallback={size}>
+        <MediaQueryComponent key={_id}  query={`${query}`}>
+          {content}
+        </MediaQueryComponent>
+      </Suspense>
+    </LazyLoad>);
   }
 }
