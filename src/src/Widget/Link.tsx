@@ -34,12 +34,16 @@ export const Link = props => {
   const {
     plain,
     a11yTitle,
-    href,
+    href: xhref,
     __children: { child = [] },
     __renderSubtree,
     gridArea,
     className,
+    preview,
   } = props;
+
+  // Disable navigation in editor, because clicking on any child-edit-button will trigger the link
+  const href = preview ? `#preview-${xhref}` : xhref;
 
   const content = child.map(__renderSubtree);
   const MDLink = styled(GLink)``;

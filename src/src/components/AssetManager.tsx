@@ -18,7 +18,7 @@ export default decorate(observer(class AssetManager extends React.Component {
   render() {
     const uppy = newUppy(this.props.current.get()?._client, this.props.auth.idToken);
     return <>
-      <Button label="Load Assets" disabled={!uppy} onClick={() => {
+      <Button label="Upload Assets" disabled={!uppy} onClick={() => {
         this.open = !this.open;
       }} />
       {uppy && <DashboardModal
