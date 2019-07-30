@@ -316,7 +316,7 @@ exports.createPages = ({ actions, graphql }) => {
                 if(!j || !j._id) {
                   console.error("Expected the nested content to have an _id", i, j)
                 }
-                return j?._id;
+                return j && j._id;
               }))
               .filter(i => i.length)
               .reduce((p, i) => p.concat(i.map(id => discover(id, graphql, page))), []);
