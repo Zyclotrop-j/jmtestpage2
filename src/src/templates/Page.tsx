@@ -113,6 +113,12 @@ export default class Page extends React.PureComponent {
 }
 
 export const postQuery = graphql`
+  fragment fcontactform on DATA_Componentcontactform {
+    _id
+    receipiant
+    text
+    to
+  }
   fragment fcomponentmaps on DATA_Componentmap {
     _id
     defaultView {
@@ -649,8 +655,12 @@ export const postQuery = graphql`
     $DATA_Componentmap: [ID!]
     $DATA_Componentlink: [ID!]
     $DATA_Componentjsonld: [ID!]
+    DATA_Componentcontactform: [ID!]
   ) {
     data {
+      componentcontactforms(_ids: $DATA_Componentcontactform) {
+        ...fcontactform
+      }
       componentmaps(_ids: $DATA_Componentmap) {
         ...fcomponentmaps
       }
