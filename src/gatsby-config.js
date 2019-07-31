@@ -67,6 +67,13 @@ websitedata.data.themes.reverse().some(id => {
   }
 });
 
+if(!foundfontbody) {
+  console.error("No body font", foundfontbody, data.data);
+}
+if(!foundfonthead) {
+  console.error("No body font", foundfonthead, data.data);
+}
+
 const getShortName = domain => {
   let _shortname = domain;
   while(_shortname.length > 12) {

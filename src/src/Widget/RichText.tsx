@@ -1,12 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Link } from 'gatsby';
+import { Link, StaticQuery, graphql } from 'gatsby';
 import Img from 'gatsby-image';
-import { tryCatch, identity } from "ramda";
+import { tryCatch, identity, is } from "ramda";
 import { Markdown, Paragraph, Anchor, Box, ResponsiveContext } from 'grommet';
 import Image from 'react-shimmer';
 import LazyLoad from 'react-lazyload';
 import { OutboundLink } from 'gatsby-plugin-gtag';
+import defer from "lodash/defer";
 import { Icon } from "./Icon";
 import { atob, decodeURIComponent, escape } from "../utils/b64";
 
@@ -19,6 +20,9 @@ interface Props {
   category: string;
   gridArea: string;
 }
+
+const toUpperFirst = str => str.charAt(0).toUpperCase() + str.slice(1);
+const isString = is(String);
 
 export const uiSchema = {
   /* // currently doesn't play well together with the markdown editor
@@ -90,6 +94,24 @@ export const components = {
   },
 };
 
+const ur = x => {
+  if(x.startsWith("ENCRYPT_")) {
+    return x.substring("ENCRYPT_".length).split("-").map((i, idx) => String.fromCharCode(i - idx)).join("");
+  }
+  return x;
+};
+const DelayedRender = ({
+  children
+}) => {
+  const [hasComponent, setComponent] = React.useState(null);
+  React.useEffect(() => {
+    defer(() => setComponent(true));
+  });
+  return hasComponent ? ur(`${children}`) : <span hidden aria-hidden style={{ display: "none" }}>{
+    children
+  }</span>;
+}
+
 export class RichText extends React.PureComponent<Props> {
 
   static defaultProps = {
@@ -107,10 +129,33 @@ export class RichText extends React.PureComponent<Props> {
       .map(([__, f]) => f)
       .reduce((p, f) => x => f(p(x)), x => x);
 
-    return (
-      <Box id={_id} className={className} gridArea={gridArea}>
-        <Markdown components={components}>{pipeline(markdown || '')}</Markdown>
-      </Box>
-    );
+    return (<StaticQuery
+      query={graphql`
+        query SiteMetaDataQuery {
+          site {
+            siteMetadata {
+              siteUrl
+              name
+              firstname
+              lastname
+              addr
+              email
+              phone
+            }
+          }
+        }
+      `}
+      render={data => (
+        <Box id={_id} className={className} gridArea={gridArea}>
+          <Markdown components={{
+            ...Object.entries(data.site.siteMetadata).reduce((p, [k, v]) => isString(v) ? ({
+              ...p,
+              [toUpperFirst(k)]: {component: () => <DelayedRender children={v} />},
+            }) : p, {}),
+            ...components
+          }}>{pipeline(markdown || '')}</Markdown>
+        </Box>
+      )}
+    />);
   }
 }
