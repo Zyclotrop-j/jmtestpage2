@@ -68,10 +68,10 @@ websitedata.data.themes.reverse().some(id => {
 });
 
 if(!foundfontbody) {
-  console.error("No body font", foundfontbody, data.data);
+  console.error("No body font", foundfontbody, websitedata.data.themes);
 }
 if(!foundfonthead) {
-  console.error("No body font", foundfonthead, data.data);
+  console.error("No body font", foundfonthead, websitedata.data.themes);
 }
 
 const getShortName = domain => {
