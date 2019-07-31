@@ -110,14 +110,14 @@ export class Box extends React.PureComponent<Props> {
       <Pingback pingback={pingback} origin={pingback && new URL(pingback).origin} src={src}>
         {f =>
           <PriorityContext.Consumer>
-          {priority => <BackgroundImage
-            critical={priority === IMPORTANT}
-            loading={priority === IMPORTANT ? "eager" : "lazy"}
-            decoding={priority === IMPORTANT ? "sync" : "async"}
-            importance={priority === IMPORTANT ? "high" : (priority === LOW ? "low" : "auto")}
-            id={_id} className={className} onLoad={f} {...background} fluid={srcFile.childImageSharp.fluid} backgroundColor={background.color}>
-            {children}
-          </BackgroundImage>}
+            {priority => <BackgroundImage
+              critical={priority === IMPORTANT}
+              loading={priority === IMPORTANT ? "eager" : "lazy"}
+              decoding={priority === IMPORTANT ? "sync" : "async"}
+              importance={priority === IMPORTANT ? "high" : (priority === LOW ? "low" : "auto")}
+              id={_id} className={className} onLoad={f} {...background} fluid={srcFile.childImageSharp.fluid} backgroundColor={background.color}>
+              {children}
+            </BackgroundImage>}
           </PriorityContext.Consumer>
         }
       </Pingback> :

@@ -80,7 +80,15 @@ const GlobalStyle = createGlobalStyle`
   :root{
    --scrollbar-width: calc(100vw - 100%);
   }
-  @media (prefers-reduced-motion: reduce) {
+
+  @supports (filter: invert(100%)) {
+    @media only screen and (prefers-color-scheme: dark) {
+      html { filter: invert(100%); }
+      img:not([src*=".svg"]), video { filter: invert(100%) }
+    }
+  }
+
+  @media only screen and (prefers-reduced-motion: reduce) {
     * {
       animation: none !important;
     }
@@ -309,7 +317,16 @@ export class Layout extends React.Component<{}> {
       if(k === '_id') return Array.isArray(l) ? l.concat([r]) : [l, r];
       return ['extend'].includes(k) ? concat(l, r) : r;
     });
-    const mergeThemes = tryCatch(themes => themes.reduce((p, i) => mergeTheme(p, i), defaultProps.theme), (e, i) => {
+
+    const baseTheme = mergeTheme(defaultProps.theme, {
+      box: {
+        extend: `
+          outline: 0.125rem solid transparent;
+          outline-offset: -0.125rem;
+        `
+      }
+    });
+    const mergeThemes = tryCatch(themes => themes.reduce((p, i) => mergeTheme(p, i), baseTheme), (e, i) => {
       console.error(e);
       return i && i[0];
     });
@@ -369,7 +386,7 @@ export class Layout extends React.Component<{}> {
             ...allthemes,
             mq: bpPipeline(allthemes.global.breakpoints),
           }}
-          id={`${pathname}-outer-container`}
+          id="outer-container"
         >
           <ErrorBoundary name="sidebar">
             {hasSideMenu ? <PageContext.Provider value={Layout.getContextValue({
@@ -382,8 +399,8 @@ export class Layout extends React.Component<{}> {
                 <MenuStyled />
                 <Sidebarstatefull
                   component={Sidebar}
-                  pageWrapId={`${pathname}-page-wrap`}
-                  outerContainerId={`${pathname}-outer-container`}
+                  pageWrapId="page-wrap"
+                  outerContainerId="outer-container"
                 >
                   <SkipLinkTarget id="navigation_side" />
                   <Box direction="column" id="navigation_side_marker">
@@ -422,7 +439,7 @@ export class Layout extends React.Component<{}> {
                 enterPose="default"
                 exitPose={`${exitpose}exit`}
               >
-                <RouteContainer id={`${pathname}-page-wrap`} key={pathname}>
+                <RouteContainer id="page-wrap" key={pathname}>
                   {children}
                 </RouteContainer>
               </PoseGroup>

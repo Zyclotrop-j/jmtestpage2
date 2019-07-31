@@ -8,6 +8,8 @@ import { Spinning } from 'grommet-controls';
 import { AnnounceContext } from "grommet";
 import metadata from "grommet-icons/metadata";
 import 'react-vertical-timeline-component/style.min.css';
+import { forceCheck } from 'react-lazyload';
+import defer from "lodash/defer";
 
 interface Props {
 
@@ -122,6 +124,7 @@ const Tmp = (props) => {
           "polite",
           2000
         );
+        defer(forceCheck);
         return <Component {...props} />;
       }}
     </AnnounceContext.Consumer>)

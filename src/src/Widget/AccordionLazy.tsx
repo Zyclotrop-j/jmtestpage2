@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom';
 import LazyLoad from 'react-lazyload';
 import { once } from "ramda";
 import Observer from '@researchgate/react-intersection-observer';
+import { forceCheck } from 'react-lazyload';
 
 interface Props {
 
@@ -53,6 +54,18 @@ const importAccordion = once((cb) => import('./Accordion').then(c => cb(c.Accord
 const Tmp = (props) => {
   // We Wrap the Component to avoid react doing reducer magic
   const [{ Component }, setContent] = useState({ Component: () => Placeholder });
+  const [reduceMotion, setReduceMotion] = useState(true);
+
+  useEffect(() => {
+    const handleStatusChange = status => setReduceMotion(status.matches);
+
+    const mediaQuery = window.matchMedia("all and (prefers-reduced-motion: reduce)");
+    setReduceMotion(mediaQuery.matches);
+    mediaQuery.addEventListener("change", handleStatusChange, { passive: true });
+
+    return () => mediaQuery.removeEventListener("change", handleStatusChange, { passive: true });
+  });
+
 
   const {
     _id,
@@ -72,7 +85,10 @@ const Tmp = (props) => {
     </AccordionPanel>
   ));
 
-  const Placeholder = (<YAccordion>
+  const Placeholder = (<YAccordion
+    onActive={forceCheck}
+    animate
+  >
     {content3}
   </YAccordion>);
 

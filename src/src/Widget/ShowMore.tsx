@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import posed from 'react-pose';
 import { Box, Button } from "grommet";
+import { forceCheck } from 'react-lazyload';
 
 export const uiSchema = {};
 
@@ -54,13 +55,17 @@ const Tmp = props => {
     className,
   } = props;
 
-  const [isOpen, dispatch] = React.useReducer(state => !state, initiallyOpen);
+  const [isOpen, xdispatch] = React.useReducer(state => !state, initiallyOpen);
+  const dispatch = open => {
+    forceCheck();
+    return xdispatch(open);
+  };
   const content = child.map(__renderSubtree);
   return <Box plain gridArea={gridArea} className={className}>
     <Item pose={isOpen ? 'open' : 'closed'}>
       {content}
     </Item>
-    {(isOpen || (showLess && showLess.trim())) && <StyledButton plain onClick={dispatch} label={isOpen ? showLess : showMore}/>}
+    {(!isOpen || (showLess && showLess.trim())) && <StyledButton plain onClick={dispatch} label={isOpen ? showLess : showMore}/>}
     {(showLess && showLess.trim()) && <hr />}
   </Box>;
 };

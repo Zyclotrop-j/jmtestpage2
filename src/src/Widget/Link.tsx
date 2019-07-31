@@ -30,6 +30,8 @@ const schema = {
   }
 };
 
+const A = styled.a``;
+
 export const Link = props => {
   const {
     plain,
@@ -49,7 +51,7 @@ export const Link = props => {
   const MDLink = styled(GLink)``;
   const as = /^\/(?!\/)/.test(href) ? { as: MDLink, to: href } : { as: OutboundLink, rel: "noopener", referrerpolicy: "origin" };
   if(plain) {
-    return <a aria-label={a11yTitle} {...as} href={href} >{content}</a>;
+    return <A aria-label={a11yTitle} {...as} href={href} >{content}</A>;
   }
   return <Anchor a11yTitle={a11yTitle} {...as} href={href} label={content} children={content} />;
 };

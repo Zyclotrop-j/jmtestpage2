@@ -7,6 +7,7 @@ import {
     AccordionItemButton,
     AccordionItemPanel,
 } from 'react-accessible-accordion';
+import { forceCheck } from 'react-lazyload';
 
 const fadein = keyframes`
   0% {
@@ -55,7 +56,11 @@ const StyledAccordionItemButton = styled(AccordionItemButton)`
 `;
 const StyledAccordionItemPanel = styled(AccordionItemPanel)`
   padding: 20px;
+
   animation: ${fadein} 0.35s ease-in;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
 `;
 
 export class Accordion extends React.Component<any> {
@@ -103,6 +108,7 @@ export class Accordion extends React.Component<any> {
           allowMultipleExpanded={allowMultipleExpanded}
           allowZeroExpanded={allowZeroExpanded}
           preExpanded={preExpanded && preExpanded.map(i => `${_id}-${i}`)}
+          onChange={forceCheck}
         >
             {content2}
         </StyledAccordion>
