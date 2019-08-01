@@ -16,6 +16,7 @@ import FallDownMenu from 'react-burger-menu/lib/menus/fallDown';
 import RevealMenu from 'react-burger-menu/lib/menus/reveal';
 import { colorStyle, normalizeColor } from 'grommet-styles';
 import Link from 'gatsby-link';
+import defer from "lodash/defer";
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { ModernLayout } from '../layouts/modern';
 import { PageContext } from '../utils/PageContext';
