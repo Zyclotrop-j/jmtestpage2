@@ -4,6 +4,18 @@
 import React from "react"
 import PropTypes from "prop-types"
 
+try {
+  const myObserver = new ReportingObserver(reportList => {
+    reportList.forEach(report => {
+      console.error(report.body.featureId, report);
+    });
+  }, {"types": ["feature-policy-violation"]});
+  myObserver.observe();
+} catch(e) {
+  console.warn(e);
+}
+
+
 export default function HTML(props) {
   return (
     <html {...props.htmlAttributes}>
