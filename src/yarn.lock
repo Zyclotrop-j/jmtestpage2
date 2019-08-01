@@ -1306,6 +1306,18 @@
     preact "8.2.9"
     prettier-bytes "^1.0.4"
 
+"@uppy/core@^1.0.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@uppy/core/-/core-1.2.0.tgz#9fe30cae1584561450cd616828f182b7b111f84c"
+  dependencies:
+    "@uppy/store-default" "1.1.0"
+    "@uppy/utils" "1.2.0"
+    cuid "^2.1.1"
+    lodash.throttle "^4.1.1"
+    mime-match "^1.0.2"
+    namespace-emitter "^2.0.1"
+    preact "8.2.9"
+
 "@uppy/dashboard@1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@uppy/dashboard/-/dashboard-1.0.2.tgz#4d587f296a2334e1f1e377fe4b2f33b0d41aa50f"
@@ -1431,6 +1443,10 @@
   version "0.28.3"
   resolved "https://registry.yarnpkg.com/@uppy/store-default/-/store-default-0.28.3.tgz#0dd37badf68f1ca4d16e23c3813626ed01127643"
 
+"@uppy/store-default@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@uppy/store-default/-/store-default-1.1.0.tgz#c4ded532ed38d13ca955962edbffe58ecd9abb7e"
+
 "@uppy/store-redux@0.28.3":
   version "0.28.3"
   resolved "https://registry.yarnpkg.com/@uppy/store-redux/-/store-redux-0.28.3.tgz#d90ba77f8329da3fe454d033cafbf6c1856e0227"
@@ -1473,6 +1489,12 @@
 "@uppy/utils@1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@uppy/utils/-/utils-1.0.2.tgz#ce584ca7e157fda3ea8983caf3d88afdfb9413e8"
+  dependencies:
+    lodash.throttle "^4.1.1"
+
+"@uppy/utils@1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@uppy/utils/-/utils-1.2.0.tgz#f9e574f72ca728b2990d0e9775be580afdac6ea4"
   dependencies:
     lodash.throttle "^4.1.1"
 

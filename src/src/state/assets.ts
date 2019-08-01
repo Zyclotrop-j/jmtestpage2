@@ -1,5 +1,5 @@
 import { Core as Uppy, AwsS3Multipart, Dropbox, GoogleDrive, Instagram, Url, Dashboard  } from 'uppy';
-import '@uppy/url/dist/style.css';
+import '@uppy/core/dist/style.min.css';
 import { memoizeWith } from "ramda";
 
 const cimemo = memoizeWith((client, idToken) => `${client}${idToken}`);

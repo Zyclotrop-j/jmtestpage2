@@ -21,47 +21,13 @@ import { ErrorBoundary } from '../components/ErrorBoundary';
 import { ModernLayout } from '../layouts/modern';
 import { PageContext } from '../utils/PageContext';
 import { MenuContext } from '../utils/menuContext';
+import { NavigationEmitter } from '../utils/NavigationEmitter';
 
 const HeadOverlay = styled.div``;
 const PageWrap = styled.div`
   max-height: 100vh;
   overflow-y: auto;
 `;
-
-const NavigationTransition = function() {
-  this.listeners = {};
-};
-NavigationTransition.prototype.listeners = null;
-NavigationTransition.prototype.addEventListener = function(type, callback) {
-  if (!(type in this.listeners)) {
-    this.listeners[type] = [];
-  }
-  this.listeners[type].push(callback);
-};
-NavigationTransition.prototype.removeEventListener = function(type, callback) {
-  if (!(type in this.listeners)) {
-    return;
-  }
-  var stack = this.listeners[type];
-  for (var i = 0, l = stack.length; i < l; i++) {
-    if (stack[i] === callback){
-      stack.splice(i, 1);
-      return;
-    }
-  }
-};
-NavigationTransition.prototype.dispatchEvent = function(event) {
-  if (!(event.type in this.listeners)) {
-    return true;
-  }
-  var stack = this.listeners[event.type].slice();
-
-  for (var i = 0, l = stack.length; i < l; i++) {
-    stack[i].call(this, event);
-  }
-  return !event.defaultPrevented;
-};
-const NavigationTransitionInstance = new NavigationTransition();
 
 const MenuStyled = createGlobalStyle`
   .bm-burger-button {
@@ -259,9 +225,9 @@ const Sidebarstatefull = ({
     resetCb();
   }
   React.useEffect(() => {
-    NavigationTransitionInstance.addEventListener("NAVIGATION-END", triggercallbacks);
+    NavigationEmitter.addEventListener("NAVIGATION-END", triggercallbacks);
     return () => {
-      NavigationTransitionInstance.removeEventListener("NAVIGATION-END", triggercallbacks);
+      NavigationEmitter.removeEventListener("NAVIGATION-END", triggercallbacks);
     };
   }, [true]);
 
@@ -307,7 +273,7 @@ export class Layout extends React.Component<{}> {
   }
   public shouldComponentUpdate(nextProps, nextState) {
     if(this.props.location.pathname !== window.location.pathname) {
-      NavigationTransitionInstance.dispatchEvent({
+      NavigationEmitter.dispatchEvent({
         type: "NAVIGATION-START"
       });
     }
@@ -510,7 +476,7 @@ export class Layout extends React.Component<{}> {
                   preEnterPose={`${enterpose}enter`}
                   enterPose="default"
                   exitPose={`${exitpose}exit`}
-                  onRest={() => NavigationTransitionInstance.dispatchEvent({
+                  onRest={() => NavigationEmitter.dispatchEvent({
                     type: "NAVIGATION-END"
                   })}
                 >
