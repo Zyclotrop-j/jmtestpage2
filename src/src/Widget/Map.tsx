@@ -111,6 +111,10 @@ const Tmp = (props) => {
     defaultView,
   } = props;
 
+  if(!defaultView) {
+    console.warn("Mandatory props defaultView not found", defaultView, props)
+  }
+
   const Placeholder = () => <div aria-label="Loading Map"><Spinning
     id={`loading-${_id}`}
     kind="circle"
@@ -128,8 +132,8 @@ const Tmp = (props) => {
             "Map loaded",
             "polite",
             2000
-          )
-          return <Component {...props} defaultView={[defaultView.lat, defaultView.lng]} />;
+          );
+          return <Component {...props} defaultView={[defaultView?.lat, defaultView?.lng]} />;
         }}
       </AnnounceContext.Consumer>))
     }));

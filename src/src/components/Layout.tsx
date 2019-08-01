@@ -22,6 +22,10 @@ import { PageContext } from '../utils/PageContext';
 import { MenuContext } from '../utils/menuContext';
 
 const HeadOverlay = styled.div``;
+const PageWrap = styled.div`
+  max-height: 100vh;
+  overflow-y: auto;
+`;
 
 const MenuStyled = createGlobalStyle`
   .bm-burger-button {
@@ -190,12 +194,18 @@ const RouteContainer = posed(NoOverflowdiv)({
 
 const Sidebarstatefull = ({
   component: Component,
+  reactStableCallback,
   children,
   ...props
 }) => {
   const [menuOpen, xsetMenuOpen] = React.useState(false);
   const setMenuOpen = toState => {
-    if(menuOpen !== toState) return xsetMenuOpen(toState);
+    if(menuOpen !== toState) return reactStableCallback(() => {
+      defer(() => {
+        xsetMenuOpen(toState);
+      });
+      return true;
+    });
     console.warn(`Trying to change menu state from ${menuOpen} to ${toState} - this function should only be called if state is different!`)
     return null;
   };
@@ -203,7 +213,7 @@ const Sidebarstatefull = ({
   return (<Component
     {...props}
     isOpen={menuOpen}
-    onStateChange={state => setMenuOpen(state.isOpen, "onStateChange")}
+    onStateChange={state => defer(xsetMenuOpen, state.isOpen)}
   >
     <MenuContext.Provider value={{ setMenuOpen }}>
       {children}
@@ -377,6 +387,15 @@ export class Layout extends React.Component<{}> {
       window.navigator.userAgent :
       "Android"; // Mobile first
 
+    let navigationendcbs = [];
+    const addAfterNavigationCb = fn => {
+      navigationendcbs.push(fn);
+    };
+    const notifyNavigationFinished = () => {
+      navigationendcbs.some(i => i());
+      navigationendcbs = [];
+    };
+
     return (
         <MenuContext.Provider value={{ setMenuOpen: () => null }}><Grommet
           cssVars
@@ -398,6 +417,7 @@ export class Layout extends React.Component<{}> {
               <>
                 <MenuStyled />
                 <Sidebarstatefull
+                  reactStableCallback={addAfterNavigationCb}
                   component={Sidebar}
                   pageWrapId="page-wrap"
                   outerContainerId="outer-container"
@@ -434,31 +454,34 @@ export class Layout extends React.Component<{}> {
               theme: allthemes,
               mode: "inline"
             })}>
-              <PoseGroup
-                preEnterPose={`${enterpose}enter`}
-                enterPose="default"
-                exitPose={`${exitpose}exit`}
-              >
-                <RouteContainer id="page-wrap" key={pathname}>
-                  {children}
-                </RouteContainer>
-              </PoseGroup>
+              <PageWrap id="page-wrap">
+                <PoseGroup
+                  preEnterPose={`${enterpose}enter`}
+                  enterPose="default"
+                  exitPose={`${exitpose}exit`}
+                  onRest={notifyNavigationFinished}
+                >
+                  <RouteContainer key={pathname}>
+                    {children}
+                  </RouteContainer>
+                </PoseGroup>
+                <ErrorBoundary name="bottommenu">
+                  {hasBottommenu ? <PageContext.Provider value={Layout.getContextValue({
+                    pages: this.props?.data?.data?.pages,
+                    pathname,
+                    theme: allthemes,
+                    mode: "horizontal"
+                  })}>
+                    <BottomMenu>
+                      <SkipLinkTarget id="navigation_bottom" />
+                      <Box direction="row" id="navigation_bottom_marker">
+                        {bottommenu && __renderSubtree(bottommenu)}
+                      </Box>
+                    </BottomMenu>
+                  </PageContext.Provider> : <span />}
+                </ErrorBoundary>
+              </PageWrap>
             </PageContext.Provider>
-          </ErrorBoundary>
-          <ErrorBoundary name="bottommenu">
-            {hasBottommenu ? <PageContext.Provider value={Layout.getContextValue({
-              pages: this.props?.data?.data?.pages,
-              pathname,
-              theme: allthemes,
-              mode: "horizontal"
-            })}>
-              <BottomMenu>
-                <SkipLinkTarget id="navigation_bottom" />
-                <Box direction="row" id="navigation_bottom_marker">
-                  {bottommenu && __renderSubtree(bottommenu)}
-                </Box>
-              </BottomMenu>
-            </PageContext.Provider> : <span />}
           </ErrorBoundary>
         </Grommet></MenuContext.Provider>
     );

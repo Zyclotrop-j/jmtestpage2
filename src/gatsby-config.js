@@ -68,10 +68,12 @@ websitedata.data.themes.reverse().some(id => {
 });
 
 if(!foundfontbody) {
-  console.error("No body font", foundfontbody, websitedata.data.themes);
+  console.error("No body font", foundfontbody, websitedata.data.themes, "Using Sintony as fallback");
+  bodyFont = "Sintony"
 }
 if(!foundfonthead) {
-  console.error("No body font", foundfonthead, websitedata.data.themes);
+  console.error("No Headline font", foundfonthead, websitedata.data.themes, "Using Headland One as fallback");
+  headFont = "Headland One"
 }
 
 const getShortName = domain => {

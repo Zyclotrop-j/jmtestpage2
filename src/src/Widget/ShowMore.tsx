@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import posed from 'react-pose';
 import { Box, Button } from "grommet";
+import defer from "lodash/defer";
 import { forceCheck } from 'react-lazyload';
 
 export const uiSchema = {};
@@ -54,6 +55,14 @@ const Tmp = props => {
     gridArea,
     className,
   } = props;
+
+
+  React.useEffect(() => {
+    if(initiallyOpen) {
+      defer(forceCheck);
+    }
+  });
+
 
   const [isOpen, xdispatch] = React.useReducer(state => !state, initiallyOpen);
   const dispatch = open => {

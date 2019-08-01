@@ -85,32 +85,30 @@ export class Accordion extends React.Component<any> {
       __renderSubtree
     } = this.props;
 
-    const content2 = children.map((u, idx) => (
-      <StyledAccordionItem
-        uuid={`${_id}-${idx}`}
-        key={u ? u._id : idx}
-      >
-          <StyledAccordionItemHeading
-            aria-level={level}
-          >
-              <StyledAccordionItemButton>
-                  {content?.[idx]?.headline}
-              </StyledAccordionItemButton>
-          </StyledAccordionItemHeading>
-          <StyledAccordionItemPanel>
-              {u?.map(__renderSubtree)}
-          </StyledAccordionItemPanel>
-      </StyledAccordionItem>
-    ));
-
     return (
         <StyledAccordion
           allowMultipleExpanded={allowMultipleExpanded}
           allowZeroExpanded={allowZeroExpanded}
-          preExpanded={preExpanded && preExpanded.map(i => `${_id}-${i}`)}
+          preExpanded={preExpanded ? preExpanded.map(i => `${_id}-${i}`) : []}
           onChange={forceCheck}
         >
-            {content2}
+            {children.map((u, idx) => (
+              <StyledAccordionItem
+                uuid={`${_id}-${idx}`}
+                key={u ? u._id : idx}
+              >
+                  <StyledAccordionItemHeading
+                    aria-level={level}
+                  >
+                      <StyledAccordionItemButton>
+                          {content?.[idx]?.headline}
+                      </StyledAccordionItemButton>
+                  </StyledAccordionItemHeading>
+                  <StyledAccordionItemPanel>
+                      {u?.map(__renderSubtree)}
+                  </StyledAccordionItemPanel>
+              </StyledAccordionItem>
+            ))}
         </StyledAccordion>
     );
   }
