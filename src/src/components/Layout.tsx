@@ -263,7 +263,7 @@ const Sidebarstatefull = ({
     return () => {
       NavigationTransitionInstance.removeEventListener("NAVIGATION-END", triggercallbacks);
     };
-  } [true]);
+  }, [true]);
 
 
   return (<Component
