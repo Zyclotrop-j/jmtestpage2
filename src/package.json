@@ -96,9 +96,7 @@
   "dependencies": {
     "@hot-loader/react-dom": "^16.8.6",
     "@researchgate/react-intersection-observer": "^1.0.1",
-    "@uppy/golden-retriever": "^1.0.2",
     "@uppy/react": "^1.0.2",
-    "@uppy/core": "^1.0.0",
     "ajv": "^6.10.0",
     "async": "^3.0.1",
     "auth0-js": "^9.10.2",
