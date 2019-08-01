@@ -196,38 +196,23 @@ const RouteContainer = posed(NoOverflowdiv)({
 
 const Sidebarstatefull = ({
   component: Component,
-  reactStableCallback,
   children,
   ...props
 }) => {
   const [menuOpen, xsetMenuOpen] = React.useState(false);
-  const [sceduledCallbacks, setSceduledCallbacks] = React.useState([]);
-  const addCB = (fn) => {
-    setSceduledCallbacks(sceduledCallbacks.concat([fn]));
-  };
-  const resetCb = () => {
-    setSceduledCallbacks([]);
-  };
   const setMenuOpen = toState => {
     if(menuOpen !== toState) {
-      console.log("Added callback to reach state "+toState);
-      addCB(() => {
-        console.log("Execing menustateset", toState);
-        xsetMenuOpen(toState);
-      });
+      // Give the other operations enough time to complete
+      return window.setTimeout(() => xsetMenuOpen(toState), 200);
     }
     console.warn(`Trying to change menu state from ${menuOpen} to ${toState} - this function should only be called if state is different!`)
     return null;
   };
-  const triggercallbacks = () => {
-    console.log("NAVIGATION-END triggered, playing ", sceduledCallbacks);
-    sceduledCallbacks.forEach(defer);
-    resetCb();
-  }
+  const closemenu = () => defer(xsetMenuOpen, false);
   React.useEffect(() => {
-    NavigationEmitter.addEventListener("NAVIGATION-END", triggercallbacks);
+    NavigationEmitter.addEventListener("NAVIGATION-END", closemenu);
     return () => {
-      NavigationEmitter.removeEventListener("NAVIGATION-END", triggercallbacks);
+      NavigationEmitter.removeEventListener("NAVIGATION-END", closemenu);
     };
   }, [true]);
 

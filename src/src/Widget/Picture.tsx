@@ -70,7 +70,8 @@ export const Pingback = ({ children, pingback = "", origin, src = "" }) =>
           ? () => window.requestIdleCallback(() => {
             return window.setTimeout(() => {
               const img = document.createElement("img");
-              const suffix = (pingback === true ? src : pingback).indexOf("?") > 1 ? "&auto=format&w=1&h=1" : "?auto=format&w=1&h=1";
+              // minimum w and h are 10
+              const suffix = (pingback === true ? src : pingback).indexOf("?") > 1 ? "&auto=format&w=10&h=10" : "?auto=format&w=10&h=10";
               img.decoding = "async";
               img.src = pingback === true ? `${src}${suffix}` : `${pingback}${suffix}`;
               img.referrerpolicy = "origin-when-cross-origin";

@@ -9,7 +9,7 @@ import { Layout, Provider } from "./src/components/Layout"
 
 window.requestIdleCallback(() => {
   try {
-    const observer = new ReportingObserver((reports, observer) => {
+    const observer = new window.ReportingObserver((reports, observer) => {
       for (const report of reports) {
         try {
           window.ga('send', 'exception', {
@@ -21,6 +21,7 @@ window.requestIdleCallback(() => {
         }
       }
     }, { buffered: true });
+    observer.observe();
   } catch(e) {
     console.warn(e);
   }
@@ -47,7 +48,7 @@ window.requestIdleCallback(() => {
   });
 
   try {
-    const myObserver = new ReportingObserver(reportList => {
+    const myObserver = new window.ReportingObserver(reportList => {
       reportList.forEach(report => {
         console.error(report.body.featureId, report);
       });
