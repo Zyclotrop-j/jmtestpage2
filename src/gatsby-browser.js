@@ -7,12 +7,18 @@ import { Layout, Provider } from "./src/components/Layout"
 
 // mobx.configure({ enforceActions: "observed" });
 
-
 window.requestIdleCallback(() => {
   try {
     const observer = new ReportingObserver((reports, observer) => {
       for (const report of reports) {
-        t
+        try {
+          window.ga('send', 'exception', {
+            'exDescription': `${report.type} - ${JSON.stringify(report.body)}`,
+            'exFatal': report.type !== "deprecation"
+          });
+        } catch(e) {
+          console.warn("reporting is disabled (do you use no-track?)", e);
+        }
       }
     }, { buffered: true });
   } catch(e) {
@@ -26,9 +32,9 @@ window.requestIdleCallback(() => {
         'exFatal': true
       });
     } catch(e) {
-      console.error(e);
+      console.error("reporting is disabled (do you use no-track?)", e);
     }
-  };
+  });
   window.addEventListener("unhandledrejection", e => {
     try {
       window.ga('send', 'exception', {
@@ -36,9 +42,9 @@ window.requestIdleCallback(() => {
         'exFatal': true
       });
     } catch(e) {
-      console.error(e);
+      console.error("reporting is disabled (do you use no-track?)", e);
     }
-  );
+  });
 
   try {
     const myObserver = new ReportingObserver(reportList => {
