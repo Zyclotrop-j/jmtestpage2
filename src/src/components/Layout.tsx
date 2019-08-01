@@ -221,7 +221,7 @@ const Sidebarstatefull = ({
   };
   const triggercallbacks = () => {
     console.log("NAVIGATION-END triggered, playing ", sceduledCallbacks);
-    sceduledCallbacks.forEach(defer, i);
+    sceduledCallbacks.forEach(defer);
     resetCb();
   }
   React.useEffect(() => {
