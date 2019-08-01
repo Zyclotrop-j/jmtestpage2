@@ -3,6 +3,7 @@ import { Link as GLink } from 'gatsby';
 import styled from 'styled-components';
 import { Anchor } from "grommet";
 import { OutboundLink } from 'gatsby-plugin-gtag';
+import { MenuContext } from '../utils/menuContext';
 
 export const uiSchema = {};
 
@@ -50,8 +51,13 @@ export const Link = props => {
   const content = child.map(__renderSubtree);
   const MDLink = styled(GLink)``;
   const as = /^\/(?!\/)/.test(href) ? { as: MDLink, to: href } : { as: OutboundLink, rel: "noopener", referrerpolicy: "origin" };
+
   if(plain) {
-    return <A aria-label={a11yTitle} {...as} href={href} >{content}</A>;
+    return (<MenuContext.Consumer>{
+      ({ setMenuOpen }) => <A onClick={() => setMenuOpen(false)} aria-label={a11yTitle} {...as} href={href} >{content}</A>
+    }</MenuContext.Consumer>);
   }
-  return <Anchor a11yTitle={a11yTitle} {...as} href={href} label={content} children={content} />;
+  return (<MenuContext.Consumer>{
+    ({ setMenuOpen }) => <Anchor onClick={() => setMenuOpen(false)} a11yTitle={a11yTitle} {...as} href={href} label={content} children={content} />
+  }</MenuContext.Consumer>);
 };

@@ -28,6 +28,41 @@ const PageWrap = styled.div`
   overflow-y: auto;
 `;
 
+const NavigationTransition = function() {
+  this.listeners = {};
+};
+NavigationTransition.prototype.listeners = null;
+NavigationTransition.prototype.addEventListener = function(type, callback) {
+  if (!(type in this.listeners)) {
+    this.listeners[type] = [];
+  }
+  this.listeners[type].push(callback);
+};
+NavigationTransition.prototype.removeEventListener = function(type, callback) {
+  if (!(type in this.listeners)) {
+    return;
+  }
+  var stack = this.listeners[type];
+  for (var i = 0, l = stack.length; i < l; i++) {
+    if (stack[i] === callback){
+      stack.splice(i, 1);
+      return;
+    }
+  }
+};
+NavigationTransition.prototype.dispatchEvent = function(event) {
+  if (!(event.type in this.listeners)) {
+    return true;
+  }
+  var stack = this.listeners[event.type].slice();
+
+  for (var i = 0, l = stack.length; i < l; i++) {
+    stack[i].call(this, event);
+  }
+  return !event.defaultPrevented;
+};
+const NavigationTransitionInstance = new NavigationTransition();
+
 const MenuStyled = createGlobalStyle`
   .bm-burger-button {
     position: fixed;
@@ -200,16 +235,36 @@ const Sidebarstatefull = ({
   ...props
 }) => {
   const [menuOpen, xsetMenuOpen] = React.useState(false);
+  const [sceduledCallbacks, setSceduledCallbacks] = React.useState([]);
+  const addCB = (fn) => {
+    setSceduledCallbacks(sceduledCallbacks.concat([fn]));
+  };
+  const resetCb = () => {
+    setSceduledCallbacks([]);
+  };
   const setMenuOpen = toState => {
-    if(menuOpen !== toState) return reactStableCallback(() => {
-      defer(() => {
+    if(menuOpen !== toState) {
+      console.log("Added callback to reach state "+toState);
+      addCB(() => {
+        console.log("Execing menustateset", toState);
         xsetMenuOpen(toState);
       });
-      return true;
-    });
+    }
     console.warn(`Trying to change menu state from ${menuOpen} to ${toState} - this function should only be called if state is different!`)
     return null;
   };
+  const triggercallbacks = () => {
+    console.log("NAVIGATION-END triggered, playing ", sceduledCallbacks);
+    sceduledCallbacks.forEach(defer, i);
+    resetCb();
+  }
+  React.useEffect(() => {
+    NavigationTransitionInstance.addEventListener("NAVIGATION-END", triggercallbacks);
+    return () => {
+      NavigationTransitionInstance.removeEventListener("NAVIGATION-END", triggercallbacks);
+    };
+  } [true]);
+
 
   return (<Component
     {...props}
@@ -251,6 +306,11 @@ export class Layout extends React.Component<{}> {
     }));
   }
   public shouldComponentUpdate(nextProps, nextState) {
+    if(this.props.location.pathname !== window.location.pathname) {
+      NavigationTransitionInstance.dispatchEvent({
+        type: "NAVIGATION-START"
+      });
+    }
     if(nextState.components && !this.state.components) {
       return true;
     }
@@ -388,15 +448,6 @@ export class Layout extends React.Component<{}> {
       window.navigator.userAgent :
       "Android"; // Mobile first
 
-    let navigationendcbs = [];
-    const addAfterNavigationCb = fn => {
-      navigationendcbs.push(fn);
-    };
-    const notifyNavigationFinished = () => {
-      navigationendcbs.some(i => i());
-      navigationendcbs = [];
-    };
-
     return (
         <MenuContext.Provider value={{ setMenuOpen: () => null }}><Grommet
           cssVars
@@ -418,7 +469,6 @@ export class Layout extends React.Component<{}> {
               <>
                 <MenuStyled />
                 <Sidebarstatefull
-                  reactStableCallback={addAfterNavigationCb}
                   component={Sidebar}
                   pageWrapId="page-wrap"
                   outerContainerId="outer-container"
@@ -460,7 +510,9 @@ export class Layout extends React.Component<{}> {
                   preEnterPose={`${enterpose}enter`}
                   enterPose="default"
                   exitPose={`${exitpose}exit`}
-                  onRest={notifyNavigationFinished}
+                  onRest={() => NavigationTransitionInstance.dispatchEvent({
+                    type: "NAVIGATION-END"
+                  })}
                 >
                   <RouteContainer key={pathname}>
                     {children}
