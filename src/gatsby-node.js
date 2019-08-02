@@ -248,7 +248,7 @@ exports.createPages = ({ actions, graphql }) => {
           return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
         if(type === "DATA_Componentverticaltimeline") {
-          const childids = (i.accordioncontent || []).map(i => i.content._id);
+          const childids = (i.verticaltimelinecontent || []).map(i => i.content._id);
           const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
           return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }

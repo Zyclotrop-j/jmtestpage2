@@ -196,7 +196,7 @@ export class MediaQuery extends React.PureComponent<Props> {
 
     const content = child.map(__renderSubtree);
     if(query === "online" || query === "offline") {
-      return <LazyLoad placeholder={query === "online" ? <>{content}</> : null} offset={100} once >
+      return <LazyLoad scrollContainer="#page-wrap" placeholder={query === "online" ? <>{content}</> : null} offset={100} once >
         <Suspense fallback={query === "online" ? <>{content}</> : null}>
           <IsInlineComponent
             OnlineComponent={query === "online" ? <>{content}</> : null}
@@ -206,7 +206,7 @@ export class MediaQuery extends React.PureComponent<Props> {
       </LazyLoad>
     }
     const size = <CssQuery key={_id} query={`${query}`}>{content}</CssQuery>;
-    return (<LazyLoad placeholder={size} offset={100} once >
+    return (<LazyLoad scrollContainer="#page-wrap" placeholder={size} offset={100} once >
       <Suspense fallback={size}>
         <MediaQueryComponent key={_id}  query={`${query}`}>
           {content}

@@ -83,7 +83,7 @@ export class QRCode extends React.PureComponent<Props> {
   public render() {
     const { _id, className, gridArea, value, renderAs, size, bgColor, fgColor, level, includeMargin } = this.props;
 
-    return (<LazyLoad height={size} offset={100} once >
+    return (<LazyLoad scrollContainer="#page-wrap" height={size} offset={100} once >
       <Suspense fallback={<Spinning
         id={`loading-${_id}`}
         kind="circle"

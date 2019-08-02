@@ -96,7 +96,7 @@ const Tmp = (props) => {
     Component
   }));
 
-  return (<Observer key={_id} onChange={f}>
+  return (<Observer root={document.querySelector(".Pane.horizontal.Pane2") || document.querySelector("#page-wrap")} key={_id} onChange={f}>
     <div><Component {...props} /></div>
   </Observer>);
 };

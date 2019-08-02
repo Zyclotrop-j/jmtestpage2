@@ -630,7 +630,7 @@ export class Stage extends React.Component<Props> {
             flipMove={false}
           >
             {slot({ preview, data: current, key: currentSlotIdx, priority: currentSlotIdx === 0 && this.context })}
-            <Observer key="placeholder" onChange={this.handleVisibilityChange}>
+            <Observer root={document.querySelector(".Pane.horizontal.Pane2") || document.querySelector("#page-wrap")} key="placeholder" onChange={this.handleVisibilityChange}>
               <CBox key="placeholder" preview={preview} width={current.width || "100vw"} height={current.height || 80}/>
             </Observer>
           </PoseGroup>

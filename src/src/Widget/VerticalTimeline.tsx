@@ -101,23 +101,29 @@ const schema = {
 };
 
 const importComponent = (cb) => import('./VerticalTimelineComponent').then(c => cb(c.default));
+let Timeline;
 
 const Tmp = (props) => {
   const {
     _id,
   } = props;
 
-  const Placeholder = () => <div aria-label="Loading Timeline"><Spinning
-    id={`loading-${_id}`}
-    kind="circle"
-    color="currentColor"
-    size="medium"
-  /></div>;
   // We Wrap the Component to avoid react doing reducer magic
-  const [{ Component }, setContent] = useState({ Component: Placeholder });
+  const [state, setState] = useState("INITIAL");
 
-  const f = event => Placeholder === Component && event.isIntersecting && importComponent(Component => setContent({
-    Component: props => (<AnnounceContext.Consumer>
+  const f = event => {
+    console.log("evt", event, state);
+    if(event.isIntersecting && state === "INITIAL") {
+      setState("LOADING");
+      importComponent(Component => {
+        Timeline = Component;
+        setState("LOADED");
+      })
+    }
+  };
+
+  if(Timeline) {
+    return <AnnounceContext.Consumer>
       {announce => {
         announce(
           "Timeline loaded",
@@ -125,13 +131,21 @@ const Tmp = (props) => {
           2000
         );
         defer(forceCheck);
-        return <Component {...props} />;
+        return <Timeline {...props} />;
       }}
-    </AnnounceContext.Consumer>)
-  }));
-
-  return (<Observer rootMargin="-25% 0% -25% 0%" key={_id} onChange={f}>
-    <div><Component {...props} /></div>
+    </AnnounceContext.Consumer>
+  }
+  console.log("root root root", document.querySelector(".Pane.horizontal.Pane2") || document.querySelector("#page-wrap"));
+  return (<Observer root={document.querySelector(".Pane.horizontal.Pane2") || document.querySelector("#page-wrap")} rootMargin="25% 0% 25% 0%" key={_id} onChange={f}>
+    <div aria-label="Loading Timeline">
+      <Spinning
+        id={`loading-${_id}`}
+        kind="circle"
+        color="currentColor"
+        size="medium"
+        aria-hidden
+      />
+    </div>
   </Observer>);
 };
 

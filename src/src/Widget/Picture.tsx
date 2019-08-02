@@ -69,13 +69,19 @@ export const Pingback = ({ children, pingback = "", origin, src = "" }) =>
         pingback && location.origin !== origin
           ? () => window.requestIdleCallback(() => {
             return window.setTimeout(() => {
+              const addr = (pingback === true ? src : pingback);
+              if(addr.indexOf("unspalsh") === -1) { // Only ping for unspalsh
+                // Todo: Add more providers for reportig here
+                return;
+              }
               const img = document.createElement("img");
               // minimum w and h are 10
-              const suffix = (pingback === true ? src : pingback).indexOf("?") > 1 ? "&auto=format&w=10&h=10" : "?auto=format&w=10&h=10";
+              const suffix = addr.indexOf("?") > 1 ? "&auto=format&w=10&h=10" : "?auto=format&w=10&h=10";
               img.decoding = "async";
-              img.src = pingback === true ? `${src}${suffix}` : `${pingback}${suffix}`;
+              img.width = "10px";
+              img.height = "10px";
+              img.src = `${addr}${suffix}`;
               img.referrerpolicy = "origin-when-cross-origin";
-              img.hidden = true;
               img.style.display = "none";
               document.body.appendChild(img);
               window.setTimeout(() => img.parentElement.removeChild(img), 10);

@@ -7,6 +7,7 @@ import Observer from '@researchgate/react-intersection-observer';
 import { Spinning } from 'grommet-controls';
 import debounceRender from 'react-debounce-render';
 import metadata from "grommet-icons/metadata";
+import { forceCheck } from 'react-lazyload';
 
 export const uiSchema = {
   objects: {
@@ -128,6 +129,7 @@ const Tmp = (props) => {
     return Placeholder === Component && event.isIntersecting && importComponent(Component => setContent({
       Component: debounceRender(props => (<AnnounceContext.Consumer>
         {announce => {
+          forceCheck();
           announce(
             "Map loaded",
             "polite",
@@ -139,7 +141,7 @@ const Tmp = (props) => {
     }));
   };
 
-  return (<Observer key={_id} onChange={f}>
+  return (<Observer root={document.querySelector(".Pane.horizontal.Pane2") || document.querySelector("#page-wrap")} key={_id} onChange={f}>
     <div><Component {...props} /></div>
   </Observer>);
 };

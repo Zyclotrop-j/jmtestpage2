@@ -86,7 +86,7 @@ export const components = {
   img: {
     component: props => {
       return (
-        <LazyLoad height={200} once offset={100}>
+        <LazyLoad scrollContainer="#page-wrap" height={200} once offset={100}>
           <Image {...props} width={250} height={100} />
         </LazyLoad>
       );
