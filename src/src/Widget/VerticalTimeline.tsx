@@ -135,8 +135,8 @@ const Tmp = (props) => {
       }}
     </AnnounceContext.Consumer>
   }
-  console.log("root root root", document.querySelector(".Pane.horizontal.Pane2") || document.querySelector("#page-wrap"));
-  return (<Observer root={document.querySelector(".Pane.horizontal.Pane2") || document.querySelector("#page-wrap")} rootMargin="25% 0% 25% 0%" key={_id} onChange={f}>
+  console.log("root root root", typeof window !== `undefined` && (document.querySelector(".Pane.horizontal.Pane2") || document.querySelector("#page-wrap")));
+  return (<Observer root={typeof window !== `undefined` && (document.querySelector(".Pane.horizontal.Pane2") || document.querySelector("#page-wrap"))} rootMargin="25% 0% 25% 0%" key={_id} onChange={f}>
     <div aria-label="Loading Timeline">
       <Spinning
         id={`loading-${_id}`}
