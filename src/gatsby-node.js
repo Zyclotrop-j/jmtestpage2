@@ -233,22 +233,22 @@ exports.createPages = ({ actions, graphql }) => {
           return { id, type, child, componentgroupid: group.componentgroupid };
         }
         if(type === "DATA_Componentgrid") {
-          const childids = (i.gridcontent || []).map(i => i._id);
+          const childids = (i.gridcontent || []).map(i => i && i._id);
           const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
           return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
         if(type === "DATA_Componentlist") {
-          const childids = (i.listcontent || []).map(i => i._id);
+          const childids = (i.listcontent || []).map(i => i && i._id);
           const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
           return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
         if(type === "DATA_Componentaccordion") {
-          const childids = (i.accordioncontent || []).map(i => i.content._id);
+          const childids = (i.accordioncontent || []).map(i => i && i.content._id);
           const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
           return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
         if(type === "DATA_Componentverticaltimeline") {
-          const childids = (i.verticaltimelinecontent || []).map(i => i.content._id);
+          const childids = (i.verticaltimelinecontent || []).map(i => i && i.content._id);
           const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
           return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
