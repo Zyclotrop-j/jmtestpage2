@@ -36,8 +36,8 @@ const willEnter = () => ({
 const FixedArea = styled(Box)`
   position: absolute;
   top: 0;
-  left: 0;
   right: 0;
+  width: 30vw;
   height: auto;
   z-index: 700;
 `;
@@ -60,16 +60,12 @@ export const Notificationbar = observer(({ notifications }) => {
             const timeout = window.setTimeout(() => removeNotification({ ...data, idx }), 10000);
             timeouts[idx] = timeout;
             return (
-              <Notification
+              <div
                 key={key}
-                message={data.message}
-                state={data.state || ''}
-                onClose={() => removeNotification({ ...data, idx })}
-                timestamp={new Date()}
-                strong={true}
-                status={data.status || 'warning'}
                 style={{ ...style, border: '1px solid' }}
-              />
+              >
+                {data.message}
+              </div>
             );
           })}
         </FixedArea>

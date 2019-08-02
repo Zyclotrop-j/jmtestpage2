@@ -253,7 +253,7 @@ export const List = (props) => {
 
   const content = children.map((u, idx) => (
     <Li key={u._id || idx}>
-      {u.map(__renderSubtree)}
+      {u?.map(__renderSubtree)}
     </Li>
   ));
 

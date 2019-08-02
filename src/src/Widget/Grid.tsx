@@ -42,7 +42,7 @@ export class Grid extends React.PureComponent<Props> {
 
     const content = children.map((u, idx) => (
       <Box key={u?._id || idx} gridArea={`col-${idx + 1}`}>
-        {u.map(__renderSubtree)}
+        {u?.map(__renderSubtree)}
       </Box>
     ));
 
