@@ -180,8 +180,12 @@ exports.createPages = ({ actions, graphql }) => {
                 ... on DATA_Componentverticaltimeline {
                   _id
                   verticaltimelinecontent: content {
-                    _id
+                    content {
+                      _id
+                    }
+                    color
                   }
+                  layout
                 }
                 ... on DATA_Componentbox {
                   _id
@@ -248,7 +252,7 @@ exports.createPages = ({ actions, graphql }) => {
           return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
         if(type === "DATA_Componentverticaltimeline") {
-          const childids = (i.verticaltimelinecontent || []).map(i => i && i._id);
+          const childids = (i.verticaltimelinecontent || []).map(i => i && i.content && i.content._id);
           const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
           return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
@@ -309,7 +313,7 @@ exports.createPages = ({ actions, graphql }) => {
                 i.mediacontent ||
                 i.showmorecontent ||
                 i.linkcontent ||
-                i.verticaltimelinecontent ||
+                i.verticaltimelinecontent && i.verticaltimelinecontent.map(i => i && i.content) ||
                 i.accordioncontent && i.accordioncontent.map(i => i && i.content) ||
                 []
               )

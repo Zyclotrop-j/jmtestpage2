@@ -1,7 +1,26 @@
 import React from "react"
 import { RenderingContext, BROWSER } from "./src/utils/renderingContext";
 // import mobx from "mobx";
-import { Layout, Provider } from "./src/components/Layout"
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+import { Layout, Provider } from "./src/components/Layout";
+
+
+const prefersNoAnimation = window?.matchMedia("(prefers-reduced-motion: reduce)")?.matches;
+toast.configure({
+  position: "top-right",
+  autoClose: 5000,
+  closeButton: undefined,
+  hideProgressBar: false,
+  pauseOnHover: true,
+  pauseOnFocusLoss: true,
+  rtl: document.dir === "rtl",
+  closeOnClick: true,
+  newestOnTop: false,
+  draggable: true,
+  draggablePercent: 80,
+});
 
 // import '@babel/polyfill';
 
@@ -71,17 +90,20 @@ export const wrapRootElement =  ({ element, ...rest }) => {
   )
 }
 
-/*
+
 export const onServiceWorkerUpdateReady = () => {
-  const answer = window.confirm(
-    `This application has been updated. ` +
-      `Reload to display the latest version?`
-  );
-
-  if (answer === true) {
-    window.location.reload()
-  }
+  const options = {
+      autoClose: 60000,
+      delay: 2000,
+      closeButton: false,
+      type: toast.TYPE.INFO,
+      hideProgressBar: true,
+      position: toast.POSITION.BOTTOM_RIGHT,
+      closeOnClick: true,
+      onClick: window.location.reload
+  };
+  toast(<div>An update is available. Click to apply update.</div>, options);
 }
-
+/*
 export const registerServiceWorker = () => true;
 */
