@@ -1,11 +1,17 @@
 import React from "react"
 import { RenderingContext, BROWSER } from "./src/utils/renderingContext";
 // import mobx from "mobx";
-import { toast } from 'react-toastify';
+import { toast, cssTransition } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { Layout, Provider } from "./src/components/Layout";
 
+const NoTransition = cssTransition({
+  enter: 'zoomIn',
+  exit: 'zoomOut',
+  duration: 1,
+  appendPosition: false
+});
 
 const prefersNoAnimation = window?.matchMedia("(prefers-reduced-motion: reduce)")?.matches;
 toast.configure({
@@ -20,6 +26,7 @@ toast.configure({
   newestOnTop: false,
   draggable: true,
   draggablePercent: 80,
+  transition: prefersNoAnimation ? NoTransition : undefined
 });
 
 // import '@babel/polyfill';

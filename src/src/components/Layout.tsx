@@ -17,6 +17,7 @@ import RevealMenu from 'react-burger-menu/lib/menus/reveal';
 import { colorStyle, normalizeColor } from 'grommet-styles';
 import Link from 'gatsby-link';
 import defer from "lodash/defer";
+import { ToastContainer, toast } from 'react-toastify';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { ModernLayout } from '../layouts/modern';
 import { PageContext } from '../utils/PageContext';
@@ -146,6 +147,18 @@ const GlobalStyle = createGlobalStyle`
   .leaflet-div-icon {
     background: transparent !important;
     border: 1px none transparent !important;
+  }
+  .Toastify__toast {
+    background-color: var(--light-1);
+  }
+  .Toastify__toast--error {
+    background-color: var(--status-error);
+  }
+  .Toastify__toast--warning  {
+    background-color: var(--status-warning);
+  }
+  .Toastify__toast--success {
+    background-color: var(--status-ok);
   }
 `;
 
@@ -397,7 +410,7 @@ export class Layout extends React.Component<{}> {
     const initialMobileBreakpoint =
       (typeof window !== 'undefined' && window.navigator) ?
       window.navigator.userAgent :
-      "Android"; // Mobile first
+      "Mobile"; // Mobile first
 
     return (
         <MenuContext.Provider value={{ setMenuOpen: () => null }}><Grommet
@@ -407,9 +420,16 @@ export class Layout extends React.Component<{}> {
           theme={{
             ...allthemes,
             mq: bpPipeline(allthemes.global.breakpoints),
+            __breakpoints: {
+              ...allthemes.global.breakpoints,
+              ...addBP,
+            }
           }}
           id="outer-container"
         >
+          <ErrorBoundary name="toastcontainer">
+            <ToastContainer />
+          </ErrorBoundary>
           <ErrorBoundary name="sidebar">
             {hasSideMenu ? <PageContext.Provider value={Layout.getContextValue({
               pages: this.props?.data?.data?.pages,

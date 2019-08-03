@@ -25,6 +25,7 @@ import "leaflet/dist/images/layers-2x.png"
 import "leaflet/dist/images/layers.png"
 Leaflet.Icon.Default.imagePath = "/";
 
+
 const StyledBox = styled(Box)`
   position: relative;
   z-index: 0;

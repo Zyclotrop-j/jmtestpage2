@@ -79,7 +79,8 @@ export const components = {
   a: {
     component: props => {
       const MDLink = styled(Link)``;
-      const as = /^\/(?!\/)/.test(props.href) ? { as: MDLink, to: props.href } : { as: OutboundLink, rel: "noopener", referrerpolicy: "origin" };
+      const islocal = /^\/(?!\/)/.test(props.href);
+      const as = islocal ? { as: MDLink, to: props.href } : { as: OutboundLink, rel: "noopener", referrerpolicy: "origin" };
       return <Anchor {...props} {...as} href={props.href} />;
     },
   },

@@ -1,9 +1,9 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { ThemeContext } from 'styled-components';
 import { Link } from 'gatsby';
 import Img from 'gatsby-image';
 import { Grid as GGrid, ResponsiveContext, Box } from 'grommet';
-import { range } from 'ramda';
+import { range, always } from 'ramda';
 import { renameKeysWith } from 'ramda-adjunct';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { HeadlineContext } from "../utils/headlineContext";
@@ -13,6 +13,8 @@ interface Props {
   urlescaped: boolean;
   text: string;
 }
+
+const alwaysauto = always("auto");
 
 export class Grid extends React.PureComponent<Props> {
 
@@ -59,29 +61,34 @@ export class Grid extends React.PureComponent<Props> {
       ?.map(i => i?.split('-') || ['full'])
       ?.map(([min, max]) => (min === max || !min || !max ? t(min) || t(min || max) : [t(min), t(max)])) || ['full'];
 
+
     return (<HeadlineContext.Provider value={this.context + 1}>
-      <ResponsiveContext.Consumer>
-        {size => (
-          <GGrid
-            id={_id}
-            className={className}
-            rows={size === 'small' ? gcolumns.map(() => "auto") /* underneight each other */ : ['full']}
-            columns={size === 'small' ? ['full'] : gcolumns}
-            areas={this.getAreas(columns, size === 'small')}
-            gap={gap}
-            margin={margin}
-            gridArea={gridArea}
-            align={align}
-            alignContent={alignContent}
-            alignSelf={alignSelf}
-            fill={fill !== false && fill !== true ? true : fill}
-            justify={justify}
-            justifyContent={justifyContent}
-          >
-            {content}
-          </GGrid>
-        )}
-      </ResponsiveContext.Consumer>
+      <ThemeContext.Consumer>
+        {theme => {
+          const smallbreakpoint = theme?.__breakpoints?.small || theme?.global?.breakpoints?.small?.value;
+          const isSmall = typeof window !== 'undefined' ? window.matchMedia(`(max-width: ${smallbreakpoint}px)`).matches : true;
+          return (<ResponsiveContext.Consumer>
+            {size => (<GGrid
+              id={_id}
+              className={className}
+              rows={!isSmall && size !== 'small' ? ['full'] : gcolumns.map(alwaysauto)}
+              columns={!isSmall && size !== 'small' ? gcolumns : ['full']}
+              areas={this.getAreas(columns, size === 'small')}
+              gap={gap}
+              margin={margin}
+              gridArea={gridArea}
+              align={align}
+              alignContent={alignContent}
+              alignSelf={alignSelf}
+              fill={fill !== false && fill !== true ? true : fill}
+              justify={justify}
+              justifyContent={justifyContent}
+            >
+              {content}
+            </GGrid>)}
+          </ResponsiveContext.Consumer>);
+        }}
+      </ThemeContext.Consumer>
     </HeadlineContext.Provider>);
   }
 

@@ -44,7 +44,13 @@ export class FlowChart extends React.PureComponent<Props> {
   }
 
   private handleVisibilityChange(event) {
-    const { _id, graph, theme } = this.props;
+    const { _id, graph: xgraph, theme } = this.props;
+    const isRTL = document.dir === "rtl";
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    let direction = "LR";
+    if(isRTL) { direction = "RL"; }
+    if(isMobile) { direction = "TB"; };
+    const graph = xgraph.replace(/^graph AUTO/, `graph ${direction}`);
     const xtheme = theme ? theme.toLowerCase() : theme;
     if(this.state.__html) {
       this.setState({
@@ -69,6 +75,7 @@ export class FlowChart extends React.PureComponent<Props> {
       const rerender = () => {
         try {
           if(graph) {
+            // todo make render direction responsive
             const innerHTML = mermaidAPI.render(`id-${_id}-flow-graph`, graph, () => null);
             this.setState({ __html: innerHTML });
           }

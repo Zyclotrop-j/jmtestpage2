@@ -246,37 +246,37 @@ const varients = {
 };
 const basegridlayouts = gap => ({
   auto: `
-    grid-template-columns: repeat(auto-fit, 10em);
+    grid-template-columns: repeat(auto-fit, minmax(2em, 10em));
   `,
   quarteritem: `
-    grid-template-columns: repeat(auto-fit, 2.5em);
+    grid-template-columns: repeat(auto-fit, minmax(2em, 2.5em));
   `,
   halfitem: `
-    grid-template-columns: repeat(auto-fit, 5em);
+    grid-template-columns: repeat(auto-fit, minmax(2em, 5em));
   `,
   singleitem: `
-    grid-template-columns: repeat(auto-fit, 10em);
+    grid-template-columns: repeat(auto-fit, minmax(2em, 10em));
   `,
   oneandhalfitem: `
-    grid-template-columns: repeat(auto-fit, 15em);
+    grid-template-columns: repeat(auto-fit, minmax(2em, 15em));
   `,
   doubleitem: `
-    grid-template-columns: repeat(auto-fit, 20em);
+    grid-template-columns: repeat(auto-fit, minmax(2em, 20em));
   `,
   oneitem: `
-    grid-template-columns: repeat(auto-fit, 10em);
+    grid-template-columns: repeat(auto-fit, minmax(2em, 10em));
   `,
   twoitem: `
-    grid-template-columns: repeat(auto-fit, 20em);
+    grid-template-columns: repeat(auto-fit, minmax(2em, 20em));
   `,
   threeitem: `
-    grid-template-columns: repeat(auto-fit, 30em);
+    grid-template-columns: repeat(auto-fit, minmax(2em, 30em));
   `,
   fouritem: `
-    grid-template-columns: repeat(auto-fit, 40em);
+    grid-template-columns: repeat(auto-fit, minmax(2em, 40em));
   `,
   eightitem: `
-    grid-template-columns: repeat(auto-fit, 80em);
+    grid-template-columns: repeat(auto-fit, minmax(2em, 80em));
   `,
   tenpercent: `
     grid-template-columns: repeat(10, calc( 10% - ${gap} ));

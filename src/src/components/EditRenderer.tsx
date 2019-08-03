@@ -47,12 +47,15 @@ const SubtreeRenderer = observer(({ render, compo, addProps, page, website, comp
 
   const type = compo["x-type"];
   const Component = availableComponents[type];
+  if(!Component) {
+    console.warn(`Component of type ${compo["x-type"]} not found`, Component, compo);
+  }
   const content = compo.content;
 
   console.log("Rendering ", type, Component, content)
 
   const WatchedComponentControlls = observer(ComponentControlls);
-  const WatchedComponent = observer(Component);
+  const WatchedComponent = Component && observer(Component);
 
   return (<ComponentControlls
         dtype="EXISTING"

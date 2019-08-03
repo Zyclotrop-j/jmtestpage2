@@ -67,32 +67,30 @@ export default class VerticalTimelineComponent extends React.Component<any> {
       (<time datetime={parseISO(date).toISOString()}>{dateFormatter(date)}</time>):
       date;
 
-    const content2 = children.map((u, idx) => (
-      <StyledVerticalTimelineElement
-        tagcolor={content?.[idx]?.tagcolor || "#111"}
-        elevation={elevation}
-        background={content?.[idx]?.background || "#EEE"}
-        position={(idx % 2) ? "right" : "left"}
-        className="vertical-timeline-element--work"
-        date={convertParseDate(content?.[idx]?.tag)}
-        iconStyle={{ background: content?.[idx]?.background || "#EEE", color: content?.[idx]?.color || "#111" }}
-        icon={Icons[content?.[idx]?.icon] && React.createElement(Icons[content?.[idx]?.icon], {
-          size: "large",
-          color: content?.[idx]?.color || "#111"
-        })}
-        key={`key-${idx}`}
-      >
-        {u?.map(__renderSubtree)}
-      </StyledVerticalTimelineElement>
-    ));
-
     return (
         <StyledVerticalTimeline
           background={background}
           animate={animate}
           layout={layout}
         >
-            {content2}
+            {children.map((u, idx) => (
+              u ? (<StyledVerticalTimelineElement
+                tagcolor={content?.[idx]?.tagcolor || "#111"}
+                elevation={elevation}
+                background={content?.[idx]?.background || "#EEE"}
+                position={(idx % 2) ? "right" : "left"}
+                className="vertical-timeline-element--work"
+                date={convertParseDate(content?.[idx]?.tag)}
+                iconStyle={{ background: content?.[idx]?.background || "#EEE", color: content?.[idx]?.color || "#111" }}
+                icon={Icons[content?.[idx]?.icon] && React.createElement(Icons[content?.[idx]?.icon], {
+                  size: "large",
+                  color: content?.[idx]?.color || "#111"
+                })}
+                key={`key-${idx}`}
+              >
+                {u?.map(__renderSubtree)}
+              </StyledVerticalTimelineElement>) : null
+            ))}
         </StyledVerticalTimeline>
     );
   }
