@@ -20,7 +20,10 @@ function runGC() {
 
 const transformunsplashpath = src => {
   if(src.indexOf("images.unsplash.com") > -1) {
-    return `${src}&w=2000`;
+    if(src.indexOf("?") > -1) {
+      return `${src}&w=2000`;
+    }
+    return `${src}?w=2000`;
   }
   return src;
 }
@@ -139,7 +142,12 @@ exports.onCreateWebpackConfig = ({ stage, actions, plugins, getConfig }) => {
 const queryCache = {};
 exports.createPages = ({ actions, graphql }) => {
   runGC();
-  const componentsWithChild = ["DATA_Componentlink", "DATA_Componentshowmore", "DATA_Componentmediaquery", "DATA_Componentverticaltimeline", "DATA_Componentlist", "DATA_Componentaccordion", "DATA_Componentgrid", "DATA_Componentbox"]
+  const componentsWithChild = [
+    "DATA_Componentbasebox", "DATA_Componentcenter", "DATA_Componentcluster",
+    "DATA_Componentcover", "DATA_Componentsgrid", "DATA_Componentsidebar",
+    "DATA_Componentstack", "DATA_Componentswitcher", "DATA_Componenttaglist",
+    "DATA_Componentlink", "DATA_Componentshowmore", "DATA_Componentmediaquery", "DATA_Componentverticaltimeline", "DATA_Componentlist", "DATA_Componentaccordion", "DATA_Componentgrid", "DATA_Componentbox"
+  ];
   const componentsStandalone = ["DATA_Componentcontactform", "DATA_Componentjsonld", "DATA_Componentmap", "DATA_Componentqrcode", "DATA_Componentflowchart", "DATA_Componentmenu", "DATA_Componentcards", "DATA_Componentcalltoaction", "DATA_Componenticon", "DATA_Componentstage", , "DATA_Componenttext", "DATA_Componentpicture", "DATA_Componentrichtext", "DATA_Componentheadline"]
   const components = [].concat(componentsStandalone, componentsWithChild);
   const makeRecursiveContext = () => {
@@ -193,6 +201,60 @@ exports.createPages = ({ actions, graphql }) => {
                     _id
                   }
                 }
+                ... on DATA_Componentbasebox {
+                  _id
+                  baseboxcontent: content {
+                    _id
+                  }
+                }
+                ... on DATA_Componentcenter {
+                  _id
+                  centercontent: content {
+                    _id
+                  }
+                }
+                ... on DATA_Componentcluster {
+                  _id
+                  clustercontent: content {
+                    _id
+                  }
+                }
+                ... on DATA_Componentcover {
+                  _id
+                  covercontent: content {
+                    _id
+                  }
+                }
+                ... on DATA_Componentsgrid {
+                  _id
+                  sgridcontent: content {
+                    _id
+                  }
+                }
+                ... on DATA_Componentsidebar {
+                  _id
+                  sidebarcontent: content {
+                    _id
+                  }
+                }
+                ... on DATA_Componentstack {
+                  _id
+                  stackcontent: content {
+                    _id
+                  }
+                }
+                ... on DATA_Componentswitcher {
+                  _id
+                  switchercontent: content {
+                    _id
+                  }
+                }
+                ... on DATA_Componenttaglist {
+                  _id
+                  taglistcontent: content {
+                    _id
+                  }
+                }
                 ... on DATA_Componentmediaquery {
                   _id
                   mediacontent: content {
@@ -231,6 +293,51 @@ exports.createPages = ({ actions, graphql }) => {
       }
       return (group.components || []).map(i => {
         const { _id: id, __typename: type } = i;
+        if(type === "DATA_Componentbasebox") {
+          const { _id: childid } = i.baseboxcontent || {};
+          const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
+          return { id, type, child, componentgroupid: group.componentgroupid };
+        }
+        if(type === "DATA_Componentcenter") {
+          const { _id: childid } = i.centercontent || {};
+          const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
+          return { id, type, child, componentgroupid: group.componentgroupid };
+        }
+        if(type === "DATA_Componentcluster") {
+          const { _id: childid } = i.clustercontent || {};
+          const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
+          return { id, type, child, componentgroupid: group.componentgroupid };
+        }
+        if(type === "DATA_Componentcover") {
+          const { _id: childid } = i.covercontent || {};
+          const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
+          return { id, type, child, componentgroupid: group.componentgroupid };
+        }
+        if(type === "DATA_Componentsgrid") {
+          const { _id: childid } = i.sgridcontent || {};
+          const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
+          return { id, type, child, componentgroupid: group.componentgroupid };
+        }
+        if(type === "DATA_Componentsidebar") {
+          const { _id: childid } = i.sidebarcontent || {};
+          const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
+          return { id, type, child, componentgroupid: group.componentgroupid };
+        }
+        if(type === "DATA_Componentstack") {
+          const { _id: childid } = i.stackcontent || {};
+          const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
+          return { id, type, child, componentgroupid: group.componentgroupid };
+        }
+        if(type === "DATA_Componentswitcher") {
+          const { _id: childid } = i.switchercontent || {};
+          const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
+          return { id, type, child, componentgroupid: group.componentgroupid };
+        }
+        if(type === "DATA_Componenttaglist") {
+          const { _id: childid } = i.taglistcontent || {};
+          const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
+          return { id, type, child, componentgroupid: group.componentgroupid };
+        }
         if(type === "DATA_Componentbox") {
           const { _id: childid } = i.boxcontent || {};
           const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
@@ -303,10 +410,22 @@ exports.createPages = ({ actions, graphql }) => {
                 "DATA_Componentverticaltimeline",
                 "DATA_Componentmediaquery",
                 "DATA_Componentlink",
-                "DATA_Componentshowmore"
+                "DATA_Componentshowmore",
+                "DATA_Componentbasebox", "DATA_Componentcenter", "DATA_Componentcluster",
+                "DATA_Componentcover", "DATA_Componentsgrid", "DATA_Componentsidebar",
+                "DATA_Componentstack", "DATA_Componentswitcher", "DATA_Componenttaglist",
               ].includes(__typename));
           const subquerries = xysubquerries
               .map(i =>
+                i.baseboxcontent ||
+                i.centercontent ||
+                i.clustercontent ||
+                i.covercontent ||
+                i.sgridcontent ||
+                i.sidebarcontent ||
+                i.stackcontent ||
+                i.switchercontent ||
+                i.taglistcontent ||
                 i.gridcontent ||
                 i.listcontent ||
                 i.boxcontent ||

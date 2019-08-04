@@ -10,7 +10,7 @@ import { without, pick, mergeDeepRight, groupBy, toLower, is } from "ramda";
 import { renameKeysWith } from 'ramda-adjunct';
 import { computed } from 'mobx';
 import { observer } from 'mobx-react';
-import { DragSource, DragDropContextProvider } from 'react-dnd';
+import { DragSource, DndProvider } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { WidgetForm } from '../../components/WidgetForm';
 import { notifications } from "../../state/notifications";
@@ -355,11 +355,20 @@ const DraggerExisting = makeDragSourceExisting(({ isDragging, connectDragSource,
 const order = ["Layout", "Basic View", "Advanced View", "Text", "Graphic", "Form", "Other"];
 const byGrade = groupBy(i => {
   const mapping = {
+    BaseBox: ["Layout"],
+    Center: ["Layout"],
+    Cluster: ["Layout"],
+    Cover: ["Layout"],
+    SGrid: ["Layout"],
+    SideBar: ["Layout"],
+    Stack: ["Layout"],
+    Switcher: ["Layout"],
+    TagList: ["Basic View"],
     Link: ["Layout"],
     JSONLDData: ["Other"],
     ContactForm: ["Form"],
     Map: ["Graphic"],
-    ShowMore: ["Layout"],
+    ShowMore: ["Basic View"],
     MediaQuery: ["Layout"],
     VerticalTimeline: ["Advanced View"],
     QRCode: ["Graphic"],
@@ -371,7 +380,7 @@ const byGrade = groupBy(i => {
     Headline: ["Text"],
     Picture: ["Graphic"],
     Text: ["Text"],
-    Box: ["Layout"],
+    Box: ["Basic View"],
     Grid: ["Layout"],
     Group: ["Other"],
     Stage: ["Advanced View"],
@@ -548,7 +557,7 @@ export default class IndexPage extends React.Component<any> {
   public render() {
 
     return (
-      <DragDropContextProvider key="DragDropContextProvider" backend={HTML5Backend}><Page>
+      <DndProvider  key="DragDropContextProvider" backend={HTML5Backend}><Page>
         <Notificationbar notifications={notifications} />
         <StyledSplitPane split="vertical" minSize={250}>
             <Grid
@@ -607,7 +616,7 @@ export default class IndexPage extends React.Component<any> {
                 </OGrommet>
             </StyledSplitPane>
         </StyledSplitPane>
-      </Page></DragDropContextProvider>
+      </Page></DndProvider>
     );
   }
 };

@@ -71,6 +71,9 @@ export const AddWidget = DropTarget(
           const awaiters = [];
           const { type, id, parentid, componenttype } = monitor.getItem();
           let insertid = id;
+
+
+
           if (type === 'EXISTING') {
             if(parentid) {
               awaiters.push(
@@ -81,7 +84,7 @@ export const AddWidget = DropTarget(
                     parentpath: props.area[1],
                   }),
                 ),
-              );  
+              );
             }
           } else if (type === 'NEW') {
             // todo: data

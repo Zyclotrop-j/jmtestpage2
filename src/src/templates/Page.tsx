@@ -113,6 +113,92 @@ export default class Page extends React.PureComponent {
 }
 
 export const postQuery = graphql`
+  fragment fbasebox on DATA_Componentbasebox {
+    _id
+    padding
+    borderWidth
+    invert
+    content {
+      _id
+    }
+  }
+  fragment fcenter on DATA_Componentcenter {
+    _id
+    max
+    andText
+    gutters
+    intrinsic
+    content {
+      _id
+    }
+  }
+  fragment fcluster on DATA_Componentcluster {
+    _id
+    justify
+    align
+    space
+    content {
+      _id
+    }
+  }
+
+  fragment fcover on DATA_Componentcover {
+    _id
+    space
+    minHeight
+    content {
+      _id
+    }
+  }
+  fragment fsgrid on DATA_Componentsgrid {
+    _id
+    space
+    min
+    content {
+      _id
+    }
+  }
+  fragment fsidebar on DATA_Componentsidebar {
+    _id
+    side
+    sideWidth
+    contentMin
+    space
+    noStretch
+    content {
+      _id
+    }
+  }
+
+  fragment fstack on DATA_Componentstack {
+    _id
+    space
+    splitAfter
+    content {
+      _id
+    }
+  }
+  fragment fswitcher on DATA_Componentswitcher {
+    _id
+    limit
+    space
+    threshold
+    proportions
+    content {
+      _id
+    }
+  }
+  fragment ftaglist on DATA_Componenttaglist {
+    _id
+    columns
+    gap
+    breakat
+    content {
+      _id
+    }
+  }
+
+
   fragment fcontactform on DATA_Componentcontactform {
     _id
     receipiant
@@ -656,8 +742,45 @@ export const postQuery = graphql`
     $DATA_Componentlink: [ID!]
     $DATA_Componentjsonld: [ID!]
     $DATA_Componentcontactform: [ID!]
+    $DATA_Componentbasebox: [ID!]
+    $DATA_Componentcenter: [ID!]
+    $DATA_Componentcluster: [ID!]
+    $DATA_Componentcover: [ID!]
+    $DATA_Componentsgrid: [ID!]
+    $DATA_Componentsidebar: [ID!]
+    $DATA_Componentstack: [ID!]
+    $DATA_Componentswitcher: [ID!]
+    $DATA_Componenttaglist: [ID!]
   ) {
     data {
+      componentbaseboxs(_ids: $DATA_Componentbasebox) {
+        ...fbasebox
+      }
+      componentcenters(_ids: $DATA_Componentcenter) {
+        ...fcenter
+      }
+      componentclusters(_ids: $DATA_Componentcluster) {
+        ...fcluster
+      }
+      componentcovers(_ids: $DATA_Componentcover) {
+        ...fcover
+      }
+      componentsgrids(_ids: $DATA_Componentsgrid) {
+        ...fsgrid
+      }
+      componentsidebars(_ids: $DATA_Componentsidebar) {
+        ...fsidebar
+      }
+      componentstacks(_ids: $DATA_Componentstack) {
+        ...fstack
+      }
+      componentswitchers(_ids: $DATA_Componentswitcher) {
+        ...fswitcher
+      }
+      componenttaglists(_ids: $DATA_Componenttaglist) {
+        ...ftaglist
+      }
+
       componentcontactforms(_ids: $DATA_Componentcontactform) {
         ...fcontactform
       }

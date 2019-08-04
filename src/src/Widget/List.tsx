@@ -202,7 +202,7 @@ const schema = {
     },
     "adjustForMobile": {
       "description": "Convert to a comma-seperated list for mobile devices",
-      "defualt": true,
+      "default": true,
       "type": "boolean"
     },
     "content": {

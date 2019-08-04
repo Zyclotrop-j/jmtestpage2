@@ -6,6 +6,51 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { Layout, Provider } from "./src/components/Layout";
 
+window.globalActions = window.globalActions || {};
+window.globalActions["INSTALL_APP"] = {
+  available: false
+};
+const fn = deferredPrompt => {
+  // Prevent Chrome 76 and later from showing the mini-infobar
+  // deferredPrompt.preventDefault();
+  let res = () => null;
+  let rej = () => null;
+  window.globalActions["INSTALL_APP"] = {
+    trigger: () => {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice
+        .then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            window.globalActions["INSTALL_APP"].successfull = true;
+            window.globalActions["INSTALL_APP"].available = false;
+            res();
+          } else {
+            window.globalActions["INSTALL_APP"].successfull = false;
+            window.globalActions["INSTALL_APP"].available = false;
+            rej();
+          }
+        });
+      window.removeEventListener('beforeinstallprompt', fn);
+    },
+    available: true,
+    successfull: null,
+    promise: new Promise((resolve, reject) => {
+      res = resolve;
+      rej = reject;
+    })
+  };
+};
+window.addEventListener('beforeinstallprompt', fn);
+window.addEventListener('appinstalled', (evt) => {
+  const options = {
+      autoClose: 6000,
+      type: toast.TYPE.SUCCESS,
+      position: toast.POSITION.BOTTOM_RIGHT,
+      closeOnClick: true
+  };
+  toast(<div>Successfully installed app!</div>, options);
+});
+
 const NoTransition = cssTransition({
   enter: 'zoomIn',
   exit: 'zoomOut',
