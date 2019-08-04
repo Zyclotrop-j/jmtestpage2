@@ -66,7 +66,7 @@ export const Cluster = props => {
 
   const content = children.map((u, idx) => (
     <BaseBox preview={preview} key={u._id || idx}>
-      {u?.map(__renderSubtree)}
+      {u?.map(__renderSubtree) || <div />}
     </BaseBox>
   ));
   const adjustedSpace = `${space}` === '0' ? '0px' : space;

@@ -299,44 +299,44 @@ exports.createPages = ({ actions, graphql }) => {
           return { id, type, child, componentgroupid: group.componentgroupid };
         }
         if(type === "DATA_Componentcenter") {
-          const { _id: childid } = i.centercontent || {};
-          const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
-          return { id, type, child, componentgroupid: group.componentgroupid };
+          const childids = (i.centercontent || []).map(i => i && i._id);
+          const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
+          return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
         if(type === "DATA_Componentcluster") {
-          const { _id: childid } = i.clustercontent || {};
-          const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
-          return { id, type, child, componentgroupid: group.componentgroupid };
+          const childids = (i.clustercontent || []).map(i => i && i._id);
+          const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
+          return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
         if(type === "DATA_Componentcover") {
-          const { _id: childid } = i.covercontent || {};
-          const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
-          return { id, type, child, componentgroupid: group.componentgroupid };
+          const childids = (i.covercontent || []).map(i => i && i._id);
+          const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
+          return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
         if(type === "DATA_Componentsgrid") {
-          const { _id: childid } = i.sgridcontent || {};
-          const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
-          return { id, type, child, componentgroupid: group.componentgroupid };
+          const childids = (i.sgridcontent || []).map(i => i && i._id);
+          const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
+          return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
         if(type === "DATA_Componentsidebar") {
-          const { _id: childid } = i.sidebarcontent || {};
-          const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
-          return { id, type, child, componentgroupid: group.componentgroupid };
+          const childids = (i.sidebarcontent || []).map(i => i && i._id);
+          const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
+          return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
         if(type === "DATA_Componentstack") {
-          const { _id: childid } = i.stackcontent || {};
-          const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
-          return { id, type, child, componentgroupid: group.componentgroupid };
+          const childids = (i.stackcontent || []).map(i => i && i._id);
+          const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
+          return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
         if(type === "DATA_Componentswitcher") {
-          const { _id: childid } = i.switchercontent || {};
-          const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
-          return { id, type, child, componentgroupid: group.componentgroupid };
+          const childids = (i.switchercontent || []).map(i => i && i._id);
+          const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
+          return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
         if(type === "DATA_Componenttaglist") {
-          const { _id: childid } = i.taglistcontent || {};
-          const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
-          return { id, type, child, componentgroupid: group.componentgroupid };
+          const childids = (i.taglistcontent || []).map(i => i && i._id);
+          const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
+          return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
         if(type === "DATA_Componentbox") {
           const { _id: childid } = i.boxcontent || {};

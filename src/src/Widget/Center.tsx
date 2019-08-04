@@ -70,8 +70,8 @@ export const Center = props => {
   } = props;
 
   const content = children.map((u, idx) => (
-    <BaseBox preview={preview} key={u._id || idx}>
-      {u?.map(__renderSubtree)}
+    <BaseBox preview={preview} key={u?._id || idx}>
+      {u?.map(__renderSubtree) || <div />}
     </BaseBox>
   ));
   return <Container className={className} gridArea={gridArea} max={max || "60ch"} andText={andText || false} gutters={gutters || "0"} intrinsic={intrinsic || false}>

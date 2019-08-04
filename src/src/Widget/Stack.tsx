@@ -52,7 +52,7 @@ const Container = styled.div`
 
 export const Stack = props => {
   const {
-    splitAfter,
+    xsplitAfter,
     space,
     __children: { children = [] },
     __renderSubtree,
@@ -63,16 +63,17 @@ export const Stack = props => {
 
   const content = children.map((u, idx) => (
     <BaseBox preview={preview} key={u._id || idx}>
-      {u?.map(__renderSubtree)}
+      {u?.map(__renderSubtree) || <div />}
     </BaseBox>
   ));
+  const splitAfter = (xsplitAfter === "none" || `${xsplitAfter}` === "0") ? "" : xsplitAfter;
   const adjustedSpace = `${space}` === '0' ? '0px' : space;
   return <Container className={className} gridArea={gridArea} space={adjustedSpace || "0px"} splitAfter={splitAfter}>
     {content}
   </Container>;
 };
 Stack.defaultProps = {
-  splitAfter: null,
+  splitAfter: "none",
   space: "1rem",
   content: []
 };

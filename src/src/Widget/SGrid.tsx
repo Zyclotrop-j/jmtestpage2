@@ -92,7 +92,7 @@ const resizeobserver = (elem, { min }) => {
 
   const content = children.map((u, idx) => (
     <BaseBox preview={preview} key={u._id || idx}>
-      {u?.map(__renderSubtree)}
+      {u?.map(__renderSubtree) || <div />}
     </BaseBox>
   ));
    return <Container ref={el} className={className} gridArea={gridArea} min={min} space={space}>
