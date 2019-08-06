@@ -304,6 +304,7 @@ module.exports = {
       resolve: "gatsby-plugin-offline",
       options: {
         // importScripts: ['@uppy/golden-retriever/lib/ServiceWorker'],
+        importScripts: ['swaddition.js'],
         // offlineGoogleAnalytics: true
         runtimeCaching: [
           {

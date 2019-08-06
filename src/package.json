@@ -13,6 +13,7 @@
     ">0.5% and last 2 version and not dead and not IE > 0"
   ],
   "scripts": {
+    "inspectverlap": "bundle-buddy ./public/*.map",
     "build": "gatsby build",
     "start": "cross-env WEBSITEID=5ccd2e75c358d60004ebe212 gatsby develop",
     "deploy": "gatsby build --prefix-paths && gh-pages -d public",
@@ -59,6 +60,7 @@
     "gatsby-source-filesystem": "^2.0.28",
     "gatsby-transformer-remark": "^2.1.7",
     "gh-pages": "^2.0.1",
+    "guess-webpack": "^0.3.12",
     "husky": "^1.1.2",
     "jsfuck": "^0.4.0",
     "lint-staged": "^8.1.5",
@@ -95,8 +97,10 @@
   },
   "dependencies": {
     "@hot-loader/react-dom": "^16.8.6",
+    "@khanacademy/tota11y": "^0.2.0",
     "@researchgate/react-intersection-observer": "^1.0.1",
     "@uppy/react": "^1.0.2",
+    "a11y.css": "^5.0.3",
     "ajv": "^6.10.0",
     "async": "^3.0.1",
     "auth0-js": "^9.10.2",
@@ -104,8 +108,10 @@
     "bigeval": "^3.1.0",
     "chart.js": "^2.8.0",
     "chroma-js": "^2.0.3",
+    "comlink": "^4.0.2",
     "date-fns": "2.0.0-beta.2",
     "distinct-colors": "^1.0.4",
+    "environment-aware-hooks": "^0.0.1",
     "final-form": "^4.13.0",
     "flubber": "^0.4.2",
     "fuse.js": "^3.4.4",

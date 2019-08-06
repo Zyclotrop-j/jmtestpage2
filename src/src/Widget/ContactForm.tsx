@@ -481,7 +481,7 @@ export class ContactForm extends React.PureComponent<Props> {
     const req = <span aria-label="required field">{" "}*</span>;
     return (<div>
       {this.state.submitted}
-      <Form onSubmit={this.onSubmit}>
+      <Form onSubmit={this.onSubmit} id={`${_id}-contactformroot`}>
         <FormField htmlFor={`${_id}-email`} aria-required label={<>Your email{req}</>}>
           <MaskedInput
             id={`${_id}-email`}

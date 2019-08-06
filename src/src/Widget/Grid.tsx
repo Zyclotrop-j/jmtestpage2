@@ -28,6 +28,15 @@ export class Grid extends React.PureComponent<Props> {
       }
   }
 
+  state = { isSmall: typeof window !== 'undefined' ? window.matchMedia(`(max-width: ${smallbreakpoint}px)`).matches : true }
+
+  componentDidMount() {
+    const isSmall = typeof window !== 'undefined' ? window.matchMedia(`(max-width: ${smallbreakpoint}px)`).matches : true;
+    this.setState({
+      isSmall
+    });
+  }
+
   public render() {
     const {
       _id,
@@ -40,6 +49,7 @@ export class Grid extends React.PureComponent<Props> {
       __children: { children = [] },
       __renderSubtree,
     } = this.props;
+    const { isSmall } = this.state;
     const { align, alignContent, alignSelf, fill, justify, justifyContent } = advanced || {};
 
     const content = children.map((u, idx) => (
@@ -66,7 +76,6 @@ export class Grid extends React.PureComponent<Props> {
       <ThemeContext.Consumer>
         {theme => {
           const smallbreakpoint = theme?.__breakpoints?.small || theme?.global?.breakpoints?.small?.value;
-          const isSmall = typeof window !== 'undefined' ? window.matchMedia(`(max-width: ${smallbreakpoint}px)`).matches : true;
           return (<ResponsiveContext.Consumer>
             {size => (<GGrid
               id={_id}

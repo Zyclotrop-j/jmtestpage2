@@ -2,7 +2,14 @@ import React from 'react';
 import styled from 'styled-components';
 import { BaseBox } from "./BaseBox";
 
-export const uiSchema = {};
+export const uiSchema = {
+  side: {
+    "ui:widget": "list",
+    "ui:options": {
+      "getList": () => ["left", "right"]
+    }
+  }
+};
 
 const schema = {
   "title": "componentsidebar",

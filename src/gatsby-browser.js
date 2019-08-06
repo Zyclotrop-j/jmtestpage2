@@ -1,10 +1,20 @@
-import React from "react"
+import React from "react";
 import { RenderingContext, BROWSER } from "./src/utils/renderingContext";
+import * as Comlink from "comlink";
 // import mobx from "mobx";
 import { toast, cssTransition } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { Layout, Provider } from "./src/components/Layout";
+
+if(`${window.location}`.indexOf("A11Y") > -1) {
+  import("a11y.css/css/a11y-en.css").then((arg) => {
+    console.log("ARG", arg)
+  });
+  import("@khanacademy/tota11y").then((arg) => {
+    console.log("ARG2", arg)
+  });
+}
 
 window.globalActions = window.globalActions || {};
 window.globalActions["INSTALL_APP"] = {
@@ -50,6 +60,8 @@ window.addEventListener('appinstalled', (evt) => {
   };
   toast(<div>Successfully installed app!</div>, options);
 });
+
+// // TODO: Listen to online and offline, then enable setting callback for re-online with notification
 
 const NoTransition = cssTransition({
   enter: 'zoomIn',
@@ -129,6 +141,140 @@ window.requestIdleCallback(() => {
     console.warn(e);
   }
 });
+
+export const onServiceWorkerActive = () => {
+  toast(<div>Content avalable offline.</div>, {
+      autoClose: 1000,
+      delay: 1000,
+      closeButton: false,
+      type: toast.TYPE.INFO,
+      hideProgressBar: true,
+      position: toast.POSITION.BOTTOM_RIGHT,
+      closeOnClick: true,
+  });
+};
+
+if(process.env.NODE_ENV !== "development") {
+  import('worker-loader?name=swaddition.js!./src/utils/swaddition');
+}
+
+const getNotificationPermission = () => {
+  if (!("Notification" in window)) {
+    return Promise.resolve({
+      supported: false,
+      permission: false
+    });
+  }
+  else if (Notification.permission === "granted") {
+    return Promise.resolve({
+      supported: true,
+      permission: true,
+    });
+  }
+  else if (Notification.permission !== "denied") {
+    return Notification.requestPermission().then(function (permission) {
+      // If the user accepts, let's create a notification
+      if (permission === "granted") {
+        return {
+          supported: true,
+          permission: true,
+        };
+      }
+      return {
+        supported: true,
+        permission: false
+      };
+    });
+  }
+  return Promise.resolve({
+    supported: true,
+    permission: false
+  });
+}
+
+window.globalActions["NOTIFY_BACKONLINE"] = (() => {
+  if(process.env.NODE_ENV === "development") {
+    return {
+      trigger: () => null,
+      available: false,
+      successfull: null,
+      promise: Promise.reject("Unavailable in develop")
+    };
+  }
+  function initComlink() {
+    const { port1, port2 } = new MessageChannel();
+    const msg = {
+      comlinkInit: true,
+      port: port1
+    };
+    navigator.serviceWorker.controller.postMessage(msg, [ port1 ]);
+    return Comlink.wrap(port2);
+  }
+  const comlinkobj = new Promise((resolve, reject) => {
+    if (navigator.serviceWorker.controller) {
+      return resolve(initComlink());
+    }
+    navigator.serviceWorker.addEventListener('controllerchange', () => resolve(initComlink()), { once: true });
+  });
+
+  return {
+    trigger: async (msg, {
+      returnURL,
+      ...options
+    } = {}) => {
+      const hasPermission = await getNotificationPermission();
+      if(!hasPermission.permission) {
+        toast(<div>Can't scedule notification - please allow the display of notifications!</div>, {
+            autoClose: 60000,
+            closeButton: true,
+            type: toast.TYPE.ERROR,
+            hideProgressBar: false,
+        });
+      }
+      const proxy = await comlinkobj;
+      await proxy.set("NOTIFY_BACKONLINE_MESSAGE", {
+        type: "online",
+        message: msg || "",
+        opt: {
+          returnURL: returnURL || "",
+          ...options
+        }
+      });
+      const returnvalue = await proxy.get("NOTIFY_BACKONLINE_MESSAGE");
+      if(!returnvalue) {
+        window.globalActions["NOTIFY_BACKONLINE"].successfull = false;
+        window.globalActions["NOTIFY_BACKONLINE"].available = false;
+        return Promise.reject();
+      }
+      if(!hasPermission.permission) {
+        toast(<div>Successfully sceduled back online reminder!</div>, {
+            type: toast.TYPE.SUCCESS,
+        });
+      }
+      return returnvalue;
+    },
+    available: !!navigator.connection,
+    successfull: null,
+    promise: comlinkobj
+  }
+})();
+
+/*
+// TODO: Do something more useful with this!
+document.addEventListener('visibilitychange', function(){
+  if(!document.hidden) {
+    toast(<div>Welcome back</div>, {
+        autoClose: 1000,
+        delay: 1000,
+        closeButton: false,
+        type: toast.TYPE.INFO,
+        hideProgressBar: true,
+        position: toast.POSITION.BOTTOM_RIGHT,
+        closeOnClick: true,
+    });
+  }
+});
+*/
 
 export const wrapPageElement = ({ element, props }, b) => {
   return <Layout {...props}>{element}</Layout>;

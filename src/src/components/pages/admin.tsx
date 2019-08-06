@@ -264,30 +264,31 @@ const ConfigureSite = observer(({ schema, website }) => {
 });
 
 const ConfigurePage = observer(({ schema, current, website }) => {
+  const csite = website.get();
+  const cpage = current.get();
+  const gschema = schema.get();
   if(!schema || !schema.get()) {
     return <Text gridArea="pageedit">No schema</Text>;
   }
   if(!current.get()) {
     return <Text gridArea="pageedit">No page selected</Text>
   }
-  const csite = website.get();
-  const cpage = current.get();
-  const gschema = schema.get();
   const keys = Object.keys(gschema.properties);
   const fkeys = without(['content'], [...keys, 'title']);
   const pickProperties = pick(fkeys);
   const submit = ({ formData: idata }) => new Promise((res, rej) =>
-    editComponent(cpage._id, pickProperties(idata), res, rej, {
+    editComponent(`${cpage._id}`, pickProperties(idata), res, rej, {
       optimistic: true
     })
   );
   return (<WidgetForm
+    key={`editing-${cpage._id || cpage.title || "new-page"}`}
     allComponents={allComponents}
     Preview={(props) => <SEOPreview title={csite.title} domain={csite.domain} path={"/"} description={csite.description} {...props} />}
     schema={gschema}
-    initialValues={pickProperties(cpage)}
+    initialValues={JSON.parse(JSON.stringify(pickProperties(cpage)))}
     button={open => <Button margin={{horizontal: "medium"}} gridArea="pageedit" label="Edit Page" icon={<Edit />} plain onClick={open} />}
-    title="page"
+    title={`page ${cpage.title}`}
     onSubmit={submit}
     onError={i => Promise.resolve(console.log('error', i))}
   />);

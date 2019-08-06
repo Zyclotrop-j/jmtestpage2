@@ -9,6 +9,7 @@ const { memoizeWith, identity, groupBy } = R;
 const validUrl = require('valid-url');
 const config = require('./config/SiteConfig');
 const util = require('util');
+const { GuessPlugin } = require('guess-webpack');
 
 function runGC() {
   if( typeof global.gc != "undefined" ){
@@ -120,7 +121,13 @@ exports.onCreateWebpackConfig = ({ stage, actions, plugins, getConfig }) => {
       ...config,
     });
   }
+
   actions.setWebpackConfig({
+                            /*
+                             plugins: process.env.CI ? [] : [
+                               new GuessPlugin({ GA: '198623083' }),
+                             ],
+                             */
                              resolve: {
                                // modules: [path.resolve(__dirname, 'src'), 'node_modules'],
                                ...hotloader

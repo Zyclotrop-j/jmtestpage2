@@ -55,9 +55,9 @@ export const Attribution = ({ author, app_name }) => {
   return <>{author?.profileurl && <Attributionoverlay aria-label={`Photo by ${author?.name} on ${author?.plattformname}`}>
   <BGBox aria-hidden>
     <span>Photo&nbsp;by&nbsp;</span>
-    <Anchor color="inherit" href={profileurl}>{author?.name}</Anchor>
-    <span>&nbsp;on&nbsp;</span>
-    <Anchor color="inherit" href={plattformurl}>{author?.plattformname}</Anchor>
+    <Anchor color="inherit" href={profileurl}>{author?.name || "unknown author"}</Anchor>
+    {author?.plattformname && <span>&nbsp;on&nbsp;</span>}
+    {author?.plattformname && <Anchor color="inherit" href={plattformurl}>{author?.plattformname}</Anchor>}
   </BGBox>
   </Attributionoverlay>}</>;
 };
