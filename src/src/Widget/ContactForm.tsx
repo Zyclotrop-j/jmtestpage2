@@ -438,8 +438,6 @@ export class ContactForm extends React.PureComponent<Props> {
       receipiant
     } = this.props;
 
-    console.log("THIS:PROPS", this.props, this);
-
     const setValue = field => event => this.setState({
       [field]: event.target.value
     });

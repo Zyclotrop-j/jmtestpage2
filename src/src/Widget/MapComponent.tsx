@@ -66,7 +66,16 @@ export default props => {
       });
       const pageAction = {
         action: `Focus-Map-${_id}-Marker-${props.icon}-${props.position.join("-")}`,
-        exec: () => setViewport(props.position)
+        exec: () => {
+          window.globalActions[pageAction.action.toUpperCase()].successfull = true;
+          return setViewport(props.position);
+        }
+      };
+      window.globalActions[pageAction.action.toUpperCase()] = {
+        available: true,
+        trigger: pageAction.exec,
+        successfull: null,
+        promise: Promise.resolve(pageAction)
       };
       return <Marker position={props.position} icon={custommarker}>
         {props.popup && <Popup><RichText

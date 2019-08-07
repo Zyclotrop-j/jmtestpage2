@@ -113,6 +113,23 @@ export default class Page extends React.PureComponent {
 }
 
 export const postQuery = graphql`
+  fragment fworldmap on DATA_Componentworldmap {
+    _id
+    a11yTitle
+    color
+    hoverColor
+    continents {
+      color
+      name
+      onClick
+    }
+    places {
+      color
+      name
+      onClick
+      location
+    }
+  }
   fragment fbasebox on DATA_Componentbasebox {
     _id
     padding
@@ -751,8 +768,12 @@ export const postQuery = graphql`
     $DATA_Componentstack: [ID!]
     $DATA_Componentswitcher: [ID!]
     $DATA_Componenttaglist: [ID!]
+    $DATA_Componentworldmap: [ID!]
   ) {
     data {
+      componentworldmaps(_ids: $DATA_Componentworldmap) {
+        ...fworldmap
+      }
       componentbaseboxs(_ids: $DATA_Componentbasebox) {
         ...fbasebox
       }

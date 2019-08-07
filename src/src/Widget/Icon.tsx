@@ -122,7 +122,6 @@ export class Icon extends React.PureComponent<Props> {
       return (<M><Fallback id={_id} data="No-icon" className={gridArea && gridArea.trim() ? "": className} viewBox='0 0 24 24' aria-hidden={true} {...other} /></M>);
     };
     if(includedIcons[icon.substring(3)]) {
-      console.log("includedIcons[icon.substring(3)]", includedIcons[icon.substring(3)], includedIcons);
       const Icon = StyledIcon(icon, includedIcons[icon.substring(3)]);
       return (<M><Icon className={gridArea && gridArea.trim() ? "": className} aria-label={a11yTitle || icon.substring(3)} id={_id} {...other} /></M>);
     }

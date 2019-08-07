@@ -22,7 +22,6 @@ import { Map, uiSchema as mapuiSchema } from "./Map";
 import { ContactForm, uiSchema as contactformuiSchema } from "./ContactForm";
 import { Link, uiSchema as linkuiSchema } from "./Link";
 import { JSONLDData, uiSchema as jsonlddatauiSchema } from "./JSONLDData";
-
 import { BaseBox, uiSchema as baseboxuiSchema } from "./BaseBox";
 import { Center, uiSchema as centeruiSchema } from "./Center";
 import { Cluster, uiSchema as clusteruiSchema } from "./Cluster";
@@ -32,6 +31,8 @@ import { Sidebar, uiSchema as sidebaruiSchema } from "./Sidebar";
 import { Stack, uiSchema as stackuiSchema } from "./Stack";
 import { Switcher, uiSchema as switcheruiSchema } from "./Switcher";
 import { TagList, uiSchema as taglistuiSchema } from "./TagList";
+import { WorldMap, uiSchema as worldmapuiSchema } from "./WorldMap";
+
 
 export const uiSchema = {
   basebox: baseboxuiSchema,
@@ -63,9 +64,10 @@ export const uiSchema = {
   map: mapuiSchema,
   contactform: contactformuiSchema,
   link: linkuiSchema,
-  jsonlddata: jsonlddatauiSchema
+  jsonlddata: jsonlddatauiSchema,
+  worldmap: worldmapuiSchema
 };
 export const Calltoaction = CallToAction;
 export const JSONLD = JSONLDData;
-export { BaseBox, Center, Cluster, Cover, SGrid, Sidebar, Stack, Switcher, TagList, JSONLDData, Link, ContactForm, Map, ShowMore, MediaQuery, VerticalTimeline, QRCode, List, Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Icon, Cards };
-export default { BaseBox, Center, Cluster, Cover, SGrid, Sidebar, Stack, Switcher, TagList, JSONLD, JSONLDData, Link, ContactForm, Map, ShowMore, MediaQuery, VerticalTimeline, QRCode, List, Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Calltoaction: CallToAction, Icon, Cards };
+export { WorldMap, BaseBox, Center, Cluster, Cover, SGrid, Sidebar, Stack, Switcher, TagList, JSONLDData, Link, ContactForm, Map, ShowMore, MediaQuery, VerticalTimeline, QRCode, List, Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Icon, Cards };
+export default { WorldMap, BaseBox, Center, Cluster, Cover, SGrid, Sidebar, Stack, Switcher, TagList, JSONLD, JSONLDData, Link, ContactForm, Map, ShowMore, MediaQuery, VerticalTimeline, QRCode, List, Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Calltoaction: CallToAction, Icon, Cards };

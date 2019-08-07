@@ -584,8 +584,6 @@ export class Cards extends React.PureComponent<Props> {
       ${cardlist.length * scrollSize[1]}em + ${cardlist.length} * ${gap || defaultgap}
     )` : null;
 
-    console.log("Cards.gridlayout[gridlayout]", Cards.gridlayout[gridlayout], gridlayout, Cards.gridlayout);
-
     return (<OverflowBox
         id={_id}
         className={className}

@@ -17,6 +17,7 @@ import { anyloading, anyerror } from "./pages/admin";
 import { AddWidget } from "../components/AddWidget";
 import { WidgetForm } from '../components/WidgetForm';
 import components from '../Widget';
+import { viewmode } from "../state/viewmode";
 
 const availableComponents = renameKeysWith(key => `component${key.toLowerCase()}`, components);
 const DebouncedPreview = debounceRender(({ children, ...props }) => children(props));
@@ -66,11 +67,11 @@ const SubtreeRenderer = observer(({ render, compo, addProps, page, website, comp
         props={compo}
         addProps={addProps}
         __children={content}
-        __renderSubtree={render}
+        __renderSubtree={render} true
     >
       {({ props, addProps: xaddProps, __children }) => {
         return (<ErrorBoundary key={compo._id}>
-          <DebouncedPreview {...props}  preview={true} __children={__children} __renderSubtree={render} {...xaddProps}>
+          <DebouncedPreview {...props}  preview={viewmode.get() || true} __children={__children} __renderSubtree={render} {...xaddProps}>
             {(props) => <WatchedComponent {...props} key={props._modified} ___resolveid={id => {
               const resolved = xcomponents.get(id);
               if(!resolved) return;

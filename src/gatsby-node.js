@@ -155,7 +155,7 @@ exports.createPages = ({ actions, graphql }) => {
     "DATA_Componentstack", "DATA_Componentswitcher", "DATA_Componenttaglist",
     "DATA_Componentlink", "DATA_Componentshowmore", "DATA_Componentmediaquery", "DATA_Componentverticaltimeline", "DATA_Componentlist", "DATA_Componentaccordion", "DATA_Componentgrid", "DATA_Componentbox"
   ];
-  const componentsStandalone = ["DATA_Componentcontactform", "DATA_Componentjsonld", "DATA_Componentmap", "DATA_Componentqrcode", "DATA_Componentflowchart", "DATA_Componentmenu", "DATA_Componentcards", "DATA_Componentcalltoaction", "DATA_Componenticon", "DATA_Componentstage", , "DATA_Componenttext", "DATA_Componentpicture", "DATA_Componentrichtext", "DATA_Componentheadline"]
+  const componentsStandalone = ["DATA_Componentworldmap", "DATA_Componentcontactform", "DATA_Componentjsonld", "DATA_Componentmap", "DATA_Componentqrcode", "DATA_Componentflowchart", "DATA_Componentmenu", "DATA_Componentcards", "DATA_Componentcalltoaction", "DATA_Componenticon", "DATA_Componentstage", , "DATA_Componenttext", "DATA_Componentpicture", "DATA_Componentrichtext", "DATA_Componentheadline"]
   const components = [].concat(componentsStandalone, componentsWithChild);
   const makeRecursiveContext = () => {
     const componentgroups = new Set();

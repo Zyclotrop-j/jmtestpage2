@@ -28,9 +28,10 @@ export class Grid extends React.PureComponent<Props> {
       }
   }
 
-  state = { isSmall: typeof window !== 'undefined' ? window.matchMedia(`(max-width: ${smallbreakpoint}px)`).matches : true }
+  state = { isSmall: typeof window !== 'undefined' ? window.matchMedia(`(max-width: 768px)`).matches : true }
 
   componentDidMount() {
+    const smallbreakpoint = this.smallbreakpoint || "768px";
     const isSmall = typeof window !== 'undefined' ? window.matchMedia(`(max-width: ${smallbreakpoint}px)`).matches : true;
     this.setState({
       isSmall
@@ -71,10 +72,10 @@ export class Grid extends React.PureComponent<Props> {
       ?.map(i => i?.split('-') || ['full'])
       ?.map(([min, max]) => (min === max || !min || !max ? t(min) || t(min || max) : [t(min), t(max)])) || ['full'];
 
-
     return (<HeadlineContext.Provider value={this.context + 1}>
       <ThemeContext.Consumer>
         {theme => {
+          this.smallbreakpoint = theme?.__breakpoints?.small;
           const smallbreakpoint = theme?.__breakpoints?.small || theme?.global?.breakpoints?.small?.value;
           return (<ResponsiveContext.Consumer>
             {size => (<GGrid

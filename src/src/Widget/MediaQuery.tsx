@@ -371,6 +371,12 @@ export class MediaQuery extends React.PureComponent<Props> {
     } = this.props;
 
     const content = child.map(__renderSubtree);
+    if(preview === "default") {
+      return <>
+        <small><b>In preview the content of <i>("{query}")</i> is always shown:</b></small>
+        <div>{content}</div>
+      </>;
+    }
     if(query === "online" || query === "offline") {
       return <LazyLoad scrollContainer="#page-wrap" placeholder={query === "online" ? <>{content}</> : null} offset={100} once >
         <Suspense fallback={query === "online" ? <>{content}</> : null}>
@@ -402,10 +408,6 @@ export class MediaQuery extends React.PureComponent<Props> {
         <MediaQueryComponent key={_id}  query={`${query}`}>
           {content}
         </MediaQueryComponent>
-        {preview ? <MediaQueryComponent key={`${_id}-reverse-editor-preview`}  query={`(not ${query})`}>
-          <div>This media query currently does not match - the content is only displayed now, in the editor!</div>
-          {content}
-        </MediaQueryComponent> : null}
       </Suspense>
     </LazyLoad>);
   }

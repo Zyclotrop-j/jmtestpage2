@@ -1,6 +1,7 @@
 import React from "react";
 import { RenderingContext, BROWSER } from "./src/utils/renderingContext";
 import * as Comlink from "comlink";
+import { navigate } from "gatsby";
 // import mobx from "mobx";
 import { toast, cssTransition } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -17,6 +18,12 @@ if(`${window.location}`.indexOf("A11Y") > -1) {
 }
 
 window.globalActions = window.globalActions || {};
+window.globalActions["NAVIGATE"] = {
+  available: true,
+  trigger: target => navigate(target),
+  successfull: null,
+  promise: Promise.resolve(navigate)
+};
 window.globalActions["INSTALL_APP"] = {
   available: false
 };

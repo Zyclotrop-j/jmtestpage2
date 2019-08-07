@@ -6,6 +6,7 @@ import { map } from 'ramda';
 import { OutboundLink } from 'gatsby-plugin-gtag';
 import { Icon } from "./Icon";
 import { RichText } from "./RichText";
+import { getGlobalAction } from "../utils/globalActions";
 
 interface Props {}
 
@@ -143,16 +144,13 @@ export class CallToAction extends React.PureComponent<Props> {
       richtext
     } = this.props;
 
-    // // TODO:
-    const pageActions = {};
-
     // the following regex is how gatsby tests it!
     const localLink = /^\/(?!\/)/.test(href) ? { as: Link, to: href } : { as: OutboundLink, rel: "noopener", referrerpolicy: "origin" };
-    const onClick = pageActions[pageAction] || undefined;
+    const onClick = getGlobalAction(pageAction);
     const cfill = ["false", "none", ""].includes(fill) ? false : (
       ["horizontal", "vertical"].includes(fill) ? fill : true
     );
-    const content = richtext && richtext.trim() ? <RichText>{richtext}</RichText> : label || undefined;
+    const content = (richtext && richtext.trim()) ? <RichText markdown={richtext} urlescaped={false} b64={false} /> : (label || undefined);
     return (
       <Button
         id={_id}

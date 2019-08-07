@@ -30,7 +30,6 @@ const schema = {
 };
 
 const CenterClass = `${BaseBox}-center`;
-console.log("IMPORTANT!!!!", BaseBox, CenterClass)
 const Container = styled.div`
   ${props => props.gridArea ? `grid-area: ${props.gridArea};` : ""}
   display: flex;
