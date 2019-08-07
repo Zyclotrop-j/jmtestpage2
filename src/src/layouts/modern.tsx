@@ -13,10 +13,10 @@ const Main = ({ children, value }) => {
     position: relative;
     padding: 1rem;
     ${props => mq('small')(`
-     padding: 0 calc( ( 100vw - ${props.theme.global.size.xlarge} ) / 2 );
+     padding: 0 calc( 100vw - ${props.theme.global.size.small} / 2 );
     `)}
     ${props => mq('medium')(`
-     padding: 0 calc( ( 100vw - ${props.theme.global.size.xxlarge} ) / 2 );
+     padding: 0 calc( 100vw - ${props.theme.global.size.medium} / 2 );
     `)}
   `;
   return (<ThemeContext.Consumer>
