@@ -151,6 +151,30 @@ export default decorate(observer(class EntityManager extends React.Component {
 
     const fn = schema => mergeDeepRight({ properties: { title: { type: "string" }, description: { type: "string" } } }, mergeDeepLeft({ format: undefined }, schema));
 
+    const onSubmit = async (xdata, event) => {
+
+      const data = emtpyToUndefined(xdata.formData);
+      const prom = new Promise((resolve, reject) => {
+        if(this.itemid.startsWith("___NEW_")) {
+          return addEntity(this.entitytype, data, resolve, reject)
+        } else {
+          return editEntity(data._id, data, resolve, reject)
+        }
+      });
+      const rep = await prom;
+
+      // addEntity, editEntity, deleteEntity
+      // type, data, resolve, reject
+      // id, iidata, resolve, reject
+      // id, resolve, reject
+      console.log("args args", data, event, rep);
+      this.entitytype = "";
+      this.itemid = "";
+      this.copy = {};
+      this.todos.push(...rep.sub);
+      return rep;
+    };
+
     return <>
       <span>{requests.size}</span>
       <Button label={loading.get() ? `Loading... (${Math.round(progress*100)}%)` : "Manage Entities"} disabled={!entities.size || loading.get()} onClick={() => {
@@ -205,7 +229,7 @@ export default decorate(observer(class EntityManager extends React.Component {
               <p><b>{this.entitytype}</b></p>
               <Accordion>
                 <AccordionPanel label="Edit">
-                  <CustomIconForm
+                  {this.entitytype !== "theme" ? <CustomIconForm
                     formContext={{
                       allComponents
                     }}
@@ -217,29 +241,7 @@ export default decorate(observer(class EntityManager extends React.Component {
                     onChange={v => {
                       this.copy = emtpyToUndefined(v.formData);
                     }}
-                    onSubmit={async (xdata, event) => {
-
-                      const data = emtpyToUndefined(xdata.formData);
-                      const prom = new Promise((resolve, reject) => {
-                        if(this.itemid.startsWith("___NEW_")) {
-                          return addEntity(this.entitytype, data, resolve, reject)
-                        } else {
-                          return editEntity(data._id, data, resolve, reject)
-                        }
-                      });
-                      const rep = await prom;
-
-                      // addEntity, editEntity, deleteEntity
-                      // type, data, resolve, reject
-                      // id, iidata, resolve, reject
-                      // id, resolve, reject
-                      console.log("args args", data, event, rep);
-                      this.entitytype = "";
-                      this.itemid = "";
-                      this.copy = {};
-                      this.todos.push(...rep.sub);
-                      return rep;
-                    }}
+                    onSubmit={onSubmit}
                     onError={(...args) => {
                       console.log("error args args", args);
                       return Promise.resolve();
@@ -249,7 +251,9 @@ export default decorate(observer(class EntityManager extends React.Component {
                     <hr />
                     <Button type="submit" label="Submit" />
                     <Button type="button" label="Reset" />
-                  </CustomIconForm>
+                  </CustomIconForm> : <><span>Schema too large</span><pre>{
+                    JSON.stringify(this.copy, null, "  ")
+                  }</pre><Button onClick={() => onSubmit({ formData: this.copy })} /></>}
                 </AccordionPanel>
                 <AccordionPanel label="Data">
                   <ReactJson
@@ -263,14 +267,16 @@ export default decorate(observer(class EntityManager extends React.Component {
                   />
                 </AccordionPanel>
                 <AccordionPanel label="Schema">
-                  <ReactJson
+                  {this.entitytype !== "theme" ? <ReactJson
                     name={`${this.entitytype} schema`}
                     src={toJS(
                       cschemas.find(i => i.title === this.entitytype)
                     )}
                     theme="monokai"
                     iconStyle="triangle"
-                  />
+                  /> : <pre>{JSON.stringify(toJS(
+                      cschemas.find(i => i.title === this.entitytype)
+                    ), null, "  ")}</pre>}
                 </AccordionPanel>
               </Accordion>
             </OverflowBox>}

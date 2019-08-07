@@ -167,10 +167,12 @@ const DeployButton = observer(({ status = {}, busy, deploy, website, loading }) 
   if(busy.get()) return (<Box gridArea="deployment" direction="row" pad="xsmall">
     <Text margin={{ horizontal: "xsmall" }}>Deploying ({Math.round(status.get()*100)/100}%)</Text>
   </Box>);
-  return <Button gridArea="deployment" label="Deploy" margin={{horizontal: "medium"}} icon={<Deploy />} onClick={() => deploy({
+  return <>{
+    !website.get().owner ? "Website needs owner before deploying becomes possible" : null
+  }<Button disabled={!website.get().owner} gridArea="deployment" label="Deploy" margin={{horizontal: "medium"}} icon={<Deploy />} onClick={() => deploy({
     ...website.get(),
     customer: website.get().owner
-  })}/>;
+  })}/></>;
 });
 
 const NewWebsite = observer(({ schema }) => {
@@ -255,7 +257,7 @@ const ConfigureSite = observer(({ schema, website }) => {
     allComponents={allComponents}
     Preview={(props) => <SEOPreview title="" domain="" path="/" description="" {...props} />}
     schema={gschema}
-    initialValues={pickProperties(csite)}
+    initialValues={JSON.parse(JSON.stringify(pickProperties(csite)))}
     button={open => <Button margin={{horizontal: "medium"}} gridArea="siteedit" label="Edit website" icon={<Edit />} plain onClick={open} />}
     title="site"
     onSubmit={submit}

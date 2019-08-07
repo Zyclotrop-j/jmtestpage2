@@ -146,13 +146,10 @@ module.exports = {
     name: `ENCRYPT_${dr(owner && owner.name)}`,
     firstname: `ENCRYPT_${dr(owner && owner.givenName && owner.givenName[0])}`,
     lastname: `ENCRYPT_${dr(owner && owner.familyName)}`,
-    addr: `ENCRYPT_${dr(`
-      ${owner && owner.name}
-      ${address && address.streetAddress}
-      ${address && address.postalCode} ${address && address.addressLocality}
-      ${address && address.addressRegion}
-      ${country && country.name}
-    `)}`,
+    addr: `ENCRYPT_${dr(`${address && address.streetAddress}
+${address && address.postalCode} ${address && address.addressLocality}
+${address && address.addressRegion}
+${country && country.name}`)}`,
     email: `ENCRYPT_${dr(owner.email && owner.email[0] || address.email && address.email[0])}`,
     phone: `ENCRYPT_${dr(owner.telephone || address.telephone)}`,
     websitename: `"${websitedata.data.title}"`,

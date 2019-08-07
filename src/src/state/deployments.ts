@@ -26,13 +26,24 @@ export const doDeploy = async (deploymentdata) => {
   const deploymentkey = xdata.find(i => i.title === "circleci").secret;
   const proxyurl = xdata.find(i => i.title === "ciproxy").secret;
   const deploymentpath = xdata.find(i => i.title === "cipath").secret;
-  
+
   const deploymenturl = `${proxyurl}${deploymentpath}?circle-token=${deploymentkey}`;
   const {
     subdomain = "www",
     domain,
     tld,
   } = parseDomain(deploymentdata.domain);
+
+  const xbody = JSON.stringify({
+    "build_parameters": {
+      "PAGENAME": `${subdomain}`.toLowerCase(),
+      "SUFFIX": `${domain}.${tld}`.toLowerCase(),
+      "DNSNAME": `${domain}.${tld}`.toLowerCase(),
+      "CUSTOMER": `c${deploymentdata.customer.replace(/[ ]/g, "")}`.toLowerCase(), // No spaces allowed!
+      "WEBSITEID": deploymentdata._id,
+      "TOKEN": `T${subdomain.replace(/[.]/g, "")}${domain}${tld}${deploymentdata.customer.replace(/[ .]/g, "")}${deploymentdata._id}`.substring(2, 28),
+    }
+  });
 
   // // TODO: Check the 'domain' first, only submit, if it is ours
   // https://dns.google.com/resolve?name=_w3jmtoken.mingram.net&type=TXT
@@ -43,16 +54,7 @@ export const doDeploy = async (deploymentdata) => {
   // For that we default to "www" -> www.www.mingram.net & www.mingram.net
   try {
     const circlecijob = await fetch(deploymenturl, {
-      body: JSON.stringify({
-        "build_parameters": {
-          "PAGENAME": `${subdomain}`.toLowerCase(),
-          "SUFFIX": `${domain}.${tld}`.toLowerCase(),
-          "DNSNAME": `${domain}.${tld}`.toLowerCase(),
-          "CUSTOMER": `c${deploymentdata.customer.replace(/[ ]/g, "")}`.toLowerCase(), // No spaces allowed!
-          "WEBSITEID": deploymentdata._id,
-          "TOKEN": `T${subdomain.replace(/[.]/g, "")}${domain}${tld}${deploymentdata.customer.replace(/[ .]/g, "")}${deploymentdata._id}`.substring(2, 28),
-        }
-      }),
+      body: xbody,
       headers: {
         "Content-Type": "application/json"
       },

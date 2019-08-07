@@ -43,6 +43,7 @@ Where reasonable and practicable to do so, we will collect your Personal Informa
 
 ## Disclosure of Personal Information
 Your Personal Information may be disclosed in a number of circumstances including the following:
+
   -	Third parties where you consent to the use or disclosure; and
   -	Where required or authorised by law.
 
@@ -65,7 +66,7 @@ This Policy may change from time to time and is available on our website.
 If you have any queries or complaints about our Privacy Policy please contact us at:
 
 ${addr}
-${email}
+${email}<br />
 ${phone}
 
 
@@ -119,6 +120,7 @@ If you are a resident of the European Economic Area (EEA), you have certain data
 If you wish to be informed what Personal Information we hold about you and if you want it to be removed from our systems, please contact us.
 
 In certain circumstances, you have the following data protection rights:
+
   - The right to access, update or to delete the information we have on you.
   - The right of rectification.
   - The right to object.
@@ -167,7 +169,7 @@ You may find a complete list of these Privacy Policies and their links here:
   - https://www.mongodb.com/mongodb-management-service-privacy-policy
   - https://www.facebook.com/policy.php
   - https://websites.mingram.net/privacy
-  - http://instagram.com/about/legal/privacy/
+  - https://instagram.com/about/legal/privacy/
   - https://about.pinterest.com/de/privacy-policy
   - https://www.dropbox.com/terms#privacy
   - https://unsplash.com/privacy

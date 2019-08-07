@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { Layout, Provider } from "./src/components/Layout";
 
+/*
 if(`${window.location}`.indexOf("A11Y") > -1) {
   import("a11y.css/css/a11y-en.css").then((arg) => {
     console.log("ARG", arg)
@@ -16,6 +17,7 @@ if(`${window.location}`.indexOf("A11Y") > -1) {
     console.log("ARG2", arg)
   });
 }
+*/
 
 window.globalActions = window.globalActions || {};
 window.globalActions["NAVIGATE"] = {
