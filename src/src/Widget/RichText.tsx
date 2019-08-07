@@ -121,7 +121,7 @@ export class RichText extends React.PureComponent<Props> {
   }
 
   public render() {
-    const { _id, className, markdown, urlescaped, escaped, b64, gridArea } = this.props;
+    const { _id, className, markdown, urlescaped, escaped, b64, gridArea, __addtional_components = {} } = this.props;
 
     // encode = window.btoa(unescape(encodeURIComponent(str)))
     // decode = decodeURIComponent(escape(window.atob(b64)));
@@ -153,7 +153,8 @@ export class RichText extends React.PureComponent<Props> {
               ...p,
               [toUpperFirst(k)]: {component: () => <DelayedRender children={v} />},
             }) : p, {}),
-            ...components
+            ...components,
+            ...__addtional_components
           }}>{pipeline(markdown || '')}</Markdown>
         </Box>
       )}

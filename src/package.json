@@ -96,6 +96,7 @@
     "worker-loader": "^2.0.0"
   },
   "dependencies": {
+    "@datorama/akita": "^4.9.1",
     "@hot-loader/react-dom": "^16.8.6",
     "@khanacademy/tota11y": "^0.2.0",
     "@researchgate/react-intersection-observer": "^1.0.1",
@@ -169,6 +170,7 @@
     "react-jsonschema-form": "^1.5.0",
     "react-lazyload": "^2.5.0",
     "react-leaflet": "^2.4.0",
+    "react-livestamp": "^0.0.6",
     "react-locky": "^1.5.6",
     "react-metismenu": "^1.4.0",
     "react-motion": "^0.5.2",

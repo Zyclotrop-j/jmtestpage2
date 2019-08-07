@@ -1,6 +1,6 @@
 import { tryCatch, identity } from "ramda";
 
-const actions = window.globalActions;
+const actions = typeof window !== 'undefined' ? window.globalActions : {};
 
 const parseArgs = tryCatch(
   (p, q) => p.concat([JSON.parse(q)]),
