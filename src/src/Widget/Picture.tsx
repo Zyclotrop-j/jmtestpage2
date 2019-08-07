@@ -23,6 +23,7 @@ export const uiSchema = {
 
 export const ImgBox = styled(Box)`
   position: relative;
+  background: transparent;
 `;
 const Attributionoverlay = styled.div`
   font-size: small;
@@ -150,7 +151,7 @@ export class Picture extends React.PureComponent<Props> {
         return <span className={className}>Loading</span>
       }
       const priority = this.context;
-      return <ImgBox className={className} background={color} fill gridArea={gridArea}>
+      return <ImgBox className={className} gridArea={gridArea}>
         <Img
           critical={priority === IMPORTANT}
           loading={priority === IMPORTANT ? "eager" : "lazy"}

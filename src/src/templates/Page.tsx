@@ -132,6 +132,9 @@ export const postQuery = graphql`
   }
   fragment fbasebox on DATA_Componentbasebox {
     _id
+    maxWidth
+    minWidth
+    width
     padding
     borderWidth
     invert

@@ -13,8 +13,11 @@ const Main = ({ children, value }) => {
   const MMain = styled.main`
     position: relative;
     padding: 1rem;
-    ${props => breakpoints.map(bp => props.theme.mq(bp)(css`
-     padding: 0 calc( 2.5rem + ( 100vw - ${props.theme.__breakpoints[bp]}px ) / 2 );
+    ${props => breakpoints.map(bp => props?.theme?.mq?.(bp)(css`
+     padding: 0 calc( 10rem + ( 100vw - ${props?.theme?.__breakpoints[bp]}px ) / 2 );
+     @supports (padding: 0 max( 10rem, calc( ( 100vw - ${props?.theme?.__breakpoints[bp]}px ) / 2 ) )) {
+       padding: 0 max( 10rem, calc( ( 100vw - ${props?.theme?.__breakpoints[bp]}px ) / 2 ) );
+     }
     `))}
   `;
   return (<ThemeContext.Consumer>

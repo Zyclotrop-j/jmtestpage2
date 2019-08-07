@@ -251,7 +251,7 @@ export default decorate(observer(class EntityManager extends React.Component {
                     <hr />
                     <Button type="submit" label="Submit" />
                     <Button type="button" label="Reset" />
-                  </CustomIconForm> : <><Button abel="Submit" onClick={() => onSubmit({ formData: this.copy })} />
+                  </CustomIconForm> : <><Button label="Submit" onClick={() => onSubmit({ formData: this.copy })} />
                   <span>Schema too large</span><pre>{
                     JSON.stringify(this.copy, null, "  ")
                   }</pre></>}

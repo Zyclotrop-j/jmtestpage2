@@ -8,6 +8,21 @@ const schema = {
   "description": "A custom element for placing two elements side-by-side. If space permits, the sidebar element has a set width, and the companion takes up the rest of the available horizontal space. If not, the elements are collapsed into a single column, each taking up 100% of the horizontal space.",
   "type": "object",
   "properties": {
+    "maxWidth": {
+      "description": "A maximum width",
+      "default": "unset",
+      "type": "string"
+    },
+    "minWidth": {
+      "description": "A minimum width",
+      "default": "unset",
+      "type": "string"
+    },
+    "width": {
+      "description": "A designated width",
+      "default": "auto",
+      "type": "string"
+    },
     "padding": {
       "description": "A CSS `padding` value",
       "default": "0px",
@@ -51,12 +66,18 @@ BaseBaseBox.defaultProps = {
   padding: "0px",
   borderWidth: "0px",
   invert: false,
-  borderColor: ""
+  borderColor: "",
+  maxWidth: "unset",
+  minWidth: "unset",
+  width: "auto"
 };
 export const BaseBox = styled(BaseBaseBox)`
   ${props => props.gridArea ? `grid-area: ${props.gridArea};` : ""}
   box-sizing: border-box;
   display: block;
+  ${props => props.maxWidth ? `max-width: ${props.maxWidth};` : ""}
+  ${props => props.minWidth ? `min-width: ${props.minWidth};` : ""}
+  ${props => props.width ? `width: ${props.width};` : ""}
   padding: ${props => props.padding || "0px"};
   border: ${props => props.borderWidth || "0px"} solid ${props => props.borderColor || ""};
   ${props => (props.invert || false) ? "filter: invert(100%);" : ''}
