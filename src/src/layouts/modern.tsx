@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Anchor, Box, Grid, ResponsiveContext, SkipLinkTarget } from 'grommet';
 import { mq } from '../utils/media';
 import { PriorityContext, LOW, DEFAULT, IMPORTANT } from "../utils/priorityContext";
@@ -8,16 +8,14 @@ import { ThemeContext } from 'styled-components';
 const NoOverflowBox = styled(Box)`
   overflow-x: hidden;
 `;
+const breakpoints = ["xxxs", "xxs", "xs", "s", "sl", "m", "ml", "l", "xl", "xxl", "xxxl", "xxxxl", "xxxxxl"];
 const Main = ({ children, value }) => {
   const MMain = styled.main`
     position: relative;
     padding: 1rem;
-    ${props => mq('small')(`
-     padding: 0 calc( 100vw - ${props.theme.global.size.small} / 2 );
-    `)}
-    ${props => mq('medium')(`
-     padding: 0 calc( 100vw - ${props.theme.global.size.medium} / 2 );
-    `)}
+    ${props => breakpoints.map(bp => props.theme.mq(bp)(css`
+     padding: 0 calc( 2.5rem + ( 100vw - ${props.theme.__breakpoints[bp]}px ) / 2 );
+    `))}
   `;
   return (<ThemeContext.Consumer>
       {theme => (
