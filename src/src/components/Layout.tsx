@@ -464,23 +464,6 @@ export class Layout extends React.Component<{}> {
               </>
             </PageContext.Provider> : <span />}
           </ErrorBoundary>
-          <ErrorBoundary name="topmenu">
-            {hasTopmenu ? <PageContext.Provider value={Layout.getContextValue({
-              pages: this.props?.data?.data?.pages,
-              pathname,
-              theme: allthemes,
-              mode: "horizontal"
-            })}>
-              <TopMenu>
-                <HeadOverlay>
-                  <SkipLinkTarget id="navigation_top" />
-                  <Box direction="row" id="navigation_top_marker">
-                    {__renderSubtree(topmenu)}
-                  </Box>
-                </HeadOverlay>
-              </TopMenu>
-            </PageContext.Provider> : <span />}
-          </ErrorBoundary>
           <ErrorBoundary name="body">
             <PageContext.Provider value={Layout.getContextValue({
               pages: this.props?.data?.data?.pages,
@@ -489,6 +472,23 @@ export class Layout extends React.Component<{}> {
               mode: "inline"
             })}>
               <PageWrap id="page-wrap">
+                <ErrorBoundary name="topmenu">
+                  {hasTopmenu ? <PageContext.Provider value={Layout.getContextValue({
+                    pages: this.props?.data?.data?.pages,
+                    pathname,
+                    theme: allthemes,
+                    mode: "horizontal"
+                  })}>
+                    <TopMenu>
+                      <HeadOverlay>
+                        <SkipLinkTarget id="navigation_top" />
+                        <Box direction="row" id="navigation_top_marker">
+                          {__renderSubtree(topmenu)}
+                        </Box>
+                      </HeadOverlay>
+                    </TopMenu>
+                  </PageContext.Provider> : <span />}
+                </ErrorBoundary>
                 <PoseGroup
                   preEnterPose={`${enterpose}enter`}
                   enterPose="default"
