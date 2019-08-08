@@ -357,7 +357,7 @@ export class Menu extends React.PureComponent<Props> {
       verticalright: "vertical-right" // well.... graphQL and names....
     }[modea || modeb] || modea || modeb;
 
-    const addEntries = isNaN(parseInt(autoAddDepth)) ? 1 : autoAddDepth;
+    const addEntries = isNaN(parseInt(autoAddDepth)) ? 1 : parseInt(autoAddDepth);
     const menuentries = imenuentries.map(i => ({
       ...i,
       path: i.path || i.href || ""
@@ -380,9 +380,8 @@ export class Menu extends React.PureComponent<Props> {
       return Object.values(obj || {}).sort((a, b) => {
         const av = a[Menu.VALUE];
         const bv = b[Menu.VALUE];
-        if(!av && !bv) return 0;
-        if(!av) return -1;
-        if(!bv) return 1;
+        if(!av && bv) return -1;
+        if(!bv && av) return 1;
         const aidx = menuentries.findIndex(({ path, href }) => av.path === path || av.path === href);
         const bidx = menuentries.findIndex(({ path, href }) => bv.path === path || bv.path === href);
         if(aidx === -1 && bidx === -1) return 0;

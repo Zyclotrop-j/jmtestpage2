@@ -33,6 +33,9 @@ const schema = {
 const FadeGraph = styled.div`
   opacity: ${props => props?.visible ? 1 : 0};
   transition: opacity 0.2s;
+  svg {
+    font: normal normal 400 normal 16px / 18.4px sans-serif;
+  }
 `;
 
 export class FlowChart extends React.PureComponent<Props> {
@@ -112,11 +115,11 @@ export class FlowChart extends React.PureComponent<Props> {
 
   public render() {
     const { _id, className, gridArea, a11yTitle } = this.props;
-    const { __html = "", visible } = this.state;
+    const { __html = "" } = this.state;
 
     return (<Observer root={typeof window !== `undefined` && (document.querySelector(".Pane.horizontal.Pane2") || document.querySelector("#page-wrap"))} key="placeholder" onChange={this.handleVisibilityChange}>
       <Box className={className} gridArea={gridArea} a11yTitle={a11yTitle}>
-        <FadeGraph visible={__html && __html.trim() && visible} dangerouslySetInnerHTML={{ __html }} />
+        <FadeGraph visible={__html && __html.trim()} dangerouslySetInnerHTML={{ __html }} />
       </Box>
     </Observer>);
   }

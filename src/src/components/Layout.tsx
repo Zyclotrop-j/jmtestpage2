@@ -24,6 +24,9 @@ import { PageContext } from '../utils/PageContext';
 import { MenuContext } from '../utils/menuContext';
 import { NavigationEmitter } from '../utils/NavigationEmitter';
 
+const StyledGrommet = styled(Grommet)`
+  overflow: hidden;
+`;
 const HeadOverlay = styled.div``;
 const PageWrap = styled.div`
   max-height: 100vh;
@@ -425,7 +428,7 @@ export class Layout extends React.Component<{}> {
       "Mobile"; // Mobile first
 
     return (
-        <MenuContext.Provider value={{ setMenuOpen: () => null }}><Grommet
+        <MenuContext.Provider value={{ setMenuOpen: () => null }}><StyledGrommet
           cssVars
           full
           userAgent={initialMobileBreakpoint}
@@ -519,7 +522,7 @@ export class Layout extends React.Component<{}> {
               </PageWrap>
             </PageContext.Provider>
           </ErrorBoundary>
-        </Grommet></MenuContext.Provider>
+        </StyledGrommet></MenuContext.Provider>
     );
   }
 

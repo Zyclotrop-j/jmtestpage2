@@ -20,7 +20,7 @@ export class EventTarget {
     const stack = this.listeners[type];
     const index = stack.findIndex(i => i === callback);
     if(index > -1) {
-      stack.splice(i, 1);
+      stack.splice(index, 1);
       return;
     }
   }
