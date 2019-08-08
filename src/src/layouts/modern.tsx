@@ -8,15 +8,22 @@ import { ThemeContext } from 'styled-components';
 const NoOverflowBox = styled(Box)`
   overflow-x: hidden;
 `;
+const calcpad = (idx) => {
+  if(idx < 3) return "0px";
+  if(idx > 12) return `${(idx-12)*1.5+10}vw`;
+  return `${idx+2}rem`;
+}
 const breakpoints = ["xxxs", "xxs", "xs", "s", "sl", "m", "ml", "l", "xl", "xxl", "xxxl", "xxxxl", "xxxxxl"];
 const Main = ({ children, value }) => {
   const MMain = styled.main`
     position: relative;
-    padding: 1rem;
-    ${props => breakpoints.map(bp => props?.theme?.mq?.(bp)(css`
-     padding: 0 calc( 10rem + ( 100vw - ${props?.theme?.__breakpoints[bp]}px ) / 2 );
-     @supports (padding: 0 max( 10rem, calc( ( 100vw - ${props?.theme?.__breakpoints[bp]}px ) / 2 ) )) {
-       padding: 0 max( 10rem, calc( ( 100vw - ${props?.theme?.__breakpoints[bp]}px ) / 2 ) );
+    padding: 3px;
+    ${props => breakpoints
+        .filter(([k]) => !["small", "medium", "large"]
+        .includes(k)).map((bp, idx) => props?.theme?.mq?.(bp)(css`
+     padding: 0 calc( ${calcpad(idx)} + ( 100vw - ${props?.theme?.__breakpoints[bp]}px ) / 2 );
+     @supports (padding: 0 max( ${calcpad(idx)}, calc( ( 100vw - ${props?.theme?.__breakpoints[bp]}px ) / 2 ) )) {
+       padding: 0 max( ${calcpad(idx)}, calc( ( 100vw - ${props?.theme?.__breakpoints[bp]}px ) / 2 ) );
      }
     `))}
   `;

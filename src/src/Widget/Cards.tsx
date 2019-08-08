@@ -244,40 +244,50 @@ const varients = {
     }
   `,
 };
+// // TODO: Copy grid collapse behavior from SGrid
+const minMap = {
+  auto: "10em",
+  quarteritem: "2.5em",
+  halfitem: "5em",
+  singleitem: "10em",
+  oneandhalfitem: "15em",
+  doubleitem: "20em",
+  oneitem: "10em",
+  twoitem: "20em",
+  threeitem: "30em",
+  fouritem: "40em",
+  eightitem: "80em",
+  quarterletter: "2.5ch",
+  halfletter: "5ch",
+  singleletter: "10ch",
+  oneandhalfletter: "15ch",
+  doubleletter: "20ch",
+  oneletter: "10ch",
+  twoletter: "20ch",
+  threeletter: "30ch",
+  fourletter: "40ch",
+  fiveletter: "50ch",
+  sixletter: "60ch",
+  sevenletter: "70ch",
+  eightletter: "80ch",
+  twelveletter: "120ch",
+};
+
+const aboc = "cards--above";
+const xitems = Object.entries(minMap).reduce((p, [k, v]) => ({
+  ...p,
+  [k]: `
+    grid-template-columns: 100%;
+    &.${aboc} {
+      grid-template-columns: repeat(auto-fit, minmax(${v}, 1fr));
+    }
+    @supports (width: min(20em, 100%)) {
+      grid-template-columns: repeat(auto-fill, minmax(min(${v}, 100%), 1fr));
+    }
+  `
+}), {});
 const basegridlayouts = gap => ({
-  auto: `
-    grid-template-columns: repeat(auto-fit, minmax(2em, 10em));
-  `,
-  quarteritem: `
-    grid-template-columns: repeat(auto-fit, minmax(2em, 2.5em));
-  `,
-  halfitem: `
-    grid-template-columns: repeat(auto-fit, minmax(2em, 5em));
-  `,
-  singleitem: `
-    grid-template-columns: repeat(auto-fit, minmax(2em, 10em));
-  `,
-  oneandhalfitem: `
-    grid-template-columns: repeat(auto-fit, minmax(2em, 15em));
-  `,
-  doubleitem: `
-    grid-template-columns: repeat(auto-fit, minmax(2em, 20em));
-  `,
-  oneitem: `
-    grid-template-columns: repeat(auto-fit, minmax(2em, 10em));
-  `,
-  twoitem: `
-    grid-template-columns: repeat(auto-fit, minmax(2em, 20em));
-  `,
-  threeitem: `
-    grid-template-columns: repeat(auto-fit, minmax(2em, 30em));
-  `,
-  fouritem: `
-    grid-template-columns: repeat(auto-fit, minmax(2em, 40em));
-  `,
-  eightitem: `
-    grid-template-columns: repeat(auto-fit, minmax(2em, 80em));
-  `,
+  ...xitems,
   tenpercent: `
     grid-template-columns: repeat(10, calc( 10% - ${gap} ));
     ${props => props.theme.mq(null, "s")(css`
@@ -378,6 +388,14 @@ const combinedgridlayout = (gap = "10px") => zipObj(
 );
 
 export class Cards extends React.PureComponent<Props> {
+
+    constructor(props) {
+      super(props);
+      this.state = {
+        [aboc]: false,
+      };
+      this.autogrid = React.createRef();
+    }
 
     static layouts = {
       sidetoside: [
@@ -485,6 +503,36 @@ export class Cards extends React.PureComponent<Props> {
     ___resolveid: identity
   }
 
+  componentDidMount() {
+    const minSize = Object.entries(minMap).find(([k, v]) => this.props.gridlayout?.indexOf(k) > -1);
+    const el = this.autogrid;
+
+    if (minSize && el?.current && 'ResizeObserver' in window && !CSS.supports('width', `min(${minSize[1]}, 100%)`)) {
+      const min = minSize[1];
+      const test = document.createElement('div');
+      test.classList.add('test');
+      test.style.width = min;
+      el.current.appendChild(test);
+      const br = test.offsetWidth;
+      el.current.removeChild(test);
+
+      this.ro = new ResizeObserver(entries => {
+        for (let entry of entries) {
+          const cr = entry.contentRect;
+          const q = cr.width > br;
+          this.setState({ [aboc]: q });
+        }
+      });
+      this.ro.observe(el.current);
+    }
+  }
+
+  componentWillUnmount() {
+    if(this.ro) {
+      this.ro.disconnect()
+    }
+  }
+
   public render() {
     const {
       _id,
@@ -584,6 +632,8 @@ export class Cards extends React.PureComponent<Props> {
       ${cardlist.length * scrollSize[1]}em + ${cardlist.length} * ${gap || defaultgap}
     )` : null;
 
+    const addClassName = this.state[aboc];
+
     return (<OverflowBox
         id={_id}
         className={className}
@@ -591,6 +641,8 @@ export class Cards extends React.PureComponent<Props> {
         overflow={(mode || "").toLowerCase() === "scroll"}
         scrollSize={scrollSize ? scrollSize[1] : "100vw"}
       ><AutoGrid
+      ref={this.autogrid}
+      className={addClassName ? aboc : ""}
       width={width || "unset"}
       gap={gap || defaultgap}
       extend={Cards.gridlayout(gap || defaultgap)[gridlayout] || defaultgridlayout(gap || defaultgap)}

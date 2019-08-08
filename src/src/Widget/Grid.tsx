@@ -31,7 +31,7 @@ export class Grid extends React.PureComponent<Props> {
   state = { isSmall: typeof window !== 'undefined' ? window.matchMedia(`(max-width: 768px)`).matches : true }
 
   componentDidMount() {
-    const smallbreakpoint = this.smallbreakpoint || "768px";
+    const smallbreakpoint = this.smallbreakpoint || "768";
     const isSmall = typeof window !== 'undefined' ? window.matchMedia(`(max-width: ${smallbreakpoint}px)`).matches : true;
     this.setState({
       isSmall
