@@ -18,6 +18,11 @@ const alwaysauto = always("auto");
 
 export class Grid extends React.PureComponent<Props> {
 
+  constructor(props) {
+    super(props);
+    this.onMediaChange = this.onMediaChange.bind(this);
+  }
+
   static contextType = HeadlineContext;
 
   static defaultProps = {
@@ -30,12 +35,30 @@ export class Grid extends React.PureComponent<Props> {
 
   state = { isSmall: typeof window !== 'undefined' ? window.matchMedia(`(max-width: 768px)`).matches : true }
 
+  onMediaChange(e) {
+    this.setState({
+      isSmall: e.matches
+    });
+  }
+
   componentDidMount() {
+    if( typeof window === 'undefined') {
+      return;
+    }
     const smallbreakpoint = this.smallbreakpoint || "768";
-    const isSmall = typeof window !== 'undefined' ? window.matchMedia(`(max-width: ${smallbreakpoint}px)`).matches : true;
+    const mediaquery = window.matchMedia(`(max-width: ${smallbreakpoint}px)`);
+    const isSmall = mediaquery.matches;
+    this.mediaquery = mediaquery;
+    mediaquery.addListener(this.onMediaChange);
     this.setState({
       isSmall
     });
+  }
+
+  componentWillUnmount() {
+    if(this.mediaquery) {
+      this.mediaquery.removeEventListener(this.onMediaChange);
+    }
   }
 
   public render() {
@@ -81,8 +104,8 @@ export class Grid extends React.PureComponent<Props> {
             {size => (<GGrid
               id={_id}
               className={className}
-              rows={!isSmall && size !== 'small' ? ['full'] : gcolumns.map(alwaysauto)}
-              columns={!isSmall && size !== 'small' ? gcolumns : ['full']}
+              rows={!isSmall ? ['full'] : gcolumns.map(alwaysauto)}
+              columns={!isSmall ? gcolumns : ['full']}
               areas={this.getAreas(columns, size === 'small')}
               gap={gap}
               margin={margin}
