@@ -43,21 +43,21 @@ export class Grid extends React.PureComponent<Props> {
 
   componentDidMount() {
     if( typeof window === 'undefined') {
+      console.warn("window not available, can's subscribe to mediaquery")
       return;
     }
     const smallbreakpoint = this.smallbreakpoint || "768";
-    const mediaquery = window.matchMedia(`(max-width: ${smallbreakpoint}px)`);
-    const isSmall = mediaquery.matches;
-    this.mediaquery = mediaquery;
-    mediaquery.addListener(this.onMediaChange);
+    this.mediaquery = window.matchMedia(`(max-width: ${smallbreakpoint}px)`);
     this.setState({
-      isSmall
+      isSmall: this.mediaquery.matches
     });
+    this.mediaquery.addListener(this.onMediaChange);
+    console.log("mediaquery grid", this.mediaquery.matches, this.mediaquery, this.smallbreakpoint);
   }
 
   componentWillUnmount() {
     if(this.mediaquery) {
-      this.mediaquery.removeEventListener(this.onMediaChange);
+      this.mediaquery.removeListener(this.onMediaChange);
     }
   }
 
