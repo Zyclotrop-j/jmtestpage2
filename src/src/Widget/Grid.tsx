@@ -51,6 +51,17 @@ export class Grid extends React.PureComponent<Props> {
     this.setState({
       isSmall: this.mediaquery.matches
     });
+    // For some reason with pre-rendering (SSR) the view doesn't get updated
+    window.setTimeout(() => {
+      this.setState({
+        isSmall: !this.mediaquery.matches
+      });
+      window.setTimeout(() => {
+        this.setState({
+          isSmall: this.mediaquery.matches
+        });
+      }, 50);
+    }, 50);
     this.mediaquery.addListener(this.onMediaChange);
     console.log("mediaquery grid", this.mediaquery.matches, this.mediaquery, this.smallbreakpoint);
   }
