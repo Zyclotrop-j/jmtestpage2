@@ -141,7 +141,7 @@ const Tmp = (props) => {
     }));
   };
 
-  return (<Observer root={typeof window !== `undefined` && (document.querySelector(".Pane.horizontal.Pane2") || document.querySelector("#page-wrap"))} key={_id} onChange={f}>
+  return (<Observer root={typeof window !== `undefined` && (document.querySelector(".Pane.horizontal.Pane2") || (q => q[q.length - 1])(document.querySelectorAll(".page-wrap")))} key={_id} onChange={f}>
     <div><Component {...props} /></div>
   </Observer>);
 };

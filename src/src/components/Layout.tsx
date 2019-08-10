@@ -479,7 +479,7 @@ export class Layout extends React.Component<{}> {
               theme: allthemes,
               mode: "inline"
             })}>
-              <PageWrap id="page-wrap">
+              <PageWrap id="page-wrap" className="page-wrap">
                 <ErrorBoundary name="topmenu">
                   {hasTopmenu ? <PageContext.Provider value={Layout.getContextValue({
                     pages: this.props?.data?.data?.pages,

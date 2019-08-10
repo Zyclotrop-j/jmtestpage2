@@ -117,7 +117,7 @@ export class FlowChart extends React.PureComponent<Props> {
     const { _id, className, gridArea, a11yTitle } = this.props;
     const { __html = "" } = this.state;
 
-    return (<Observer root={typeof window !== `undefined` && (document.querySelector(".Pane.horizontal.Pane2") || document.querySelector("#page-wrap"))} key="placeholder" onChange={this.handleVisibilityChange}>
+    return (<Observer root={typeof window !== `undefined` && (document.querySelector(".Pane.horizontal.Pane2") || (q => q[q.length - 1])(document.querySelectorAll(".page-wrap")))} key="placeholder" onChange={this.handleVisibilityChange}>
       <Box className={className} gridArea={gridArea} a11yTitle={a11yTitle}>
         <FadeGraph visible={__html && __html.trim()} dangerouslySetInnerHTML={{ __html }} />
       </Box>

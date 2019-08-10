@@ -124,7 +124,7 @@ export class Value extends React.PureComponent<Props> {
       suffix={suffix}
     >
       {({ countUpRef, start, reset, pauseResume }) => (
-        <Observer root={typeof window !== `undefined` && (document.querySelector(".Pane.horizontal.Pane2") || document.querySelector("#page-wrap"))} rootMargin={`${activationMarginBottom}px 0px 0px 0px`} threshold={[0,1]} onChange={
+        <Observer root={typeof window !== `undefined` && (document.querySelector(".Pane.horizontal.Pane2") || (q => q[q.length - 1])(document.querySelectorAll(".page-wrap")))} rootMargin={`${activationMarginBottom}px 0px 0px 0px`} threshold={[0,1]} onChange={
           (evt) => {
             if(this.animationready && evt.intersectionRatio > 0.99) {
               start();

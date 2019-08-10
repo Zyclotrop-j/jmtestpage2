@@ -66,7 +66,7 @@ export const doDeploy = async (deploymentdata) => {
     console.warn(e);
   }
   let deploymentprogress = 0;
-  const seconds = 60 * 3;
+  const seconds = 60 * 10;
   setDeployment(deploymentprogress);
   const increaseDeployment = () => {
     deploymentprogress += (100 / seconds);
