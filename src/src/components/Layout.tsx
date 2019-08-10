@@ -165,6 +165,11 @@ const GlobalStyle = createGlobalStyle`
   }
   .Toastify__toast {
     background-color: var(--light-1);
+    color: black;
+  }
+  .Toastify__toast--info {
+    background-color: var(--light-2);
+    color: black;
   }
   .Toastify__toast--error {
     background-color: var(--status-error);
