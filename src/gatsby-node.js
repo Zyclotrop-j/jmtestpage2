@@ -18,15 +18,14 @@ function bytesToSize(bytes, decimals = 2) {
 }
 function runGC() {
   if( typeof global.gc != "undefined" ){
-    const bmem = process.memoryUsage();
-    console.log(`Using ${bytesToSize(bmem.rss)} (heap: ${bytesToSize(bmem.heapUsed)}/${bytesToSize(bmem.heapTotal)}, external: ${bytesToSize(bmem.external)})`);
+    const bmem = process.memoryUsage().rss;
     global.gc();
     const mem = process.memoryUsage();
     const total = mem.rss;
     const heapTotal = mem.heapTotal;
     const heapUsed = mem.heapUsed;
     const external = mem.external;
-    console.log(`Freed up mem, now using ${bytesToSize(total)} (heap: ${bytesToSize(heapUsed)}/${bytesToSize(heapTotal)}, external: ${bytesToSize(external)})`);
+    console.log(`Freed up ${bytesToSize(bmem - total)} mem, now using ${bytesToSize(total)} (heap: ${bytesToSize(heapUsed)}/${bytesToSize(heapTotal)}, external: ${bytesToSize(external)})`);
   }
 }
 

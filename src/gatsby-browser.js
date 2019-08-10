@@ -3,7 +3,7 @@ import { RenderingContext, BROWSER } from "./src/utils/renderingContext";
 import * as Comlink from "comlink";
 import { navigate } from "gatsby";
 // import mobx from "mobx";
-import { toast, cssTransition } from 'react-toastify';
+import { toast, cssTransition, Flip } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { Layout, Provider } from "./src/components/Layout";
@@ -299,6 +299,7 @@ export const wrapRootElement =  ({ element, ...rest }) => {
 
 
 export const onServiceWorkerUpdateReady = () => {
+  const toastId = 'loremIpsum';;
   const options = {
       autoClose: 60000,
       delay: 2000,
@@ -306,8 +307,37 @@ export const onServiceWorkerUpdateReady = () => {
       type: toast.TYPE.INFO,
       hideProgressBar: true,
       position: toast.POSITION.BOTTOM_RIGHT,
-      closeOnClick: true,
-      onClick: window.location.reload
+      closeOnClick: false,
+      toastId: toastId,
+      onClick: () => {
+        toast.update(toastId, {
+          render: "Updating in 3",
+          type: toast.TYPE.SUCCESS,
+          transition: Flip
+        });
+        window.setTimeout(() => {
+          toast.update(toastId, {
+            render: "Updating in 2",
+            type: toast.TYPE.SUCCESS,
+            transition: Flip
+          });
+          window.setTimeout(() => {
+            toast.update(toastId, {
+              render: "Updating in 1",
+              type: toast.TYPE.SUCCESS,
+              transition: Flip
+            });
+            window.setTimeout(() => {
+              toast.update(toastId, {
+                render: "Reload",
+                type: toast.TYPE.SUCCESS,
+                transition: Flip
+              });
+              window.location.reload()
+            }, 1000);
+          }, 1000);
+        }, 1000);
+      }
   };
   toast(<div>An update is available. Click to apply update.</div>, options);
 }
