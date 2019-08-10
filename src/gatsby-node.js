@@ -2173,3 +2173,7 @@ export default { ${Object.values(xicon).map(i => i.join(", ")).join(", ")} };
   });
   return createdIconfile;
 };
+
+exports.onCreatePage = () => {
+  runGC();
+};
