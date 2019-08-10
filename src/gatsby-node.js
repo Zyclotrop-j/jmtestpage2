@@ -11,11 +11,22 @@ const config = require('./config/SiteConfig');
 const util = require('util');
 const { GuessPlugin } = require('guess-webpack');
 
+function bytesToSize(bytes, decimals = 2) {
+  if (bytes == 0) return '0 Bytes';
+  var k = 1024, dm = decimals <= 0 ? 0 : decimals || 2, sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'], i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
 function runGC() {
   if( typeof global.gc != "undefined" ){
-    console.log("Mem Usage Pre-GC " + util.inspect(process.memoryUsage()));
+    const bmem = process.memoryUsage();
+    console.log(`Using ${bytesToSize(bmem.rss)} (heap: ${bytesToSize(bmem.heapUsed)}/${bytesToSize(bmem.heapTotal)}, external: ${bytesToSize(bmem.external)})`);
     global.gc();
-    console.log("Mem Usage Post-GC " + util.inspect(process.memoryUsage()));
+    const mem = process.memoryUsage();
+    const total = mem.rss;
+    const heapTotal = mem.heapTotal;
+    const heapUsed = mem.heapUsed;
+    const external = mem.external;
+    console.log(`Freed up mem, now using ${bytesToSize(total)} (heap: ${bytesToSize(heapUsed)}/${bytesToSize(heapTotal)}, external: ${bytesToSize(external)})`);
   }
 }
 
