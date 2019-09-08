@@ -22,6 +22,7 @@
     "fix": "prettier --write 'src/**/*.{ts,tsx,scss,md}' && tslint --fix 'src/**/*.{ts,tsx}' -p tsconfig.json && stylelint --fix 'src/**/*.scss' "
   },
   "devDependencies": {
+    "babel-plugin-transform-custom-element-classes",
     "@babel/plugin-proposal-decorators": "^7.4.4",
     "@babel/plugin-proposal-function-bind": "^7.2.0",
     "@babel/plugin-proposal-optional-chaining": "^7.2.0",
