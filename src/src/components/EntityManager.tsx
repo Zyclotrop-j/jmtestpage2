@@ -8,7 +8,6 @@ import { PagingTable } from 'grommet-controls';
 import { toJS } from 'mobx';
 import Fuse from 'fuse.js';
 import hash from "object-hash";
-import { formatRelative, parseISO } from 'date-fns';
 import { AddCircle } from "grommet-icons";
 import ReactJson from 'react-json-view';
 import { CustomIconForm, fields, widgets } from "./WidgetForm";

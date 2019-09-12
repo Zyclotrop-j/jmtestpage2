@@ -32,9 +32,11 @@ import { Stack, uiSchema as stackuiSchema } from "./Stack";
 import { Switcher, uiSchema as switcheruiSchema } from "./Switcher";
 import { TagList, uiSchema as taglistuiSchema } from "./TagList";
 import { WorldMap, uiSchema as worldmapuiSchema } from "./WorldMap";
+import { CountDown, uiSchema as countDownuiSchema } from "./CountDown";
 
 
 export const uiSchema = {
+  countdown: countDownuiSchema,
   basebox: baseboxuiSchema,
   center: centeruiSchema,
   cluster: clusteruiSchema,
@@ -69,5 +71,5 @@ export const uiSchema = {
 };
 export const Calltoaction = CallToAction;
 export const JSONLD = JSONLDData;
-export { WorldMap, BaseBox, Center, Cluster, Cover, SGrid, Sidebar, Stack, Switcher, TagList, JSONLDData, Link, ContactForm, Map, ShowMore, MediaQuery, VerticalTimeline, QRCode, List, Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Icon, Cards };
-export default { WorldMap, BaseBox, Center, Cluster, Cover, SGrid, Sidebar, Stack, Switcher, TagList, JSONLD, JSONLDData, Link, ContactForm, Map, ShowMore, MediaQuery, VerticalTimeline, QRCode, List, Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Calltoaction: CallToAction, Icon, Cards };
+export { CountDown, WorldMap, BaseBox, Center, Cluster, Cover, SGrid, Sidebar, Stack, Switcher, TagList, JSONLDData, Link, ContactForm, Map, ShowMore, MediaQuery, VerticalTimeline, QRCode, List, Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Icon, Cards };
+export default { CountDown, WorldMap, BaseBox, Center, Cluster, Cover, SGrid, Sidebar, Stack, Switcher, TagList, JSONLD, JSONLDData, Link, ContactForm, Map, ShowMore, MediaQuery, VerticalTimeline, QRCode, List, Accordion, FlowChart, Menu, RichText, Headline, Picture, Text, Box, Grid, Group, Stage, CallToAction, Calltoaction: CallToAction, Icon, Cards };

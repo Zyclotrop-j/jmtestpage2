@@ -8,8 +8,6 @@ import { path, memoizeWith } from 'ramda';
 import { renameKeysWith } from 'ramda-adjunct';
 import { PagingTable } from 'grommet-controls';
 import { toJS } from 'mobx';
-import { formatRelative, parseISO } from 'date-fns';
-import { enGB } from 'date-fns/locale';
 import { DropTarget } from 'react-dnd';
 import { addComponent, addComponenttoGroup, removeComponentfromGroup, components } from '../state/components';
 import { componentschemas } from '../state/schemas';

@@ -1,5 +1,5 @@
 {
-  "name": "gatsby-starter-typescirpt-power-blog-jm-website-adoption",
+  "name": "websites.mingram.net",
   "description": "Jannes Website",
   "version": "1.0.1",
   "author": "Jannes Mingram (jannes@mingram.net)",
@@ -110,7 +110,7 @@
     "chart.js": "^2.8.0",
     "chroma-js": "^2.0.3",
     "comlink": "^4.0.2",
-    "date-fns": "2.0.0-beta.2",
+    "date-fns": "2.0.1",
     "distinct-colors": "^1.0.4",
     "environment-aware-hooks": "^0.0.1",
     "final-form": "^4.13.0",
@@ -196,6 +196,8 @@
     "styled-components-media-query": "^1.0.15",
     "styled-icons": "^8.1.0",
     "tinycolor": "^0.0.1",
+    "tweetnacl": "^1.0.1",
+    "tweetnacl-util": "^0.15.0",
     "unsplash-js": "^5.0.0",
     "uppy": "^1.0.2",
     "webfontloader": "^1.6.28"

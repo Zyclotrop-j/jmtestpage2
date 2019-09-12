@@ -20,6 +20,7 @@ import { uiSchema } from '../Widget';
 import { Modal } from '../components/Modal';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { IconChoose } from './IconChooser';
+import { getGlobalAction } from "../utils/globalActions";
 
 const dofetch = once(() => fetch("https://zcmsapi.herokuapp.com/api/v1/clientsidesecret", {
   cache: "no-cache",
@@ -481,6 +482,21 @@ const debouncedChange = debounce((v, onChange) => createemail.then(secret =>
   'trailing': true,
   'maxWait': 30000
 });
+const decrypt = debounce((v, onChange) => createemail.then(secret =>
+  fetch("https://script.google.com/macros/s/AKfycbwAj7072jfxikYraJ7KYTTXBzQBDjlG42rsPg-4bFnagzRChJy8/exec?callback=&callbacke=", {
+    redirect: "follow",
+    method: "POST",
+    mode: "cors",
+    body: JSON.stringify({
+      passcode: secret.createemail,
+      operation: "decypt",
+      data: v
+    })
+})).then(i => i.text()).then(onChange), 1800, {
+  'leading': false,
+  'trailing': true,
+  'maxWait': 30000
+});
 const emailregex = /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i;
 
 const EncryptedEmail = ({
@@ -493,6 +509,14 @@ const EncryptedEmail = ({
 }) => {
   const [plaintext, setplaintext] = React.useState();
   const [working, setworking] = React.useState(false);
+  const [decrypting, setdecrypting] = React.useState(false);
+  if(!plaintext && !decrypting) {
+    setdecrypting(true);
+    decrypt(value, (x) => {
+      setplaintext(x);
+      setdecrypting(false);
+    });
+  }
 
   const valueChanged = (v, event) => {
     if(emailregex.test(v)) {
@@ -507,7 +531,8 @@ const EncryptedEmail = ({
   return (<>
     <TextInput
       {...props}
-      placeholder="Your email"
+      disabled={props.disabled || decrypting}
+      placeholder={`Your email${decrypting ? " is being decrypted": ""}`}
       value={plaintext}
       onBlur={onBlur && (event => onBlur(event.value))}
       onFocus={onFocus && (event => onFocus(event.value))}
@@ -524,34 +549,67 @@ const EncryptedEmail = ({
       onChange={() => null}
     />
   </>);
-  // todo: get clientside secret createemail
-  // todo: send to
-  /*
-    fetch("https://script.google.com/macros/s/AKfycbwAj7072jfxikYraJ7KYTTXBzQBDjlG42rsPg-4bFnagzRChJy8/exec?callback=&callbacke=", {
-            redirect: "follow",
-            method: "POST",
-            mode: "cors",
-            body: JSON.stringify({
-              passcode: "<SECRET>",
-              operation: "encypt",
-              data: "<EMAIL>"
-            })
-    }).then(i => i.text()).then(i => console.log("!!!", i))
-
-    fetch("https://script.google.com/macros/s/AKfycbwAj7072jfxikYraJ7KYTTXBzQBDjlG42rsPg-4bFnagzRChJy8/exec?callback=&callbacke=", {
-            redirect: "follow",
-            method: "POST",
-            mode: "cors",
-            body: JSON.stringify({
-              passcode: "<SECRET>",
-              operation: "decypt",
-              data: "<DATA FROM WIDGET>"
-            })
-    }).then(i => i.text()).then(i => console.log("!!!", i))
-  */
 };
 
 const MarkdownInput = MarkdownPreview;
+
+const PageAction = ({
+  value,
+  onChange,
+  options,
+  onBlur,
+  onFocus,
+  ...props
+}) => {
+  const [action, setaction] = React.useState("");
+  const [params, setparams] = React.useState([]);
+  const [rawparams, setrawparams] = React.useState([]);
+  console.log("getGlobalAction.actions", getGlobalAction.actions, getGlobalAction.actionconfigurations);
+  return <>
+    <Select
+      {...props}
+      labelKey="key"
+      valueKey="value"
+      multiple={false}
+      onBlur={onBlur && (event => onBlur(event.value))}
+      onFocus={onFocus && (event => onFocus(event.value))}
+      onChange={event => {
+        const v = event?.value?.value || event?.value;
+        setaction(v);
+        onChange(JSON.stringify([v, ...params]));
+      }}
+      options={getGlobalAction.actions.map(i => ({ key: i, value: i })).concat([{key: "None", value: ""}])}
+      value={action}
+    />
+    <pre>{JSON.stringify(getGlobalAction.actionconfigurations[action]?.params)}</pre>
+    <TextArea
+      {...props}
+      resize="vertical"
+      placeholder="Enter the parameters described above as JSON"
+      value={rawparams}
+      onBlur={onBlur && (event => onBlur(event.value))}
+      onFocus={onFocus && (event => onFocus(event.value))}
+      onChange={event => {
+        const vv = event.target.value;
+        setrawparams(vv);
+        try {
+          const v = JSON.parse(vv);
+          if(!Array.isArray(v)) return;
+          setparams(v);
+          onChange(JSON.stringify([action, ...v]));
+        } catch(e) {
+          console.warn(e);
+        }
+      }}
+    />
+    <TextInput
+      disabled
+      readonly
+      value={JSON.stringify([action, ...params])}
+      onChange={() => null}
+    />
+  </>;
+};
 
 export const widgets = {
   EncryptedEmail,
@@ -559,6 +617,7 @@ export const widgets = {
   icon: IconChoose,
   markdown: MarkdownInput,
   image: ImageInput,
+  pageaction: PageAction,
   "grommet-color": GrommetColor,
   constantInput: ConstantInput,
   transformInput: TransformInput,

@@ -4,6 +4,7 @@ import * as Icons from 'grommet-icons';
 import { VerticalTimeline, VerticalTimelineElement }  from 'react-vertical-timeline-component';
 import { colorIsDark  } from "grommet/utils";
 import { isValid, parseISO, formatDistanceToNow } from 'date-fns';
+import { getLocale } from '../utils/dateFnsLocale';
 
 const StyledVerticalTimeline = styled(VerticalTimeline)`
   body &::before {
@@ -58,7 +59,7 @@ export default class VerticalTimelineComponent extends React.Component<any> {
 
     const dateFormatter = {
       absolute: date => parseISO(date).toLocaleDateString(),
-      relative: date => formatDistanceToNow(parseISO(date), { addSuffix: true }),
+      relative: date => formatDistanceToNow(parseISO(date), { addSuffix: true, locale: getLocale() }),
       none: date => date
     }[dateformat] || (date => date);
 

@@ -8,8 +8,11 @@ import Image from 'react-shimmer';
 import LazyLoad from 'react-lazyload';
 import { OutboundLink } from 'gatsby-plugin-gtag';
 import defer from "lodash/defer";
+import { formatDistance, formatDistanceStrict, formatRelative, format } from 'date-fns';
 import { Icon } from "./Icon";
 import { atob, decodeURIComponent, escape } from "../utils/b64";
+import { DateContext } from '../utils/DateContext';
+import { getLocale } from '../utils/dateFnsLocale';
 
 interface Props {
   title: string;
@@ -23,6 +26,14 @@ interface Props {
 
 const toUpperFirst = str => str.charAt(0).toUpperCase() + str.slice(1);
 const isString = is(String);
+const exf = (e, a, b) => {
+  console.warn(e);
+  return `${a} - ${b}`;
+};
+const safeFormatDistance = tryCatch(formatDistance, exf);
+const safeFormatDistanceStrict = tryCatch(formatDistanceStrict, exf);
+const safeFormatRelative = tryCatch(formatRelative, exf);
+const safeFormat = tryCatch(format, exf)
 
 export const uiSchema = {
   /* // currently doesn't play well together with the markdown editor
@@ -92,6 +103,62 @@ export const components = {
         </LazyLoad>
       );
     },
+  },
+  formatted: {
+    component: (props = {}) => <DateContext.Consumer>{date => safeFormatDistance(props.date ? new Date(props.date) : date, props.baseDate ? new Date(props.baseDate) : new Date(), {
+      includeSeconds: true,
+      addSuffix: true,
+      locale: getLocale(),
+      ...props,
+    })}</DateContext.Consumer>
+  },
+  formattedStrict: {
+    component: (props = {}) => <DateContext.Consumer>{date => safeFormatDistanceStrict(props.date ? new Date(props.date) : date, props.baseDate ? new Date(props.baseDate) : new Date(), {
+      includeSeconds: true,
+      addSuffix: true,
+      locale: getLocale(),
+      ...props,
+    })}</DateContext.Consumer>
+  },
+  formatRelative: {
+    component: (props = {}) => <DateContext.Consumer>{date => safeFormatRelative(props.date ? new Date(props.date) : date, props.baseDate ? new Date(props.baseDate) : new Date(), {
+      locale: getLocale(),
+      ...props,
+    })}</DateContext.Consumer>
+  },
+  format: {
+    component: (props = {}) => <DateContext.Consumer>{date => safeFormat(props.date ? new Date(props.date) : date, props.format || "PPPPpppp", {
+      locale: getLocale(),
+      ...props,
+    })}</DateContext.Consumer>
+  },
+  Formatted: {
+    component: (props = {}) => <DateContext.Consumer>{date => safeFormatDistance(props.date ? new Date(props.date) : date, props.baseDate ? new Date(props.baseDate) : new Date(), {
+      includeSeconds: true,
+      addSuffix: true,
+      locale: getLocale(),
+      ...props,
+    })}</DateContext.Consumer>
+  },
+  FormattedStrict: {
+    component: (props = {}) => <DateContext.Consumer>{date => safeFormatDistanceStrict(props.date ? new Date(props.date) : date, props.baseDate ? new Date(props.baseDate) : new Date(), {
+      includeSeconds: true,
+      addSuffix: true,
+      locale: getLocale(),
+      ...props,
+    })}</DateContext.Consumer>
+  },
+  FormatRelative: {
+    component: (props = {}) => <DateContext.Consumer>{date => safeFormatRelative(props.date ? new Date(props.date) : date, props.baseDate ? new Date(props.baseDate) : new Date(), {
+      locale: getLocale(),
+      ...props,
+    })}</DateContext.Consumer>
+  },
+  Format: {
+    component: (props = {}) => <DateContext.Consumer>{date => safeFormat(props.date ? new Date(props.date) : date, props.format || "PPPPpppp", {
+      locale: getLocale(),
+      ...props,
+    })}</DateContext.Consumer>
   },
 };
 

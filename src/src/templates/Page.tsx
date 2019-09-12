@@ -113,6 +113,11 @@ export default class Page extends React.PureComponent {
 }
 
 export const postQuery = graphql`
+  fragment fcomponentcountdown on DATA_Componentcountdown {
+    endTime
+    richtext
+    expired
+  }
   fragment fworldmap on DATA_Componentworldmap {
     _id
     a11yTitle
@@ -772,8 +777,12 @@ export const postQuery = graphql`
     $DATA_Componentswitcher: [ID!]
     $DATA_Componenttaglist: [ID!]
     $DATA_Componentworldmap: [ID!]
+    $DATA_Componentcountdown: [ID!]
   ) {
     data {
+      componentcountdowns(_ids: $DATA_Componentcountdown) {
+        ...fcomponentcountdown
+      }
       componentworldmaps(_ids: $DATA_Componentworldmap) {
         ...fworldmap
       }

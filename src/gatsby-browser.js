@@ -1,4 +1,5 @@
 import React from "react";
+import { Heading, Grid, Box } from "grommet";
 import { RenderingContext, BROWSER } from "./src/utils/renderingContext";
 import * as Comlink from "comlink";
 import { navigate } from "gatsby";
@@ -24,17 +25,71 @@ window.globalActions["NAVIGATE"] = {
   available: true,
   trigger: target => navigate(target),
   successfull: null,
-  promise: Promise.resolve(navigate)
+  promise: Promise.resolve(navigate),
+  params: {
+    "type": "array",
+    "items": [
+      {
+        "type": "string",
+        "description": "Navigation target (url)"
+      }
+    ]
+  }
 };
 window.globalActions["INSTALL_APP"] = {
-  available: false
+  available: false,
+  params: {
+    "type": "array",
+    "items": []
+  }
 };
+window.globalActions["SHARE"] = {
+  available: false,
+  params: {
+    "type": "array",
+    "items": [
+      {
+        "type": "string",
+        "description": "title - headline of what you want to share"
+      },
+      {
+        "type": "string",
+        "description": "text - some description of what is being shared"
+      },
+      {
+        "type": "string",
+        "description": "url - the url you want to share, default is `current url`"
+      }
+    ]
+  }
+};
+
+Object.entries({
+  available: navigator.share !== undefined,
+  trigger: async (title, text, url) => {
+    try {
+      await navigator.share({ title, text, url: url || `${window.location}` });
+      window.globalActions["SHARE"].successfull = true;
+    } catch (err) {
+      window.globalActions["SHARE"].successfull = false;
+      console.warn("Share failed:", err.message);
+    }
+  },
+  successfull: null,
+  promise: navigator.share === undefined ? Promise.reject("Share unavailable") : Promise.resolve(navigator.share)
+}).forEach(([k, v]) => {
+  window.globalActions["SHARE"][k] = v;
+});
+
+
+
+
 const fn = deferredPrompt => {
   // Prevent Chrome 76 and later from showing the mini-infobar
   // deferredPrompt.preventDefault();
   let res = () => null;
   let rej = () => null;
-  window.globalActions["INSTALL_APP"] = {
+  Object.entries({
     trigger: () => {
       deferredPrompt.prompt();
       deferredPrompt.userChoice
@@ -57,7 +112,9 @@ const fn = deferredPrompt => {
       res = resolve;
       rej = reject;
     })
-  };
+  }).forEach(([k, v]) => {
+    window.globalActions["INSTALL_APP"][k] = v;
+  });
 };
 window.addEventListener('beforeinstallprompt', fn);
 window.addEventListener('appinstalled', (evt) => {
@@ -201,13 +258,97 @@ const getNotificationPermission = () => {
   });
 }
 
+const notificationparams = {
+  "badge": {
+    "type": "string",
+    "description": "The URL of the image used to represent the notification when there is not enough space to display the notification itself."
+  },
+  "dir": {
+    "type": "string",
+    "description": "The direction in which to display the notification. It defaults to auto, which just adopts the browser's language setting behavior, but you can override that behaviour by setting values of ltr and rtl (although most browsers seem to ignore these settings.)"
+  },
+  "lang": {
+    "type": "string",
+    "description": "The notification's language, as specified using a DOMString representing a BCP 47 language tag. See the Sitepoint ISO 2 letter language codes page for a simple reference."
+  },
+  "body": {
+    "type": "string",
+    "description": "A DOMString representing the body text of the notification, which is displayed below the title."
+  },
+  "icon": {
+    "type": "string",
+    "description": "A USVString containing the URL of an icon to be displayed in the notification."
+  },
+  "image": {
+    "type": "string",
+    "description": "a USVString containing the URL of an image to be displayed in the notification."
+  },
+  "vibrate": {
+    "type": "string",
+    "description": "A vibration pattern for the device's vibration hardware to emit with the notification."
+  },
+  "renotify": {
+    "type": "boolean",
+    "default": false,
+    "description": "A Boolean specifying whether the user should be notified after a new notification replaces an old one. The default is false, which means they won't be notified."
+  },
+  "requireInteraction": {
+    "type": "boolean",
+    "default": false,
+    "description": "Indicates that a notification should remain active until the user clicks or dismisses it, rather than closing automatically. The default value is false."
+  },
+  "silent": {
+    "type": "boolean",
+    "default": false,
+    "description": "A Boolean specifying whether the notification is silent  (no sounds or vibrations  issued), regardless of the device settings. The default is false, which means it won't be silent."
+  },
+  /*
+  // difficult to implement and somewhat useless
+  "actions": {
+    "type": "string",
+    "description": "An array of NotificationActions representing the actions available to the user when the notification is presented. These are options the user can choose among in order to act on the action within the context of the notification itself. The action's name is sent to the service worker notification handler to let it know the action was selected by the user."
+  },
+  */
+  "noscreen": {
+    "type": "boolean",
+    "default": false,
+    "description": "A Boolean specifying whether the notification firing enable the device's screen or not. The default is false, which means it enables the screen."
+  },
+  "sticky": {
+    "type": "boolean",
+    "default": false,
+    "description": "A Boolean specifying whether the notification is 'sticky', i.e. not easily clearable by the user. The default is false, which means it won't be sticky."
+  }
+};
+const notifyBackOnlineParams = {
+  "type": "array",
+  "items": [
+    {
+      "type": "string",
+      "description": "msg - the text to display when the user is back online"
+    },
+    {
+      "type": "object",
+      "description": "The settings",
+      "properties": {
+        "returnURL": {
+          "type": "string",
+          "description": "none or a url to return to when notification is clicked. Defaults to `current url`"
+        },
+        ...notificationparams
+      }
+    }
+  ]
+};
+
 window.globalActions["NOTIFY_BACKONLINE"] = (() => {
   if(process.env.NODE_ENV === "development") {
     return {
       trigger: () => null,
       available: false,
       successfull: null,
-      promise: Promise.reject("Unavailable in develop")
+      promise: Promise.reject("Unavailable in develop"),
+      params: notifyBackOnlineParams
     };
   }
   function initComlink() {
@@ -245,7 +386,7 @@ window.globalActions["NOTIFY_BACKONLINE"] = (() => {
         type: "online",
         message: msg || "",
         opt: {
-          returnURL: returnURL || "",
+          returnURL: `${returnURL}`.toLowerCase() === "none" ? "" : `${returnURL || window.location}`,
           ...options
         }
       });
@@ -264,26 +405,97 @@ window.globalActions["NOTIFY_BACKONLINE"] = (() => {
     },
     available: !!navigator.connection,
     successfull: null,
-    promise: comlinkobj
+    promise: comlinkobj,
+    params: notifyBackOnlineParams
   }
 })();
 
-/*
-// TODO: Do something more useful with this!
-document.addEventListener('visibilitychange', function(){
-  if(!document.hidden) {
-    toast(<div>Welcome back</div>, {
-        autoClose: 1000,
-        delay: 1000,
-        closeButton: false,
-        type: toast.TYPE.INFO,
-        hideProgressBar: true,
-        position: toast.POSITION.BOTTOM_RIGHT,
-        closeOnClick: true,
-    });
-  }
+let documentvisible = document.hidden;
+document.addEventListener('visibilitychange', () => {
+  documentvisible = document.hidden
 });
-*/
+window.globalActions["NOTIFICATION"] = {
+  available: false,
+  params: {
+    "type": "array",
+    "items": [
+      {
+        "type": "string",
+        "description": "title - headline of the notification"
+      },
+      {
+        "type": "object",
+        "properties": notificationparams
+      }
+    ]
+  }
+};
+const notificationPromiseCbs = [];
+const notificationPromise = new Promise((resolve, reject) => {
+  if (Notification.permission === "denied") return reject();
+  if (Notification.permission === "granted") return resolve();
+  notificationPromiseCbs.push({ resolve, reject });
+});
+Object.entries({
+  available: "Notification" in window && Notification.permission !== "denied",
+  trigger: async (title, opts) => {
+    if(documentvisible) {
+      const options = {
+          hideProgressBar: true,
+          autoClose: opts.requireInteraction ? false : 5000
+      };
+      toast(<div dir={opts.dir} lang={opts.lang}>
+              <Grid
+                rows={['auto', 'flex', 'auto']}
+                columns={['auto', 'flex']}
+                gap={
+                  {"row": opts.image || opts.body ? "small" : "none", "column": opts.image ? "small" : "none"}
+                }
+                areas={[
+                    { name: 'icon', start: [0, 0], end: [0, 1] },
+                    { name: 'headline', start: [1, 0], end: [1, 0] },
+                    { name: 'text', start: [1, 1], end: [1, 1] },
+                    { name: 'image', start: [0, 2], end: [1, 2] },
+                ]}
+              >
+                {opts.icon && <Box gridArea="icon">
+                  <img style={{width: 80, height: 80}} src={opts.icon} alt="" />
+                </Box>}
+                <Box gridArea="headline">
+                  <Heading level={2} margin="none" size="small">{title}</Heading>
+                </Box>
+                {opts.body && <Box gridArea="text">
+                  {opts.body}
+                </Box>}
+                {opts.image && <Box gridArea="image">
+                  <img style={{width: "auto", "max-height": 80}} src={opts.image} alt="" />
+                </Box>}
+              </Grid>
+      </div>, options);
+      return;
+    }
+    if (Notification.permission === "denied") {
+      window.globalActions["NOTIFICATION"].successfull = false;
+      window.globalActions["NOTIFICATION"].available = false;
+      return;
+    } else if (Notification.permission !== "granted") {
+      const permission = await Notification.requestPermission();
+      notificationPromiseCbs.forEach(({ resolve, reject }) => permission !== "granted" ? reject() : resolve());
+      if(permission !== "granted") {
+        window.globalActions["NOTIFICATION"].successfull = false;
+        window.globalActions["NOTIFICATION"].available = false;
+        return;
+      }
+    }
+    // Permission is granted now
+    new Notification(title, opts);
+    window.globalActions["NOTIFICATION"].successfull = true;
+  },
+  successfull: null,
+  promise: notificationPromise,
+}).forEach(([k, v]) => {
+  window.globalActions["NOTIFICATION"][k] = v;
+});
 
 export const wrapPageElement = ({ element, props }, b) => {
   return <Layout {...props}>{element}</Layout>;
@@ -333,7 +545,7 @@ export const onServiceWorkerUpdateReady = () => {
                 type: toast.TYPE.SUCCESS,
                 transition: Flip
               });
-              window.location.reload()
+              window.location.reload(true)
             }, 1000);
           }, 1000);
         }, 1000);
