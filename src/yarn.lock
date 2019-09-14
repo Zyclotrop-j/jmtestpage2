@@ -871,6 +871,13 @@
   dependencies:
     regenerator-runtime "^0.13.2"
 
+"@babel/runtime@^7.6.0":
+  version "7.6.0"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.6.0.tgz#4fc1d642a9fd0299754e8b5de62c631cf5568205"
+  integrity sha512-89eSBLJsxNxOERC0Op4vd+0Bqm6wRMqMbFtV3i0/fbaWw/mJ8Q3eBvgX0G4SyrOOLCtbu98HspF8o09MRT+KzQ==
+  dependencies:
+    regenerator-runtime "^0.13.2"
+
 "@babel/template@^7.1.0", "@babel/template@^7.4.4":
   version "7.4.4"
   resolved "https://registry.yarnpkg.com/@babel/template/-/template-7.4.4.tgz#f4b88d1225689a08f5bc3a17483545be9e4ed237"
@@ -7086,6 +7093,13 @@ gatsby-plugin-compile-es6-packages@^1.1.0:
   dependencies:
     "@babel/runtime" "^7.0.0"
     regex-escape "^3.4.8"
+
+gatsby-plugin-create-client-paths@^2.1.7:
+  version "2.1.7"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-create-client-paths/-/gatsby-plugin-create-client-paths-2.1.7.tgz#488c44847079c84dc9d2c7143c07d9e7a3e20496"
+  integrity sha512-+G3w79wKsoozZRW9AadYJYi53MNW78LEMZ4mnUUFKrTbHVue6VCbxdOB2DcCTJP2W8BdF8JgeCVHX3IgUKd2sw==
+  dependencies:
+    "@babel/runtime" "^7.6.0"
 
 gatsby-plugin-csp@^1.1.0:
   version "1.1.3"

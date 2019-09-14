@@ -27,17 +27,20 @@ class Auth {
     this.renewSession = this.renewSession.bind(this);
   }
 
-  login() {
-    localStorage.setItem('auth0Path', `${location.pathname}`);
+  login(optPath) {
+    console.log('Setting path to ', optPath || `${location.pathname}`);
+    localStorage.setItem('auth0Path', optPath || `${location.pathname}`);
     this.auth0.authorize();
   }
 
   handleAuthentication() {
     return new Promise((res, rej) => {
       const pathname = localStorage.getItem('auth0Path');
+      localStorage.removeItem('auth0Path');
       this.auth0.parseHash((err, authResult) => {
         if (authResult && authResult.accessToken && authResult.idToken) {
           this.setSession(authResult);
+          console.log('Resolving auth-handler with ', pathname);
           res({ ...authResult, pathname });
         } else if (err) {
           console.error(err);
@@ -66,7 +69,7 @@ class Auth {
     // Set the time that the Access Token will expire at
     const expiresAt = authResult.expiresIn * 1000 + new Date().getTime();
     runInAction(() => {
-      console.log("Setting", authResult);
+      console.log('Setting', authResult);
       this.accessToken = authResult.accessToken;
       this.idToken = authResult.idToken;
       this.authResult = authResult;
@@ -124,11 +127,11 @@ class Auth {
 }
 
 const DecoratedAuth = decorate(Auth, {
-    accessToken: observable,
-    idToken: observable,
-    expiresAt: observable,
-    authResult: observable,
-    initialized: observable,
+  accessToken: observable,
+  idToken: observable,
+  expiresAt: observable,
+  authResult: observable,
+  initialized: observable,
 });
 
 export default DecoratedAuth;

@@ -1,10 +1,10 @@
-const websiteid = process.env.WEBSITEID || "5d18639f49c4440004404d09";
+const websiteid = process.env.WEBSITEID || '5d18639f49c4440004404d09';
 const fs = require('fs');
 const path = require('path');
-const webpack = require("webpack");
+const webpack = require('webpack');
 const _ = require('lodash');
 const { createRemoteFileNode } = require(`gatsby-source-filesystem`);
-const R = require("ramda");
+const R = require('ramda');
 const { memoizeWith, identity, groupBy } = R;
 const validUrl = require('valid-url');
 const config = require('./config/SiteConfig');
@@ -13,11 +13,14 @@ const { GuessPlugin } = require('guess-webpack');
 
 function bytesToSize(bytes, decimals = 2) {
   if (bytes == 0) return '0 Bytes';
-  var k = 1024, dm = decimals <= 0 ? 0 : decimals || 2, sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'], i = Math.floor(Math.log(bytes) / Math.log(k));
+  var k = 1024,
+    dm = decimals <= 0 ? 0 : decimals || 2,
+    sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
+    i = Math.floor(Math.log(bytes) / Math.log(k));
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 function runGC() {
-  if( typeof global.gc != "undefined" ){
+  if (typeof global.gc != 'undefined') {
     const bmem = process.memoryUsage().rss;
     global.gc();
     const mem = process.memoryUsage();
@@ -25,28 +28,26 @@ function runGC() {
     const heapTotal = mem.heapTotal;
     const heapUsed = mem.heapUsed;
     const external = mem.external;
-    console.log(`Freed up ${bytesToSize(bmem - total)} mem, now using ${bytesToSize(total)} (heap: ${bytesToSize(heapUsed)}/${bytesToSize(heapTotal)}, external: ${bytesToSize(external)})`);
+    console.log(
+      `Freed up ${bytesToSize(bmem - total)} mem, now using ${bytesToSize(total)} (heap: ${bytesToSize(heapUsed)}/${bytesToSize(
+        heapTotal,
+      )}, external: ${bytesToSize(external)})`,
+    );
   }
 }
 
 const transformunsplashpath = src => {
-  if(src.indexOf("images.unsplash.com") > -1) {
-    if(src.indexOf("?") > -1) {
+  if (src.indexOf('images.unsplash.com') > -1) {
+    if (src.indexOf('?') > -1) {
       return `${src}&w=2000`;
     }
     return `${src}?w=2000`;
   }
   return src;
-}
+};
 
 const usedicons = [];
-exports.createResolvers = ({
-  actions,
-  cache,
-  createNodeId,
-  createResolvers,
-  store,
-}) => {
+exports.createResolvers = ({ actions, cache, createNodeId, createResolvers, store }) => {
   const { createNode } = actions;
   return createResolvers({
     DATA_Componentpicture: {
@@ -54,7 +55,7 @@ exports.createResolvers = ({
         type: `File`,
         // projection: { url: true },
         async resolve(source, args, context, info) {
-          if(validUrl.isWebUri(source.src)) {
+          if (validUrl.isWebUri(source.src)) {
             const rfi = createRemoteFileNode({
               url: transformunsplashpath(source.src),
               store,
@@ -67,15 +68,15 @@ exports.createResolvers = ({
             return rfi;
           }
           return null;
-        }
-      }
+        },
+      },
     },
     DATA_ImageMod1NnsrnvwA5TS1: {
       srcFile: {
         type: `File`,
         // projection: { url: true },
         async resolve(source, args, context, info) {
-          if(validUrl.isWebUri(source.src)) {
+          if (validUrl.isWebUri(source.src)) {
             const rfi = createRemoteFileNode({
               url: transformunsplashpath(source.src),
               store,
@@ -88,15 +89,15 @@ exports.createResolvers = ({
             return rfi;
           }
           return null;
-        }
-      }
+        },
+      },
     },
     DATA_BackgroundMod23FwuT6Q8V5Z5: {
       srcFile: {
         type: `File`,
         // projection: { url: true },
         async resolve(source, args, context, info) {
-          if(validUrl.isWebUri(source.image)) {
+          if (validUrl.isWebUri(source.image)) {
             const rfi = createRemoteFileNode({
               url: transformunsplashpath(source.image),
               store,
@@ -109,28 +110,28 @@ exports.createResolvers = ({
             return rfi;
           }
           return null;
-        }
-      }
+        },
+      },
     },
     DATA_Componenticon: {
       component: {
         type: `String`,
         // projection: { url: true },
         resolve(source, args, context, info) {
-          if(!source.icon || !source.icon.trim()) {
+          if (!source.icon || !source.icon.trim()) {
             return null;
           }
           usedicons.push(source.icon);
           return null;
-        }
-      }
+        },
+      },
     },
   });
 };
 
 exports.onCreateWebpackConfig = ({ stage, actions, plugins, getConfig }) => {
-  const hotloader = stage.startsWith('develop') ? { alias: { 'react-dom': '@hot-loader/react-dom'  } } : {};
-  if(stage.startsWith('develop')) {
+  const hotloader = stage.startsWith('develop') ? { alias: { 'react-dom': '@hot-loader/react-dom' } } : {};
+  if (stage.startsWith('develop')) {
     const config = getConfig();
     config.output.globalObject = '(this)';
     actions.replaceWebpackConfig({
@@ -139,39 +140,70 @@ exports.onCreateWebpackConfig = ({ stage, actions, plugins, getConfig }) => {
   }
 
   actions.setWebpackConfig({
-                            /*
+    /*
                              plugins: process.env.CI ? [] : [
                                new GuessPlugin({ GA: '198623083' }),
                              ],
                              */
-                             resolve: {
-                               // modules: [path.resolve(__dirname, 'src'), 'node_modules'],
-                               ...hotloader
-                             },
-                             node: {
-                                // prevent webpack from injecting mocks to Node native modules
-                                // that does not make sense for the client
-                                dgram: 'empty',
-                                fs: 'empty',
-                                net: 'empty',
-                                tls: 'empty',
-                                child_process: 'empty',
-                                // prevent webpack from injecting eval / new Function through global polyfill
-                                global: stage.startsWith('develop')
-                             },
-                           });
+    resolve: {
+      // modules: [path.resolve(__dirname, 'src'), 'node_modules'],
+      ...hotloader,
+    },
+    node: {
+      // prevent webpack from injecting mocks to Node native modules
+      // that does not make sense for the client
+      dgram: 'empty',
+      fs: 'empty',
+      net: 'empty',
+      tls: 'empty',
+      child_process: 'empty',
+      // prevent webpack from injecting eval / new Function through global polyfill
+      global: stage.startsWith('develop'),
+    },
+  });
 };
 
 const queryCache = {};
 exports.createPages = ({ actions, graphql }) => {
   runGC();
   const componentsWithChild = [
-    "DATA_Componentbasebox", "DATA_Componentcenter", "DATA_Componentcluster",
-    "DATA_Componentcover", "DATA_Componentsgrid", "DATA_Componentsidebar",
-    "DATA_Componentstack", "DATA_Componentswitcher", "DATA_Componenttaglist",
-    "DATA_Componentlink", "DATA_Componentshowmore", "DATA_Componentmediaquery", "DATA_Componentverticaltimeline", "DATA_Componentlist", "DATA_Componentaccordion", "DATA_Componentgrid", "DATA_Componentbox"
+    'DATA_Componentbasebox',
+    'DATA_Componentcenter',
+    'DATA_Componentcluster',
+    'DATA_Componentcover',
+    'DATA_Componentsgrid',
+    'DATA_Componentsidebar',
+    'DATA_Componentstack',
+    'DATA_Componentswitcher',
+    'DATA_Componenttaglist',
+    'DATA_Componentlink',
+    'DATA_Componentshowmore',
+    'DATA_Componentmediaquery',
+    'DATA_Componentverticaltimeline',
+    'DATA_Componentlist',
+    'DATA_Componentaccordion',
+    'DATA_Componentgrid',
+    'DATA_Componentbox',
   ];
-  const componentsStandalone = ["DATA_Componentcountdown", "DATA_Componentworldmap", "DATA_Componentcontactform", "DATA_Componentjsonld", "DATA_Componentmap", "DATA_Componentqrcode", "DATA_Componentflowchart", "DATA_Componentmenu", "DATA_Componentcards", "DATA_Componentcalltoaction", "DATA_Componenticon", "DATA_Componentstage", , "DATA_Componenttext", "DATA_Componentpicture", "DATA_Componentrichtext", "DATA_Componentheadline"]
+  const componentsStandalone = [
+    'DATA_Componentcountdown',
+    'DATA_Componentworldmap',
+    'DATA_Componentcontactform',
+    'DATA_Componentjsonld',
+    'DATA_Componentmap',
+    'DATA_Componentqrcode',
+    'DATA_Componentflowchart',
+    'DATA_Componentmenu',
+    'DATA_Componentcards',
+    'DATA_Componentcalltoaction',
+    'DATA_Componenticon',
+    'DATA_Componentstage',
+    ,
+    'DATA_Componenttext',
+    'DATA_Componentpicture',
+    'DATA_Componentrichtext',
+    'DATA_Componentheadline',
+  ];
   const components = [].concat(componentsStandalone, componentsWithChild);
   const makeRecursiveContext = () => {
     const componentgroups = new Set();
@@ -183,10 +215,14 @@ exports.createPages = ({ actions, graphql }) => {
               componentgroupid: _id
               components {
                 __typename
-                ${componentsStandalone.map(q => `... on ${q} {
+                ${componentsStandalone
+                  .map(
+                    q => `... on ${q} {
                   _id
                 }
-                `).join("")}
+                `,
+                  )
+                  .join('')}
                 ...on DATA_Componentaccordion {
                   _id
                   accordioncontent: content {
@@ -310,93 +346,93 @@ exports.createPages = ({ actions, graphql }) => {
     };
 
     const buildtree = (group, children) => {
-      if(!group) {
-        console.log("WARNING!!!! No group", group, children)
+      if (!group) {
+        console.log('WARNING!!!! No group', group, children);
         return [];
       }
       return (group.components || []).map(i => {
         const { _id: id, __typename: type } = i;
-        if(type === "DATA_Componentbasebox") {
+        if (type === 'DATA_Componentbasebox') {
           const { _id: childid } = i.baseboxcontent || {};
           const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
           return { id, type, child, componentgroupid: group.componentgroupid };
         }
-        if(type === "DATA_Componentcenter") {
+        if (type === 'DATA_Componentcenter') {
           const childids = (i.centercontent || []).map(i => i && i._id);
           const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
           return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
-        if(type === "DATA_Componentcluster") {
+        if (type === 'DATA_Componentcluster') {
           const childids = (i.clustercontent || []).map(i => i && i._id);
           const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
           return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
-        if(type === "DATA_Componentcover") {
+        if (type === 'DATA_Componentcover') {
           const childids = (i.covercontent || []).map(i => i && i._id);
           const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
           return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
-        if(type === "DATA_Componentsgrid") {
+        if (type === 'DATA_Componentsgrid') {
           const childids = (i.sgridcontent || []).map(i => i && i._id);
           const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
           return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
-        if(type === "DATA_Componentsidebar") {
+        if (type === 'DATA_Componentsidebar') {
           const childids = (i.sidebarcontent || []).map(i => i && i._id);
           const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
           return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
-        if(type === "DATA_Componentstack") {
+        if (type === 'DATA_Componentstack') {
           const childids = (i.stackcontent || []).map(i => i && i._id);
           const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
           return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
-        if(type === "DATA_Componentswitcher") {
+        if (type === 'DATA_Componentswitcher') {
           const childids = (i.switchercontent || []).map(i => i && i._id);
           const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
           return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
-        if(type === "DATA_Componenttaglist") {
+        if (type === 'DATA_Componenttaglist') {
           const childids = (i.taglistcontent || []).map(i => i && i._id);
           const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
           return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
-        if(type === "DATA_Componentbox") {
+        if (type === 'DATA_Componentbox') {
           const { _id: childid } = i.boxcontent || {};
           const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
           return { id, type, child, componentgroupid: group.componentgroupid };
         }
-        if(type === "DATA_Componentgrid") {
+        if (type === 'DATA_Componentgrid') {
           const childids = (i.gridcontent || []).map(i => i && i._id);
           const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
           return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
-        if(type === "DATA_Componentlist") {
+        if (type === 'DATA_Componentlist') {
           const childids = (i.listcontent || []).map(i => i && i._id);
           const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
           return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
-        if(type === "DATA_Componentaccordion") {
+        if (type === 'DATA_Componentaccordion') {
           const childids = (i.accordioncontent || []).map(i => i && i.content && i.content._id);
           const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
           return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
-        if(type === "DATA_Componentverticaltimeline") {
+        if (type === 'DATA_Componentverticaltimeline') {
           const childids = (i.verticaltimelinecontent || []).map(i => i && i.content && i.content._id);
           const rchildren = childids.map(childid => children.find(childt => childt.find(j => j.componentgroupid === childid)));
           return { id, type, children: rchildren, componentgroupid: group.componentgroupid };
         }
-        if(type === "DATA_Componentmediaquery") {
+        if (type === 'DATA_Componentmediaquery') {
           const { _id: childid } = i.mediacontent || {};
           const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
           return { id, type, child, componentgroupid: group.componentgroupid };
         }
-        if(type === "DATA_Componentshowmore") {
+        if (type === 'DATA_Componentshowmore') {
           const { _id: childid } = i.showmorecontent || {};
           const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
           return { id, type, child, componentgroupid: group.componentgroupid };
         }
-        if(type === "DATA_Componentlink") {
+        if (type === 'DATA_Componentlink') {
           const { _id: childid } = i.linkcontent || {};
           const child = children.find(childt => childt.find(j => j.componentgroupid === childid));
           return { id, type, child, componentgroupid: group.componentgroupid };
@@ -408,73 +444,86 @@ exports.createPages = ({ actions, graphql }) => {
     const resultset = [];
     const subquerrySet = {};
     const discover = (id, graphql, page) => {
-      if(!id) return Promise.resolve([]);
+      if (!id) return Promise.resolve([]);
       runGC();
-      return  new Promise(resolve => {
+      return new Promise(resolve => {
         const [query, discovered] = queryComponentgroup(id, graphql);
         console.log(`Dicovered ${id}, discovered before: ${discovered}, on ${page.path}`);
 
-        const children = !subquerrySet[id] ?
-          query.then(result => {
-            runGC();
-            if(!result || !result.data || !result.data.data) {
-              console.log("ERROR",result)
-            }
-            const tmp = result.data.data.componentgroup;
-            console.log(`Query done; ${page.path}:`, tmp && tmp.componentgroupid, tmp && tmp.components);
-            const data = result.data.data.componentgroup && result.data.data.componentgroup.components || [];
-            resultset.push(...data);
-            const xysubquerries = data
-              .filter(({ __typename }) => [
-                "DATA_Componentgrid",
-                "DATA_Componentbox",
-                "DATA_Componentaccordion",
-                "DATA_Componentlist",
-                "DATA_Componentverticaltimeline",
-                "DATA_Componentmediaquery",
-                "DATA_Componentlink",
-                "DATA_Componentshowmore",
-                "DATA_Componentbasebox", "DATA_Componentcenter", "DATA_Componentcluster",
-                "DATA_Componentcover", "DATA_Componentsgrid", "DATA_Componentsidebar",
-                "DATA_Componentstack", "DATA_Componentswitcher", "DATA_Componenttaglist",
-              ].includes(__typename));
-          const subquerries = xysubquerries
-              .map(i =>
-                i.baseboxcontent ||
-                i.centercontent ||
-                i.clustercontent ||
-                i.covercontent ||
-                i.sgridcontent ||
-                i.sidebarcontent ||
-                i.stackcontent ||
-                i.switchercontent ||
-                i.taglistcontent ||
-                i.gridcontent ||
-                i.listcontent ||
-                i.boxcontent ||
-                i.mediacontent ||
-                i.showmorecontent ||
-                i.linkcontent ||
-                i.verticaltimelinecontent && i.verticaltimelinecontent.map(i => i && i.content) ||
-                i.accordioncontent && i.accordioncontent.map(i => i && i.content) ||
-                []
-              )
-              .map((i, didx) => (i._id && [i._id]) || i.map(j => {
-                if(!j || !j._id) {
-                  console.error("Expected the nested content to have an _id", i, j, xysubquerries[didx])
-                }
-                return j && j._id;
-              }))
-              .filter(i => i.length)
-              .reduce((p, i) => p.concat(i.map(id => discover(id, graphql, page))), []);
-            return Promise.all(subquerries);
-          }) : subquerrySet[id];
+        const children = !subquerrySet[id]
+          ? query.then(result => {
+              runGC();
+              if (!result || !result.data || !result.data.data) {
+                console.log('ERROR', result);
+              }
+              const tmp = result.data.data.componentgroup;
+              console.log(`Query done; ${page.path}:`, tmp && tmp.componentgroupid, tmp && tmp.components);
+              const data = (result.data.data.componentgroup && result.data.data.componentgroup.components) || [];
+              resultset.push(...data);
+              const xysubquerries = data.filter(({ __typename }) =>
+                [
+                  'DATA_Componentgrid',
+                  'DATA_Componentbox',
+                  'DATA_Componentaccordion',
+                  'DATA_Componentlist',
+                  'DATA_Componentverticaltimeline',
+                  'DATA_Componentmediaquery',
+                  'DATA_Componentlink',
+                  'DATA_Componentshowmore',
+                  'DATA_Componentbasebox',
+                  'DATA_Componentcenter',
+                  'DATA_Componentcluster',
+                  'DATA_Componentcover',
+                  'DATA_Componentsgrid',
+                  'DATA_Componentsidebar',
+                  'DATA_Componentstack',
+                  'DATA_Componentswitcher',
+                  'DATA_Componenttaglist',
+                ].includes(__typename),
+              );
+              const subquerries = xysubquerries
+                .map(
+                  i =>
+                    i.baseboxcontent ||
+                    i.centercontent ||
+                    i.clustercontent ||
+                    i.covercontent ||
+                    i.sgridcontent ||
+                    i.sidebarcontent ||
+                    i.stackcontent ||
+                    i.switchercontent ||
+                    i.taglistcontent ||
+                    i.gridcontent ||
+                    i.listcontent ||
+                    i.boxcontent ||
+                    i.mediacontent ||
+                    i.showmorecontent ||
+                    i.linkcontent ||
+                    (i.verticaltimelinecontent && i.verticaltimelinecontent.map(i => i && i.content)) ||
+                    (i.accordioncontent && i.accordioncontent.map(i => i && i.content)) ||
+                    [],
+                )
+                .map(
+                  (i, didx) =>
+                    (i._id && [i._id]) ||
+                    i.map(j => {
+                      if (!j || !j._id) {
+                        console.error('Expected the nested content to have an _id', i, j, xysubquerries[didx]);
+                      }
+                      return j && j._id;
+                    }),
+                )
+                .filter(i => i.length)
+                .reduce((p, i) => p.concat(i.map(id => discover(id, graphql, page))), []);
+              return Promise.all(subquerries);
+            })
+          : subquerrySet[id];
         subquerrySet[id] = children;
-        resolve(Promise.all([query, children]).then(([ query, children ]) => (buildtree(query.data.data.componentgroup, children))));
+        resolve(Promise.all([query, children]).then(([query, children]) => buildtree(query.data.data.componentgroup, children)));
       });
     };
     return { discover, result: () => resultset };
-  }
+  };
 
   const themeQuery = `themes {
     meter {
@@ -1949,7 +1998,8 @@ exports.createPages = ({ actions, graphql }) => {
   // const parseGraphQLMeta = ({ name }, allTypes) => { const f = allTypes.data.__schema.types.find(i => i.name === name).fields; if(!f) { return null; } return f.reduce((p, i) => ({ ...p, [i.name]: x(i.type, allTypes) || i.type.name }), {}) };
   // parseGraphQLMeta({ name: "DATA_Theme" }, { /* all types query result goes here */ });
 
-  const execwebsitequery = memoizeWith(identity, (websiteid, graphql) => graphql(`{
+  const execwebsitequery = memoizeWith(identity, (websiteid, graphql) =>
+    graphql(`{
     data {
       website(_id: "${websiteid}") {
         _client
@@ -1994,19 +2044,20 @@ exports.createPages = ({ actions, graphql }) => {
         }
       }
     }
-  }`));
+  }`),
+  );
 
   const { createPage } = actions;
 
   return execwebsitequery(websiteid, graphql)
-  .then(result => {
-    runGC();
-    if (result.errors) {
-      console.error(result.errors);
-      return Promise.reject(result.errors);
-    }
+    .then(result => {
+      runGC();
+      if (result.errors) {
+        console.error(result.errors);
+        return Promise.reject(result.errors);
+      }
 
-    const menuquery = graphql(`{
+      const menuquery = graphql(`{
       data {
         website(_id: "${websiteid}") {
           favicon
@@ -2032,89 +2083,83 @@ exports.createPages = ({ actions, graphql }) => {
       }
     }`);
 
-    console.log("Page query finished!");
-    const { pages } = result.data.data.website;
-    const { discover, result: getresult } = makeRecursiveContext();
-    runGC();
-    return menuquery.then(xmenudata => {
-      const menudata = xmenudata.data.data.website;
+      console.log('Page query finished!');
+      const { pages } = result.data.data.website;
+      const { discover, result: getresult } = makeRecursiveContext();
       runGC();
-      return Promise.all([
-        menuquery,
-        Promise.resolve(result.data.data.website),
-        Promise.all(pages.map(page => {
-          console.log("Discovering page "+page.path+"....");
-          return Promise.all([
-            discover(page.main._id, graphql, page),
-            discover(page.header.left && page.header.left._id, graphql, page),
-            discover(page.header.center && page.header.center._id, graphql, page),
-            discover(page.header.right && page.header.right._id, graphql, page),
-            discover(page.footer.left && page.footer.left._id, graphql, page),
-            discover(page.footer.center && page.footer.center._id, graphql, page),
-            discover(page.footer.right && page.footer.right._id, graphql, page),
-            discover(menudata.topmenu && menudata.topmenu.content && menudata.topmenu.content._id, graphql, { path: "topmenu" }),
-            discover(menudata.bottommenu && menudata.bottommenu.content && menudata.bottommenu.content._id, graphql, { path: "bottommenu" }),
-            discover(menudata.sidemenu && menudata.sidemenu.content && menudata.sidemenu.content._id, graphql, { path: "sidemenu" })
-          ]).then(([
-            main,
-            hleft,
-            hcenter,
-            hright,
-            bleft,
-            bcenter,
-            bright,
-            topmenu,
-            bottommenu,
-            sidemenu
-          ]) => ({
-            main,
-            header: {
-              left: hleft,
-              center: hcenter,
-              right: hright
-            },
-            footer: {
-              left: bleft,
-              center: bcenter,
-              right: bright
-            },
-            topmenu,
-            bottommenu,
-            sidemenu
-          }));
-        })),
-        Promise.resolve(getresult)
-      ]);
-    });
-  }).then(([menudata, website, discovery, getresult]) => {
-    runGC();
-    return new Promise(res => {
-      const { pages, ...other } = website;
-      const groupdata = groupBy(i => i.__typename, getresult());
-      const targetobj = {
-        ...components.reduce((p, i) => ({ ...p, [i]: [] }), {}),
-        ...R.map(i => i.map(j => j._id), groupdata)
-      };
-      runGC();
-      pages.map((i, idx) => {
+      return menuquery.then(xmenudata => {
+        const menudata = xmenudata.data.data.website;
         runGC();
-        createPage({
-           path: `${i.path}`,
-           component: path.resolve('./src/templates/Page.tsx'),
-           context: {
-             website: other,
-             menudata: menudata,
-             pageid: i._id,
-             page: i,
-             tree: discovery[idx],
-             pageids: pages.map(q => q._id),
-             ...targetobj
-           }
-         });
+        return Promise.all([
+          menuquery,
+          Promise.resolve(result.data.data.website),
+          Promise.all(
+            pages.map(page => {
+              console.log('Discovering page ' + page.path + '....');
+              return Promise.all([
+                discover(page.main._id, graphql, page),
+                discover(page.header.left && page.header.left._id, graphql, page),
+                discover(page.header.center && page.header.center._id, graphql, page),
+                discover(page.header.right && page.header.right._id, graphql, page),
+                discover(page.footer.left && page.footer.left._id, graphql, page),
+                discover(page.footer.center && page.footer.center._id, graphql, page),
+                discover(page.footer.right && page.footer.right._id, graphql, page),
+                discover(menudata.topmenu && menudata.topmenu.content && menudata.topmenu.content._id, graphql, { path: 'topmenu' }),
+                discover(menudata.bottommenu && menudata.bottommenu.content && menudata.bottommenu.content._id, graphql, {
+                  path: 'bottommenu',
+                }),
+                discover(menudata.sidemenu && menudata.sidemenu.content && menudata.sidemenu.content._id, graphql, { path: 'sidemenu' }),
+              ]).then(([main, hleft, hcenter, hright, bleft, bcenter, bright, topmenu, bottommenu, sidemenu]) => ({
+                main,
+                header: {
+                  left: hleft,
+                  center: hcenter,
+                  right: hright,
+                },
+                footer: {
+                  left: bleft,
+                  center: bcenter,
+                  right: bright,
+                },
+                topmenu,
+                bottommenu,
+                sidemenu,
+              }));
+            }),
+          ),
+          Promise.resolve(getresult),
+        ]);
       });
-      res();
     })
-  });
+    .then(([menudata, website, discovery, getresult]) => {
+      runGC();
+      return new Promise(res => {
+        const { pages, ...other } = website;
+        const groupdata = groupBy(i => i.__typename, getresult());
+        const targetobj = {
+          ...components.reduce((p, i) => ({ ...p, [i]: [] }), {}),
+          ...R.map(i => i.map(j => j._id), groupdata),
+        };
+        runGC();
+        pages.map((i, idx) => {
+          runGC();
+          createPage({
+            path: `${i.path}`,
+            component: path.resolve('./src/templates/Page.tsx'),
+            context: {
+              website: other,
+              menudata: menudata,
+              pageid: i._id,
+              page: i,
+              tree: discovery[idx],
+              pageids: pages.map(q => q._id),
+              ...targetobj,
+            },
+          });
+        });
+        res();
+      });
+    });
 };
 
 exports.onPreBuild = () => {
@@ -2128,54 +2173,63 @@ exports.onPreBootstrap = () => {
 exports.onPostBootstrap = () => {
   runGC();
   const sources = {
-    de: icons => `import { ${icons.join(", ")} } from "grommet-icons";`,
+    de: icons => `import { ${icons.join(', ')} } from "grommet-icons";`,
 
     // import {AccountCircle, Lock} from 'styled-icons/material'
-    bl: icons => `import { ${icons.join(", ")} } from "styled-icons/boxicons-logos";`,
-    br: icons => `import { ${icons.join(", ")} } from "styled-icons/boxicons-regular";`,
-    bs: icons => `import { ${icons.join(", ")} } from "styled-icons/boxicons-solid";`,
-    cr: icons => `import { ${icons.join(", ")} } from "styled-icons/crypto";`,
-    ev: icons => `import { ${icons.join(", ")} } from "styled-icons/evil";`,
-    im: icons => `import { ${icons.join(", ")} } from "styled-icons/icomoon";`,
+    bl: icons => `import { ${icons.join(', ')} } from "styled-icons/boxicons-logos";`,
+    br: icons => `import { ${icons.join(', ')} } from "styled-icons/boxicons-regular";`,
+    bs: icons => `import { ${icons.join(', ')} } from "styled-icons/boxicons-solid";`,
+    cr: icons => `import { ${icons.join(', ')} } from "styled-icons/crypto";`,
+    ev: icons => `import { ${icons.join(', ')} } from "styled-icons/evil";`,
+    im: icons => `import { ${icons.join(', ')} } from "styled-icons/icomoon";`,
 
-    fa: icons => icons.map(i => `import { ${i} } from "react-icons-kit/fa/${i}";`).join("\n"),
-    io: icons => icons.map(i => `import { ${i} } from "react-icons-kit/iconic/${i}";`).join("\n"),
-    ia: icons => icons.map(i => `import { ${i} } from "react-icons-kit/ionicons/${i}";`).join("\n"),
-    md: icons => icons.map(i => `import { ${i} } from "react-icons-kit/md/${i}";`).join("\n"),
-    ti: icons => icons.map(i => `import { ${i} } from "react-icons-kit/typicons/${i}";`).join("\n"),
-    go: icons => icons.map(i => `import { ${i} } from "react-icons-kit/oct/${i}";`).join("\n"),
-    fi: icons => icons.map(i => `import { ${i} } from "react-icons-kit/feather/${i}";`).join("\n"),
+    fa: icons => icons.map(i => `import { ${i} } from "react-icons-kit/fa/${i}";`).join('\n'),
+    io: icons => icons.map(i => `import { ${i} } from "react-icons-kit/iconic/${i}";`).join('\n'),
+    ia: icons => icons.map(i => `import { ${i} } from "react-icons-kit/ionicons/${i}";`).join('\n'),
+    md: icons => icons.map(i => `import { ${i} } from "react-icons-kit/md/${i}";`).join('\n'),
+    ti: icons => icons.map(i => `import { ${i} } from "react-icons-kit/typicons/${i}";`).join('\n'),
+    go: icons => icons.map(i => `import { ${i} } from "react-icons-kit/oct/${i}";`).join('\n'),
+    fi: icons => icons.map(i => `import { ${i} } from "react-icons-kit/feather/${i}";`).join('\n'),
 
     // import { icon } from "react-icons-kit/ikons/icon"
-    ik: icons => icons.map(i => `import { ${i} } from "react-icons-kit/ikons/${i}";`).join("\n"),
-    li: icons => icons.map(i => `import { ${i} } from "react-icons-kit/linea/${i}";`).join("\n"),
-    me: icons => icons.map(i => `import { ${i} } from "react-icons-kit/metrize/${i}";`).join("\n"),
-    ty: icons => icons.map(i => `import { ${i} } from "react-icons-kit/entypo/${i}";`).join("\n"),
-    no: icons => icons.map(i => `import { ${i} } from "react-icons-kit/noto_emoji_regular/${i}";`).join("\n")
+    ik: icons => icons.map(i => `import { ${i} } from "react-icons-kit/ikons/${i}";`).join('\n'),
+    li: icons => icons.map(i => `import { ${i} } from "react-icons-kit/linea/${i}";`).join('\n'),
+    me: icons => icons.map(i => `import { ${i} } from "react-icons-kit/metrize/${i}";`).join('\n'),
+    ty: icons => icons.map(i => `import { ${i} } from "react-icons-kit/entypo/${i}";`).join('\n'),
+    no: icons => icons.map(i => `import { ${i} } from "react-icons-kit/noto_emoji_regular/${i}";`).join('\n'),
   };
   const createdIconfile = new Promise((res, rej) => {
     const filteredIcons = usedicons.filter((i, idx, arr) => arr.indexOf(i) === idx);
-    const xicon = filteredIcons.map(source => source.split("/")).reduce((p, [lib, ico]) => ({
-      ...p,
-      [lib]: (p[lib] || []).concat([ico])
-    }), {});
-    const importstring = Object.entries(xicon).map(
-      ([lib, ico]) => sources[lib] ? sources[lib](ico) : ""
-    );
-    fs.writeFile("./src/utils/usedIcons.ts", `
+    const xicon = filteredIcons
+      .map(source => source.split('/'))
+      .reduce(
+        (p, [lib, ico]) => ({
+          ...p,
+          [lib]: (p[lib] || []).concat([ico]),
+        }),
+        {},
+      );
+    const importstring = Object.entries(xicon).map(([lib, ico]) => (sources[lib] ? sources[lib](ico) : ''));
+    fs.writeFile(
+      './src/utils/usedIcons.ts',
+      `
 /* GENERATED CONTENT - DO NOT EDIT */
 /* ${JSON.stringify(usedicons)} */
-${importstring.join("\n")};
+${importstring.join('\n')};
 
-export default { ${Object.values(xicon).map(i => i.join(", ")).join(", ")} };
-    `, function(err) {
-        if(err) {
-            console.log(err);
-            rej(err);
+export default { ${Object.values(xicon)
+        .map(i => i.join(', '))
+        .join(', ')} };
+    `,
+      function(err) {
+        if (err) {
+          console.log(err);
+          rej(err);
         }
-        console.log("Wrote icon file");
+        console.log('Wrote icon file');
         return res(null);
-    });
+      },
+    );
   });
   return createdIconfile;
 };

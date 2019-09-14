@@ -303,7 +303,7 @@ export const Authentication = observer(({ auth: authx }) => {
   const email = authx.authResult?.idTokenPayload?.email;
   return (<>
     {email && <Text gridArea="user">Logged in as {email}</Text>}
-    <Button fill="horizontal" gridArea="auth" label={authx.isAuthenticated() ? "Log out" : "Log in"} onClick={authx.isAuthenticated() ? authx.logout : authx.login} />
+    <Button fill="horizontal" gridArea="auth" label={authx.isAuthenticated() ? "Log out" : "Log in"} onClick={authx.isAuthenticated() ? () => authx.logout() : () => authx.login()} />
   </>);
 });
 
